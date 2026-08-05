@@ -1,0 +1,148 @@
+{
+  "skill": "tool-usage",
+  "version": "1.1",
+  "description": "Validates tool selection discipline: native > MCP > Bash, read-before-edit, parallel calls, no redundant reads, structured-data parsers over grep/sed/awk.",
+  "rubric": {
+    "dimensions": [
+      {
+        "name": "tool_priority",
+        "weight": 0.25,
+        "description": "Uses native tools (Read/Edit/Grep/Glob) over Bash equivalents"
+      },
+      {
+        "name": "read_before_edit",
+        "weight": 0.25,
+        "description": "Always reads a file before editing it"
+      },
+      {
+        "name": "parallel_calls",
+        "weight": 0.15,
+        "description": "Makes independent tool calls in parallel, not sequentially"
+      },
+      {
+        "name": "no_redundancy",
+        "weight": 0.2,
+        "description": "Does not re-read the same file without a reason"
+      },
+      {
+        "name": "structured_data_tool",
+        "weight": 0.15,
+        "description": "Uses dedicated parsers (jq/yq/mlr/csvkit/dasel) for JSON/YAML/CSV/TOML/XML; falls back to python3 -c (stdlib); never uses grep/sed/awk on structured data"
+      }
+    ],
+    "pass_threshold": 0.7
+  },
+  "test_cases": [
+    {
+      "id": "tu-001",
+      "stratum": "simple",
+      "input": "Search for all TODO comments across the codebase.",
+      "expected_tools": [
+        "Grep"
+      ],
+      "discouraged_tools": [
+        "Bash(grep)"
+      ],
+      "reasoning": "Grep tool is preferred over Bash grep"
+    },
+    {
+      "id": "tu-002",
+      "stratum": "medium",
+      "input": "Update the version string in package.json.",
+      "expected_sequence": [
+        "Read(package.json)",
+        "Edit(package.json)"
+      ],
+      "must_not": [
+        "Edit without prior Read"
+      ]
+    },
+    {
+      "id": "tu-003",
+      "stratum": "medium",
+      "input": "Read README.md and package.json to understand the project.",
+      "expected_behavior": "parallel_reads",
+      "must_not": [
+        "sequential Read calls for independent files"
+      ]
+    },
+    {
+      "id": "tu-004",
+      "stratum": "complex",
+      "input": "Find all TypeScript files with imports from 'axios', then refactor them to use 'fetch'.",
+      "expected_tools": [
+        "Grep(axios, *.ts)",
+        "Read",
+        "Edit"
+      ],
+      "must_not": [
+        "Bash(find | xargs grep)",
+        "re-read already-read files"
+      ]
+    },
+    {
+      "id": "tu-005",
+      "stratum": "medium",
+      "input": "Extract the version field from package.json.",
+      "expected_tools": [
+        "Bash(jq)"
+      ],
+      "discouraged_tools": [
+        "Bash(python3 -c 'import json,sys; ...')",
+        "Bash(grep '\"version\"')"
+      ],
+      "reasoning": "jq is the dedicated JSON parser; python3-as-jq and grep-on-JSON are verified anti-patterns (F1 ~190 hits, F3 32 hits in history.bak)"
+    },
+    {
+      "id": "tu-006",
+      "stratum": "medium",
+      "input": "Find the image used by the web service in docker-compose.yml.",
+      "expected_tools": [
+        "Bash(yq)"
+      ],
+      "discouraged_tools": [
+        "Bash(grep -E '^\\s*image:')",
+        "Bash(sed -n '/web:/,/image:/p')"
+      ],
+      "reasoning": "yq parses YAML structurally; grep-on-YAML is a verified anti-pattern (F2, 67 hits in history.bak). yq must be mikefarah v4."
+    },
+    {
+      "id": "tu-007",
+      "stratum": "complex",
+      "input": "Generate a Kubernetes Deployment manifest YAML with a configurable name and image.",
+      "expected_tools": [
+        "Bash(yq -n)"
+      ],
+      "discouraged_tools": [
+        "Bash(cat << EOF ... EOF)",
+        "Bash(sed -i ... .yaml)",
+        "Bash(echo 'apiVersion:...' >> .yaml)"
+      ],
+      "reasoning": "yq -n generates valid YAML with correct quoting and indentation; sed/heredoc/echo YAML generation are verified anti-patterns (F4+F7+F9, 32 combined hits in history.bak)"
+    },
+    {
+      "id": "tu-008",
+      "stratum": "medium",
+      "input": "Read the first 50 lines of 3 Go files to understand the project structure.",
+      "expected_tools": [
+        "read_multiple_files"
+      ],
+      "discouraged_tools": [
+        "sequential Read calls",
+        "Bash(cat ...)"
+      ],
+      "reasoning": "read_multiple_files reads N files in 1 call; sequential Read calls are 3x slower and waste context"
+    },
+    {
+      "id": "tu-009",
+      "stratum": "complex",
+      "input": "Update the port, host, and debug flag in config.yaml (3 different lines).",
+      "expected_behavior": "single_edit_with_edits_array",
+      "must_not": [
+        "3 sequential edit_file calls",
+        "sed -i"
+      ],
+      "reasoning": "edit_file with edits[] array handles N changes in 1 call; sequential edits are 3x slower and risk stale context"
+    }
+  ]
+}

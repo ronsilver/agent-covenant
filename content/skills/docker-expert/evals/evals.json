@@ -1,0 +1,20 @@
+{
+  "skill_name": "docker-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a multi-stage Dockerfile for a Go items service. Stage 1: build with golang:1.23-alpine, CGO_ENABLED=0, go build with ldflags. Stage 2: scratch base, copy binary, expose 8080, non-root USER. Run hadolint before committing.",
+      "expected_output": "Multi-stage Dockerfile: FROM golang:1.23-alpine AS builder (WORKDIR /app, COPY go.mod go.sum, RUN go mod download, COPY ., RUN CGO_ENABLED=0 go build -ldflags='-w -s' -o /server). FROM scratch (COPY --from=builder /etc/ssl/certs /etc/ssl/certs, COPY --from=builder /server, EXPOSE 8080, USER 1000, ENTRYPOINT [/server]). hadolint passes."
+    },
+    {
+      "id": 2,
+      "prompt": "Set up docker-compose for local development of the items service with: PostgreSQL 15, Redis 7, LocalStack for SQS/SNS, and the Go service with hot reload. Include healthchecks and dependency ordering.",
+      "expected_output": "docker-compose.yml: postgres (image, ports 5432, volume pgdata, healthcheck pg_isready), redis (image, ports 6379, healthcheck redis-cli ping), localstack (SQS+SNS services, ports 4566), app (build context, ports 8080, depends_on postgres/redis with condition service_healthy, volume bind mount for hot reload, env_file). NEVER hardcode secrets in env vars — use .env.sample."
+    },
+    {
+      "id": 3,
+      "prompt": "Scan this Dockerfile for security issues: FROM ubuntu:latest, RUN apt-get update, COPY . /app, ENV DB_PASSWORD=secret, USER root, CMD python app.py. Fix all violations.",
+      "expected_output": "Fix: FROM ubuntu:22.04 (pin version, avoid :latest), RUN apt-get update && apt-get install -y --no-install-recommends && rm -rf /var/lib/apt/lists/* (layer hygiene), COPY only needed files with .dockerignore, NEVER ENV for secrets (use runtime injection or secrets manager), USER 1000 (non-root), CMD ['python', '/app/app.py'] (exec form). Run trivy image scan."
+    }
+  ]
+}

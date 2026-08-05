@@ -1,0 +1,503 @@
+{
+  "agent": {
+    "ultraplan": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "git status": "allow",
+          "git log *": "allow",
+          "git diff *": "allow",
+          "git branch *": "allow",
+          "git show *": "allow",
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "ultrareview": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "git diff *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "ultradebugger": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "git log *": "allow",
+          "git diff *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "code-review": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "git diff *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "security-auditor": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "performance-profiler": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "research": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "dependency-audit-agent": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "idempotency-agent": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "linting-agent": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "ultracode": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "allow"
+        },
+        "write": {
+          "*": "allow"
+        },
+        "bash": {
+          "go test*": "allow",
+          "go build*": "allow",
+          "go vet*": "allow",
+          "pytest*": "allow",
+          "npm test*": "allow",
+          "npm run build*": "allow",
+          "vitest*": "allow",
+          "jest*": "allow",
+          "tsc*": "allow",
+          "mypy*": "allow",
+          "terraform plan*": "allow",
+          "terraform validate*": "allow",
+          "tflint*": "allow",
+          "checkov*": "allow",
+          "kubectl get*": "allow",
+          "kubectl logs*": "allow",
+          "kubectl describe*": "allow",
+          "git status": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git branch*": "allow",
+          "rm -rf*": "deny",
+          "git push --force*": "deny",
+          "git reset --hard*": "deny",
+          "git rebase*": "deny",
+          "kubectl delete*": "deny",
+          "kubectl apply*": "ask",
+          "terraform apply*": "ask",
+          "git push*": "ask",
+          "git commit*": "ask",
+          "git add*": "ask",
+          "*": "ask"
+        }
+      }
+    },
+    "test-writer": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "allow"
+        },
+        "write": {
+          "*": "allow"
+        },
+        "bash": {
+          "go test*": "allow",
+          "go build*": "allow",
+          "go vet*": "allow",
+          "pytest*": "allow",
+          "npm test*": "allow",
+          "vitest*": "allow",
+          "jest*": "allow",
+          "playwright*": "allow",
+          "tsc*": "allow",
+          "mypy*": "allow",
+          "git status": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git branch*": "allow",
+          "rm -rf*": "deny",
+          "git push --force*": "deny",
+          "git reset --hard*": "deny",
+          "git rebase*": "deny",
+          "kubectl delete*": "deny",
+          "kubectl apply*": "ask",
+          "terraform apply*": "ask",
+          "git push*": "ask",
+          "git commit*": "ask",
+          "git add*": "ask",
+          "*": "ask"
+        }
+      }
+    },
+    "git-requests": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "git status": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git branch*": "allow",
+          "git show*": "allow",
+          "git stash*": "allow",
+          "git add*": "allow",
+          "git commit*": "allow",
+          "git push*": "allow",
+          "gh pr create*": "allow",
+          "gh pr edit*": "allow",
+          "gh pr view*": "allow",
+          "gh pr checks*": "allow",
+          "go build*": "allow",
+          "tsc --noEmit": "allow",
+          "tsc*": "allow",
+          "npm run build*": "allow",
+          "python -m compileall*": "allow",
+          "git checkout*": "ask",
+          "git switch*": "ask",
+          "gh release*": "ask",
+          "rm -rf*": "deny",
+          "git push --force*": "deny",
+          "git push -f*": "deny",
+          "git reset --hard*": "deny",
+          "git rebase*": "ask",
+          "git revert*": "ask",
+          "git cherry-pick*": "ask",
+          "*": "ask"
+        }
+      }
+    },
+    "ultraresearch": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "curl *": "allow",
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "ultrathinking": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "grep *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "*": "deny"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "skill_name": "typescript-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Next.js 14 config-creation page with App Router. The page must have a Server Component fetching user config and a Client Component (ConfigForm) with Zustand for config-creation state. Use React Hook Form + Zod for config-field validation (sku, quantity, warehouse_id). Handle loading, error, and empty states. Type all props strictly - no 'any'.",
+      "expected_output": "app/config-creation/page.tsx (Server Component with async data fetch), components/ConfigForm.tsx (Client Component with 'use client'), store/config-creation.ts (Zustand store with devtools middleware), lib/validate.ts (Zod schema for sku/quantity/warehouse_id). TanStack Query for server state. NEVER 'use client' at layout level. NEVER fetch in useEffect. All props typed. Loading skeleton, error banner, empty state for no configs."
+    },
+    {
+      "id": 2,
+      "prompt": "Write a Node.js Express middleware pipeline for auth + rate limiting + request logging. Include zod env validation at startup, helmet security headers, CORS configuration for config-creation domains, and structured logging with pino. Use TypeScript strict mode.",
+      "expected_output": "src/config/env.ts (zod schema for PORT, DB_URL, JWT_SECRET, ALLOWED_ORIGINS - fail-fast at startup). src/middleware/auth.ts (JWT verification, 401 on invalid), src/middleware/rateLimit.ts (token bucket per IP), src/middleware/requestLogger.ts (pino with request_id). Register order: cors -> helmet -> requestId -> logger -> rateLimit -> auth -> routes -> errorHandler. Error handler NEVER leaks stack traces. TypeScript strict, no any, async/await only."
+    },
+    {
+      "id": 3,
+      "prompt": "Test a React config-submit button component with Vitest and React Testing Library. Mock the config API with MSW. Test the full flow: click Submit -> loading spinner -> success message -> or error state. Use userEvent (not fireEvent). Query by accessible role, no data-testid. Test keyboard navigation.",
+      "expected_output": "Vitest test file with MSW server (beforeAll listen, afterAll close). Tests: renders submit button with quantity, shows progressbar during loading, shows success message after API 200, shows error message on API 500, keyboard Enter triggers submit. userEvent.setup() used. getByRole('button', {name: /submit/i}) queries. waitFor for async states. NEVER snapshot for dynamic UI. NEVER test implementation details."
+    }
+  ]
+}

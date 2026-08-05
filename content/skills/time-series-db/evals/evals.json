@@ -1,0 +1,20 @@
+{
+  "skill_name": "time-series-db",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a TimescaleDB hypertable for event metrics: timestamp, entity_id, value, status. Enable compression after 7 days (segment by entity_id), continuous aggregate for hourly/daily value sums, and 90-day retention policy.",
+      "expected_output": "CREATE TABLE event_metrics (time TIMESTAMPTZ NOT NULL, entity_id UUID, value BIGINT, status TEXT). SELECT create_hypertable('event_metrics','time'). Compression: ALTER TABLE event_metrics SET (timescaledb.compress, timescaledb.compress_segmentby='entity_id'). Compression policy: SELECT add_compression_policy('event_metrics', INTERVAL '7 days'). Continuous aggregate: CREATE MATERIALIZED VIEW hourly_totals WITH (timescaledb.continuous) AS SELECT time_bucket('1 hour',time), entity_id, SUM(value) FROM event_metrics GROUP BY 1,2. Retention: SELECT add_retention_policy('event_metrics', INTERVAL '90 days'). NEVER skip compression for high-ingest tables."
+    },
+    {
+      "id": 2,
+      "prompt": "Choose between InfluxDB, TimescaleDB, and Amazon Timestream for storing 10k events/second with queries: total value by hour per entity, 90-day retention, downsampling to daily after 30 days. Justify the choice.",
+      "expected_output": "Comparison: TimescaleDB (PostgreSQL extension, SQL, compression 90%+ reduction, continuous aggregates). InfluxDB v3 (custom query language Flux, good ingestion, less operational maturity). Timestream (AWS managed, automatic tiering, pay-per-query can get expensive). Recommendation: TimescaleDB (SQL compatibility with existing PostgreSQL stack, team already knows PostgreSQL, best compression ratio, no vendor lock-in). Trade-off: self-managed vs Timestream managed. NEVER choose non-SQL engine if team has no experience with it."
+    },
+    {
+      "id": 3,
+      "prompt": "Implement downsampling: raw data retains full resolution for 7 days, hourly rollups for 90 days, daily rollups for 1 year. Use TimescaleDB continuous aggregates with refresh policies. Show the SQL DDL.",
+      "expected_output": "Hourly: CREATE MATERIALIZED VIEW metrics_hourly WITH (timescaledb.continuous) AS SELECT time_bucket('1 hour', time) AS bucket, entity_id, SUM(value) as total_value, COUNT(*) as event_count FROM event_metrics GROUP BY 1,2. Refresh policy: SELECT add_continuous_aggregate_policy('metrics_hourly', start_offset=>INTERVAL '2 hour', end_offset=>INTERVAL '1 hour', schedule_interval=>INTERVAL '1 hour'). Daily: CREATE MATERIALIZED VIEW metrics_daily AS SELECT time_bucket('1 day', bucket) AS day, entity_id, SUM(total_value), SUM(event_count) FROM metrics_hourly GROUP BY 1,2. Retention: drop raw chunks after 7 days, hourly after 90 days, daily keeps 1 year. NEVER keep raw data longer than needed."
+    }
+  ]
+}

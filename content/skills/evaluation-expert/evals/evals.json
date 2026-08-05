@@ -1,0 +1,20 @@
+{
+  "skill_name": "evaluation-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Compare two item API designs: Design A uses REST with resource-based URLs and cursor pagination. Design B uses RPC-style with POST /execute and offset pagination. Create a weighted decision matrix with axes: performance, scalability, developer experience, standards compliance, and this project ecosystem fit. Recommend with rationale.",
+      "expected_output": "Decision matrix (1-5 scale, weights in parens): REST compliance A=5 B=1 (weight 0.3). Performance A=4 B=3 (0.2). DX A=4 B=2 (0.2). Ecosystem fit A=5 B=1 (0.2). Scalability cursor A=5 offset B=2 (0.1). Weighted: A=4.6, B=1.8. Recommendation: Design A (REST). Rationale: follows this project OpenAPI standards, cursor pagination avoids consistency issues with offset, better developer experience, consistent with existing items API. Trade-off: slightly more complex client implementation (offset by auto-generated SDKs from OpenAPI spec). NEVER choose RPC over REST for public APIs without strong justification."
+    },
+    {
+      "id": 2,
+      "prompt": "Evaluate an AI agent's performance on customer analytics: 50 test cases, dimensions = accuracy (0.72), completeness (0.85), citation accuracy (0.45), tool efficiency (0.68). Thresholds: 0.7 general, 0.9 high-stakes. Should this agent be deployed?",
+      "expected_output": "Per-dimension analysis: Accuracy 0.72 (PASS general, FAIL high-stakes). Completeness 0.85 (PASS). Citation accuracy 0.45 (FAIL - critical for trust). Tool efficiency 0.68 (borderline, waste). Verdict: DO NOT DEPLOY. Citation accuracy at 0.45 is unacceptable for customer analytics. Tool efficiency suggests unnecessary API calls eating cost budget. Fixes: improve retrieval grounding to boost citations, cache common queries to reduce tool calls, add explicit citation requirement to system prompt. Re-evaluate after fixes. NEVER deploy with any dimension below threshold. NEVER report only aggregate score."
+    },
+    {
+      "id": 3,
+      "prompt": "Set up an LLM-as-Judge pipeline to evaluate the AI service SQL generation quality. Define rubric: correctness (does SQL return expected results), efficiency (appropriate indexes, no full scans), safety (no DROP/DELETE/UPDATE on production tables), format compliance (SYSDATE, no PII). Use Claude Sonnet as judge (different model family from generator Haiku). Implement position-bias mitigation via answer swapping.",
+      "expected_output": "Rubric: criteria=[{name: correctness, weight: 0.4, levels: 1(wrong results),3(partial),5(exact)}, {name: efficiency, weight: 0.2}, {name: safety, weight: 0.25}, {name: format, weight: 0.15}]. Judge prompt: task description + rubric + generated SQL + expected behavior -> find evidence, score per criterion, justify, suggest improvement. Position bias: swap generated SQL position, run twice. Inconsistent = TIE. NEVER same model as generator (Haiku generates, Sonnet judges). NEVER use 1-10 scale without detailed per-level rubrics. ALWAYS validate judge against 10% human-reviewed samples."
+    }
+  ]
+}

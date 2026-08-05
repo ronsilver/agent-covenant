@@ -1,0 +1,39 @@
+# Boot Manifest — Skills Runtime MUST Load Before Any Tool Use
+# trigger: always skills are auto-injected by agent harness.
+# trigger: on-demand skills are loaded via skill() tool.
+# Subagents (content/subagents/): the conditional split below does NOT apply —
+# every subagent loads all 7 boot skills unconditionally at its Step 0
+# (AGENTS.md Architectural Invariant #4).
+
+version: "1.0"
+
+boot_skills:
+  # Global flow — loaded before ANY task, always present
+  global:
+    core_immutable:
+      - context-management
+      - engineering-standards
+      - governance
+      - operating-protocol
+      - token-efficiency
+      - tool-usage
+    mandatory_domain:
+      - skill-router
+
+  # Plan flow — loaded after global, before planning phase
+  plan_mode:
+    feature:
+      - planning-expert
+      - reasoning-expert
+      - research-expert
+    bug:
+      - evaluation-expert
+      - debugging-expert
+      - planning-expert
+      - reasoning-expert
+      - research-expert
+
+  # Build flow — skill-router already loaded in global;
+  # agent invokes it dynamically for full catalog
+  build_mode:
+    extends: global

@@ -1,0 +1,20 @@
+{
+  "skill_name": "architecture-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a modular monolith for a new item analytics service. Define bounded contexts, data ownership per module, async event bus for cross-module communication, and a migration path to microservices if needed later.",
+      "expected_output": "Modules: ItemCore, Analytics, Reporting, Notification. Each owns its DB tables (no shared tables). Communication: sync within module, async across modules via in-process event bus (later replaceable with SQS). Migration path: each module extractable as microservice by swapping event bus impl from in-process to SQS. Keep API stable. Hexagonal: port/adapter so DB/queue implementations swappable. NEVER share tables across modules. NEVER design microservices from day 1 without proven need."
+    },
+    {
+      "id": 2,
+      "prompt": "Write an ADR for choosing between REST and gRPC for inter-service communication in the items ecosystem. Context: 8 Go services, need both sync (request-response) and async (event streaming) patterns.",
+      "expected_output": "ADR: Decision = REST (OpenAPI) for external/partner APIs, gRPC for internal service-to-service. Rationale: gRPC better performance (protobuf binary, 7-10x faster than JSON), native streaming, strong typing. REST stays for public APIs (tooling, browser compatibility). Consequences: services expose both REST + gRPC via KrakenD gateway. Complexity increased (2 protocols). NEVER choose single protocol for all use cases. NEVER skip streaming consideration."
+    },
+    {
+      "id": 3,
+      "prompt": "Review this architecture proposal: a item processing system with 6 microservices sharing a single PostgreSQL database. Each service has its own schema but queries across schemas freely. Identify violations and propose a fix.",
+      "expected_output": "Violations: Shared Database anti-pattern - database-per-service principle violated. Cross-schema queries create tight coupling (schema A change breaks schema B). Fix: migrate to database per service. Use API calls (not direct DB queries) for cross-service data access. Eventual consistency via events for data synchronization. Temporary: add PGBouncer in transaction mode for schema isolation. NEVER share databases between services. NEVER allow cross-schema queries."
+    }
+  ]
+}

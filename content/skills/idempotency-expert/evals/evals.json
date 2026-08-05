@@ -1,0 +1,20 @@
+{
+  "skill_name": "idempotency-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement idempotency key support for POST /v1/items in Go. Store key->response in Redis with 24h TTL. On first request: process item, store response. On duplicate: return stored response immediately (same status code + body). Handle race condition: two requests with same key arriving simultaneously.",
+      "expected_output": "func (s *Service) CreateItem(ctx context.Context, idempotencyKey string, req ItemRequest) (*Item, error) { cached, err := s.redis.Get(ctx, key); if err == nil { return unmarshal(cached) }; // Use SETNX for atomic lock: acquired := s.redis.SetNX(ctx, lockKey, 'locked', 10*time.Second); if !acquired { time.Sleep(50*time.Millisecond); return s.CreateItem(ctx, idempotencyKey, req) }; item, err := s.process(ctx, req); s.redis.Set(ctx, key, marshal(item), 24*time.Hour); s.redis.Del(ctx, lockKey); return item, err }. NEVER skip race condition handling. NEVER use idempotency keys shorter than UUID. NEVER forget to set TTL on stored responses."
+    },
+    {
+      "id": 2,
+      "prompt": "Design a Saga pattern for an operation that requires: 1) provision capacity in provider, 2) create item record in DB, 3) send notification. If step 2 fails, compensate step 1 (undo provision). If step 3 fails, it's non-critical (retry, don't roll back). Implement using an orchestration Saga with state machine.",
+      "expected_output": "Saga state machine: STATES: Initial -> Provisioned -> Recorded -> Notified -> Complete. Initial -> Provisioned (call provider provision). Provisioned -> Recorded (save to DB). Provisioned -> ProvisionFailed (compensate: provider undo). Recorded -> Notified (send notification, with retries). Recorded -> NotificationFailed (retry up to 3 times, then alert, saga still complete - notification is non-critical). Store saga state in DB for crash recovery. Each step idempotent (safe to retry). NEVER skip compensating operations. NEVER use 2PC for distributed transactions - sagas are eventually consistent."
+    },
+    {
+      "id": 3,
+      "prompt": "Debug duplicate operations: the same request was processed twice because the idempotency key check failed to find the stored response (Redis eviction). The TTL was set to 60 seconds but request processing took 90 seconds. Fix the race condition between key expiration and request completion.",
+      "expected_output": "Root cause: TTL=60s but processing time can exceed 60s — key evicted before response stored. Fix 1: set TTL=300s minimum (enough for worst-case processing time + safety margin). Fix 2: use Redis SETNX as distributed lock with separate TTL — lock expires before idempotency key, but processing checks lock existence. Fix 3: on processing start, set key with status='processing' and TTL=600s; on completion, update status to completed with 24h TTL; on timeout, revert to idempotent retry. NEVER set TTL shorter than max processing time. NEVER rely on single key for atomicity — use distributed lock."
+    }
+  ]
+}

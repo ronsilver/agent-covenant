@@ -1,0 +1,20 @@
+{
+  "skill_name": "diagram-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a C4 Container diagram for the session flow: User -> Mobile/Web App -> Session API -> Account API -> external service Adapter -> external service. Also show PostgreSQL, Redis, and Secrets Manager as data stores. Use Mermaid syntax.",
+      "expected_output": "Mermaid graph TB: User --> Mobile[Session SDK]; User --> Web[Session Web]; Mobile & Web --> Session[Session API: Node.js]; Session --> Account[Account API: Go]; Account --> external service[external service Adapter: Go]; external service --> Externalexternal service[External external service]; Account --> PG[(PostgreSQL)]; Account --> Redis[(Redis Cache)]; Account --> SecretsManager[Secrets Manager]. Boundaries: subgraph this project (Session, Account, external service, PG, Redis, SecretsManager); subgraph External (Externalexternal service). NEVER use images for diagrams in docs (not diffable). NEVER skip context level for new proposals."
+    },
+    {
+      "id": 2,
+      "prompt": "Create a Sequence Diagram for the session validation flow: Client -> Session (POST /session) -> Account (POST /account) -> Secrets Manager (store secret) -> external service (validate) -> response chain back to Client. Include error paths: external service timeout -> 504, Secrets Manager unavailable -> 503. Use Mermaid.",
+      "expected_output": "sequenceDiagram: Client->>+Session: POST /session {value, token}; Session->>+Account: POST /account {value, token?}; Account->>+Secrets Manager: POST /secrets {data}; Secrets Manager-->>-Account: {secret}; Account->>+external service: validate(token, value); alt success: external service-->>Account: {ok}; Account-->>Session: {account_id, ok}; Session-->>Client: {redirect to success}; else external service timeout: external service--xAccount: timeout(5s); Account-->>Session: 504 Gateway Timeout; Session-->>Client: {error: 'Session service unavailable'}; else Secrets Manager unavailable: Secrets Manager--xAccount: connection refused; Account-->>Session: 503 Service Unavailable; Session-->>Client: {error: 'Try again later'}; end. NEVER skip error paths in sequence diagrams. ALWAYS include alt/else for failure modes."
+    },
+    {
+      "id": 3,
+      "prompt": "Create an ERD for the accounts database: users (id PK, name, region, created_at), accounts (id PK, user_id FK, quota_units, region, status enum, idempotency_key UNIQUE, created_at), sessions (id PK, account_id FK UNIQUE, duration_units, reason, created_at). Show relationships with cardinality. Use Mermaid.",
+      "expected_output": "erDiagram: USER ||--o{ ACCOUNT : creates. ACCOUNT ||--o| SESSION : 'may have one'. USER { string id PK; string name; string region; timestamp created_at }. ACCOUNT { string id PK; string user_id FK; bigint quota_units; string region; enum status; string idempotency_key UK; timestamp created_at }. SESSION { string id PK; string account_id FK UK; bigint duration_units; string reason; timestamp created_at }. Cardinality: one user creates many accounts, one account may have at most one session. NEVER skip FK constraints in ERDs. NEVER omit cardinality notation."
+    }
+  ]
+}

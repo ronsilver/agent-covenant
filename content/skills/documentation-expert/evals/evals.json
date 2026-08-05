@@ -1,0 +1,20 @@
+{
+  "skill_name": "documentation-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Convert this bug report into a TRD: 'API requests with value > 50000 are randomly rejected. Error is 'timeout' but the external service confirms they received the request. Impact: 3% of large requests fail.' Investigate, document evidence, root cause, solution, and rollback plan.",
+      "expected_output": "TRD: Summary (large requests timeout due to external service connection pool exhaustion). Evidence (logs: 47 timeouts in last 24h, all values > 50000; external service logs: requests received but slow response > 5s; connection pool stats: max 20 connections, 20 active during spikes). Root Cause: external service response time > 5s for large requests (extra validation checks at external service side), connection pool exhausted, subsequent requests timeout. Solution: increase pool to 50, add circuit breaker with 10s timeout. Rollout: canary deploy to 10% traffic, monitor timeout rate. Rollback: revert pool config if timeout rate doesn't decrease. NEVER deploy without rollback plan. NEVER use vague metrics - all numbers concrete."
+    },
+    {
+      "id": 2,
+      "prompt": "Write a runbook for the 'ApiRequestErrorRateHigh' alert. Symptoms: Prometheus alert fires when error rate > 5% for 5min. Include diagnosis steps, mitigation actions, and escalation path.",
+      "expected_output": "Runbook: Alert: ApiRequestErrorRateHigh (PromQL: rate(request_validate_errors_total[5m]) / rate(request_validate_total[5m]) > 0.05). Severity: SEV2. Symptoms: dashboard shows spike in 4xx/5xx responses, external service error rate panel, latency p99 increase. Diagnosis: 1) Check external service health dashboard (is external service down or slow?), 2) Check logs: grep 'provider_error' in api service (specific error codes), 3) Check external service status page for incidents. Mitigation: 1) If external service down: activate fallback external service (secondary routing), 2) If external service rate limited: increase retry backoff, 3) If DB issue: check pgbouncer stats. Escalation: if > 15min unresolved, escalate to external service team on-call (PagerDuty). NEVER page without actionable steps. ALWAYS link alert to runbook URL."
+    },
+    {
+      "id": 3,
+      "prompt": "Update the README for the items service following docs-as-code principles. Include: overview, architecture diagram (Mermaid), setup instructions, API reference (link to OpenAPI), deployment guide, and observability dashboard links. Use Keep a Changelog format for recent changes.",
+      "expected_output": "README sections: Overview (2-3 sentences + architecture badge). Architecture (Mermaid C4 container diagram showing client -> API Gateway -> Items -> external service + DB + Redis + Secrets Manager). Setup (prerequisites: Go 1.23, Docker, PostgreSQL 15; commands: go mod download, docker-compose up, go run cmd/server/main.go). API: link to OpenAPI spec (docs/api/openapi.yaml) + Swagger UI URL. Deploy: Helm chart location, environment variables table, CI/CD pipeline link. Observability: Grafana dashboard link, alerts runbook link. CHANGELOG: v2.1.0 (added import support, fixed timeout config). NEVER duplicate info across docs (link instead). NEVER document code that doesn't exist yet."
+    }
+  ]
+}

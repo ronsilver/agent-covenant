@@ -1,0 +1,20 @@
+{
+  "skill_name": "mysql-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Tune MySQL InnoDB for OLTP workload: 16GB RAM server, OLTP workload (many small transactions), 200GB dataset. Configure buffer_pool_size, log_file_size, flush_method, and io_capacity for SSD storage.",
+      "expected_output": "my.cnf: innodb_buffer_pool_size=12G (75% of 16GB — enough for 200GB working set if hot data fits). innodb_log_file_size=2G (reduce checkpoint frequency). innodb_flush_log_at_trx_commit=1 (ACID for transactional data). innodb_flush_method=O_DIRECT (avoid double buffering with SSD). innodb_io_capacity=2000 (SSD IOPS). innodb_buffer_pool_instances=8 (one per GB of pool). NEVER set buffer_pool > 80% RAM (OS needs memory). NEVER use flush_log_at_trx_commit=2 for transactions."
+    },
+    {
+      "id": 2,
+      "prompt": "Set up MySQL Group Replication for OLTP HA: 3 nodes, single-primary mode, auto-failover. Show the replication configuration and monitoring queries for replication lag and member state.",
+      "expected_output": "Config: group_replication_group_name=UUID, group_replication_start_on_boot=ON, group_replication_bootstrap_group=OFF (only on initial setup). Single-primary mode: group_replication_single_primary_mode=ON. Monitoring: SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members. Replication lag: SELECT RECEIVED_TRANSACTION_SET, GTID_SUBTRACT from performance_schema. NEVER run multi-primary for OLTP transactional data (conflict resolution overhead). NEVER skip monitoring on replication lag."
+    },
+    {
+      "id": 3,
+      "prompt": "Perform an online schema change on the OLTP items table (50M rows): add index on (customer_id, created_at). Use pt-online-schema-change to avoid locking. Show the command and verification steps.",
+      "expected_output": "pt-online-schema-change --alter 'ADD INDEX idx_owner_created (customer_id, created_at)' --execute D=appdb,t=items. Pt-osc creates shadow table, copies rows in chunks, uses triggers to sync writes, swaps tables atomically. Verification: SHOW INDEX FROM items; verify new index exists. EXPLAIN SELECT * FROM items WHERE customer_id='...' ORDER BY created_at; verify index usage. NEVER run ALTER TABLE directly on tables > 1M rows. NEVER skip verification after pt-osc."
+    }
+  ]
+}

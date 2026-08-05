@@ -1,0 +1,20 @@
+{
+  "skill_name": "planning-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Plan a new feature: add scheduled import support to the data import workflow. Conduct a pre-coding interview: what's the user flow (upload file -> schedule run -> completion notification)? What's in scope (import workflow UI, external service integration, scheduler handler) vs out of scope (legacy API migration, reporting)? What are technical constraints (async confirmation, 24h expiration)? Produce a standard plan.",
+      "expected_output": "Interview phases: Need (enable scheduled imports for users without manual runs). Scope IN: import workflow page UI (file upload), external service adapter for scheduled import, scheduler handler for run confirmation, expiration scheduler. Scope OUT: legacy API v1->v2 migration (future), analytics dashboard (future), mobile SDK integration (future). Constraints: async confirmation (webhook arrives 1-24h later), run token expires in 24h, max file size 1000 MB, idempotency on webhook. Standard Plan: Objective (add scheduled import method), Milestones (1. external service adapter, 2. Import UI, 3. Scheduler handler, 4. Expiration scheduler, 5. Integration tests). Risks (webhook reliability -> retry+DLQ; external service sandbox access -> request early). Dependencies (external service team for API docs, frontend for import workflow UI)."
+    },
+    {
+      "id": 2,
+      "prompt": "Write an ADR for choosing between monolithic module structure vs micro-frontend architecture. Context: 3 teams (import, processing, analytics) need to modify the import workflow independently, current monolith causes merge conflicts weekly. Decision: micro-frontend with module federation. Document alternatives and consequences.",
+      "expected_output": "ADR-001: Import Architecture Evolution. Status: Proposed. Context: weekly merge conflicts in monolithic import workflow repository across 3 teams, increasing time-to-deploy. Decision: migrate to micro-frontend architecture using Webpack Module Federation (Next.js multi-zone). Alternatives: stay monolith (faster now, conflicts will worsen with 4th team joining Q3), separate SPAs with iframe (isolation but poor UX, no shared state), micro-frontend with single-spa (mature but heavier migration). Consequences: easier = independent deploy per team, faster feature velocity. Harder = shared design tokens need contract, initial setup overhead (2 weeks), cross-team debugging more complex."
+    },
+    {
+      "id": 3,
+      "prompt": "This planning attempt has red flags: 'We'll add auth later', 'It should be fast', scope includes 8 features 'while we're at it'. No external dependencies identified, no metrics defined, no rollback strategy. Flag all violations and request a revised plan.",
+      "expected_output": "Red flags: 1) 'Add auth later' = security deferred (NEVER - must be designed in, not bolted on). 2) 'It should be fast' = unquantified (must specify: p95 < 200ms for import workflow API). 3) Scope creep: 8 features in one plan (split into phased milestones - P0 (must have): import; P1: notifications; P2: reporting). 4) No external deps identified (external API access, secrets management, auth service integration). 5) No rollback for DB schema changes. Fix: request revised plan with quantified metrics, phased scope, explicit dependencies, and rollback strategy for every destructive operation."
+    }
+  ]
+}

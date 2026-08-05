@@ -1,0 +1,20 @@
+{
+  "skill_name": "python-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a FastAPI service with a POST /items endpoint that validates a Pydantic v2 model (value: int, category: Literal[standard,premium], owner_id: str). Include async service layer with SQLAlchemy 2.0, httpx AsyncClient for tests, and structlog. Activate venv before running. Use Google-style docstrings.",
+      "expected_output": "Project with src/api/routers/items.py (thin router with Depends), src/models/item.py (Pydantic v2 with ConfigDict from_attributes=True), src/services/item.py (async business logic), src/repositories/item.py (async SQLAlchemy), tests/test_items.py (pytest + httpx AsyncClient with ASGITransport). All function signatures type-annotated. source .venv/bin/activate in setup instructions. Google docstrings (Args/Returns/Raises)."
+    },
+    {
+      "id": 2,
+      "prompt": "Build a LangGraph workflow for an item analytics stimulus in the AI service. Define a State TypedDict with messages and next fields. Create 3 nodes (analyze, route, respond) with conditional edges based on analysis output. Register the stimulus in stimuli_registry.py. Wire to AWS Bedrock via ChatBedrockConverse. Use astream for streaming. Version as branches/<stimulus>/v1/.",
+      "expected_output": "Structure: branches/item_analytics/v1/ with graph.py (StateGraph), nodes.py (3 pure functions: state -> state patch), edges.py (conditional routing). State TypedDict in state.py. stimuli_registry.py entry mapping stimulus -> version. Nodes NEVER mutate state directly — return patches only. ChatBedrockConverse configuration via env. astream with run_name and tags. from langchain_community import * forbidden — pin exact imports."
+    },
+    {
+      "id": 3,
+      "prompt": "Write a pytest suite for the item service using fixtures and parametrize. Include tests for success (201), validation error (422), external service timeout (504), and idempotency key reuse. Mock the external service at httpx network layer using respx. Run ruff + mypy + bandit as pre-commit.",
+      "expected_output": "pytest file with fixtures (async client, mock external service, test DB), parametrize for category edge cases (standard, premium, invalid, empty). Tests: test_create_item_returns_201, test_invalid_category_returns_422, test_provider_timeout_returns_504, test_duplicate_idempotency_key_returns_cached. httpx.AsyncClient with ASGITransport. respx mock for external service HTTP calls. Golden chain: ruff format -> ruff check -> mypy -> bandit -> pytest. source .venv/bin/activate always before."
+    }
+  ]
+}

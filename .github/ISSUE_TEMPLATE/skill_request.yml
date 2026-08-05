@@ -1,0 +1,35 @@
+name: Skill Request
+description: Request a new skill or significant enhancement to an existing one.
+labels: ["skill-request"]
+body:
+  - type: input
+    id: skill_name
+    attributes:
+      label: Proposed skill name (lowercase-hyphenated)
+      placeholder: "e.g. api-versioning-deprecation"
+    validations:
+      required: true
+  - type: textarea
+    id: use_when
+    attributes:
+      label: Use when...
+      description: Describe the trigger conditions for invoking this skill.
+    validations:
+      required: true
+  - type: textarea
+    id: domain
+    attributes:
+      label: Domain / technology
+      description: What technology stack, protocol, or domain does this cover?
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 (blocks critical workflows)
+        - P1 (high-value gap)
+        - P2 (nice to have)
+    validations:
+      required: true

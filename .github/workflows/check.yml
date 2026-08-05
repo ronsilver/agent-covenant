@@ -1,0 +1,153 @@
+name: Check
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Reusable tool-installation steps are inlined per-job to keep jobs independent
+# and fully parallel.  Each job installs only what it needs.
+# ─────────────────────────────────────────────────────────────────────────────
+
+jobs:
+
+  # ── 1. Shell lint (shellcheck + shfmt) ───────────────────────────────────
+  lint-shell:
+    name: "Lint: Shell (shellcheck + shfmt)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install shellcheck
+        run: |
+          curl -sSL https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz \
+            | tar -xJ --strip-components=1 -C /usr/local/bin shellcheck-v0.11.0/shellcheck
+
+      - name: Install shfmt
+        run: |
+          curl -sSL https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64 \
+            -o /usr/local/bin/shfmt
+          chmod +x /usr/local/bin/shfmt
+
+      - name: shellcheck
+        run: make lint
+
+      - name: shfmt (format check)
+        run: make fmt-check
+
+  # ── 2. Markdown lint ─────────────────────────────────────────────────────
+  lint-markdown:
+    name: "Lint: Markdown"
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli@0.44.0
+
+      - name: markdownlint
+        run: |
+          markdownlint $(find . -name "*.md" \
+            -not -path "./.git/*" \
+            -not -path "./node_modules/*")
+
+  # ── 3. YAML / JSON lint ──────────────────────────────────────────────────
+  lint-yaml-json:
+    name: "Lint: YAML + JSON"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install yq and jq
+        run: |
+          curl -sSL https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 \
+            -o /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+          sudo apt-get install -y jq
+
+      - name: Validate YAML files
+        run: |
+          find . -name "*.yaml" -o -name "*.yml" \
+            | grep -v ".git/" \
+            | xargs -I{} yq '.' {} > /dev/null
+
+      - name: Validate JSON files
+        run: |
+          find . -name "*.json" \
+            | grep -v ".git/" \
+            | xargs -I{} jq '.' {} > /dev/null
+
+  # ── 4. Security scan (gitleaks) ──────────────────────────────────────────
+  security:
+    name: "Security: Secret scan (gitleaks)"
+    if: ${{ false }}  # disabled: no gitleaks license
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── 5. Manifest + skill validation ───────────────────────────────────────
+  validate:
+    name: "Validate: Manifest + Skills"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install yq and jq
+        run: |
+          curl -sSL https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 \
+            -o /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+          sudo apt-get install -y jq
+
+      - name: Validate manifest and skills
+        run: make validate
+
+      - name: Skill reference integrity (informational)
+        run: make validate-skill-refs
+        continue-on-error: true
+
+  # ── 6. Bats unit tests ───────────────────────────────────────────────────
+  test:
+    name: "Test: Bats"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install bats
+        run: sudo apt-get install -y bats
+
+      - name: Install yq and jq
+        run: |
+          curl -sSL https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 \
+            -o /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+          sudo apt-get install -y jq
+
+      - name: Run bats tests
+        run: make test
+
+  # ── Gate: all 6 jobs must pass ───────────────────────────────────────────
+  ci-gate:
+    name: "CI Gate"
+    runs-on: ubuntu-latest
+    needs:
+      - lint-shell
+      - lint-markdown
+      - lint-yaml-json
+      - validate
+      - test
+    steps:
+      - name: All checks passed
+        run: echo "All parallel checks passed."

@@ -1,0 +1,20 @@
+{
+  "skill_name": "refactoring-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Refactor this 80-line Python function: it parses JSON, validates 5 fields, calls 3 services sequentially, handles 4 error types with nested if/elif, and formats the response. Extract functions by responsibility. Apply early returns. Rename magic numbers.",
+      "expected_output": "Split into: parse_input(json_str) -> dict, validate_input(data) -> validated, call_service(data) -> response, handle_errors(err) -> ErrorResponse, format_response(result) -> JSON. Early returns for each validation failure (not deep nesting). Magic numbers 350, 1000 replaced with RATE_PERCENTAGE=3.5, MIN_VALUE=1000. Each extracted function ≤15 lines. Behavior identical — original tests still pass."
+    },
+    {
+      "id": 2,
+      "prompt": "This TypeScript component has 3 useEffect hooks fetching data, managing state with useState for form fields, and inline validation. Refactor to use TanStack Query for server state, React Hook Form + Zod for form state. Remove useEffect data fetching.",
+      "expected_output": "Before: 3 useEffects (fetch customers, fetch config, fetch user). After: useQuery for each fetch with queryKey, no useEffects. Form: useForm with zodResolver, no local useState for fields. Validation: Zod schema for all form fields, not inline if/else checks. Remove all redundant states (isLoading, error from manual fetch). Tests: update to verify new patterns — MSW mock for TanStack Query."
+    },
+    {
+      "id": 3,
+      "prompt": "Post-implementation cleanup: after adding a feature, these smells were introduced: duplicated 12-line validation logic in 3 handlers, magic number 86400 used 5 times, unhandled error on cache miss logged but not returned, large if/else chain for 8 processing methods. Simplify while preserving behavior.",
+      "expected_output": "Extract validateRecord() shared function (12 lines now 1 call per handler). Replace 86400 with SECONDS_PER_DAY constant. Cache miss: wrap with if err == redis.Nil, log warning, return DB fallback (never swallow silently). Processing methods: replace if/else chain with map[string]Processor, select by method key. Run tests after each change. NEVER change API signatures. NEVER touch pre-existing code outside scope."
+    }
+  ]
+}

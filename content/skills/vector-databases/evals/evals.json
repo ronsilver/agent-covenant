@@ -1,0 +1,20 @@
+{
+  "skill_name": "vector-databases",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up pgvector for the AI service's document retrieval. Create an embeddings table (id, document_id, chunk_text, embedding vector(1536), metadata JSONB, created_at). Create an HNSW index on the embedding column. Write a cosine similarity search query returning top 5 chunks.",
+      "expected_output": "CREATE EXTENSION vector. CREATE TABLE document_chunks (id UUID PK, document_id UUID REFERENCES documents(id), chunk_text TEXT, embedding vector(1536), metadata JSONB, created_at TIMESTAMPTZ DEFAULT now()). CREATE INDEX ON document_chunks USING hnsw (embedding vector_cosine_ops). Query: SELECT chunk_text, 1 - (embedding <=> query_embedding) AS similarity FROM document_chunks ORDER BY embedding <=> query_embedding LIMIT 5. HNSW params: m=16, ef_construction=200 for 1M+ vectors. NEVER skip index. NEVER use exact search for >10k vectors."
+    },
+    {
+      "id": 2,
+      "prompt": "Compare pgvector, Pinecone, and Weaviate for the the AI service context layer (500k documents, 1536-dim vectors, need metadata filtering + hybrid search). Consider latency, cost, operational overhead, and this project AWS-centric architecture.",
+      "expected_output": "pgvector: zero additional cost (uses existing RDS), SQL-based metadata filtering, no native hybrid search (BM25 needs separate implementation), latency <50ms for 500k with HNSW. Pinecone: managed ($0.096/hr per pod, ~$70/month for 1M vectors), native metadata filtering, better scalability but vendor lock-in and external dependency. Weaviate: open-source self-hosted or cloud, native hybrid search (BM25+vector), GraphQL API, moderate operational overhead. Recommendation: pgvector for MVP (free with existing infra, team knows PostgreSQL). Migrate to Weaviate self-hosted if hybrid search becomes critical. NEVER use Pinecone for regulated data without data residency review."
+    },
+    {
+      "id": 3,
+      "prompt": "Debug low retrieval quality: cosine similarity search returns unrelated chunks because the query embedding is from a different model version than the indexed embeddings. Check embedding model mismatch and fix the re-indexing pipeline.",
+      "expected_output": "Root cause: query uses Cohere Embed v3 (1024 dims) but indexed documents use Titan Embeddings G1 (1536 dims). Dimensions mismatch causes garbage similarity scores. Fix: pin one embedding model. Either re-embed all documents with Cohere OR switch queries to Titan. Re-indexing pipeline: 1) record embedding_model_version per chunk, 2) batch re-embed with new model, 3) update index, 4) validate retrieval quality (recall@5 > 0.8). NEVER mix embedding models for read and write. NEVER change model without re-indexing all documents. ALWAYS version-tag embeddings with model info."
+    }
+  ]
+}

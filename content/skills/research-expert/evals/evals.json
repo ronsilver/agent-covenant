@@ -1,0 +1,20 @@
+{
+  "skill_name": "research-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Explore the services repo to understand the service flow architecture. Use git log to find hot files (most changed), grep for import patterns to map dependencies, and identify the bounded contexts (validation, processing, audit, notification). Produce a structured findings document.",
+      "expected_output": "Hotspot analysis: git log --format=format: --name-only | sort | uniq -c | sort -nr shows top 5 files (handler/service.go 87 changes, service/processing.go 64, repository/records.go 52, integration/adapter.go 48, middleware/auth.go 41). Dependency map: grep -r 'import.*services/' --include='*.go' -l shows 12 internal consumers. Bounded contexts: Validation (handler+service+repo -> external service adapter), Processing (separate service, scheduled batch), Audit (handler+service+notification handler), Notification (external service callback handler with HMAC validation). Architecture: layered (handler -> service -> repository), Go kit pattern, secrets manager for sensitive data. NEVER trust docs over code behavior. NEVER assume without statistical evidence (grep counts verify frequency)."
+    },
+    {
+      "id": 2,
+      "prompt": "Research which validation approach to use: in-house ML model vs Provider A API vs Provider B API. Gather data: latency requirements (<200ms), global coverage, cost per operation, and integration effort. Triangulate with >=3 sources.",
+      "expected_output": "Sources: Provider A docs (global coverage; latency: 150ms avg; $0.04/op). Provider B docs (global coverage; latency: 300ms avg; $0.06/op). In-house: team estimates (6 months to build, 2 FTE ongoing; latency: 50ms; cost: $15k/month infra). Triangulation: check review platforms for user feedback. Recommendation: Provider A for MVP (fastest global coverage), in-house as long-term (best latency+cost at scale, full control). NEVER single source for vendor comparison. ALWAYS verify vendor claims with actual customer references."
+    },
+    {
+      "id": 3,
+      "prompt": "Map the dependency graph of the internal library library. Which services import which sub-modules? Identify the most critical modules (imported by >10 services) and orphans (imported by 0). Use grep and AST analysis, not manual counting.",
+      "expected_output": "Top modules by consumers: internal library/core (18 services), internal library/http (14), internal library/dynamodb (9), internal library/sqs (7), internal library/security (6), internal library/export (5), internal library/validator (4). Orphans: internal library/bindetector (imported by 0 — dead code?), internal library/descriptor (1 consumer). Critical blast radius: changes to core affect 18 services — require integration tests across all before merge. Orphan investigation: bindetector may be legacy or unreferenced — check git log for last meaningful change (2024-03). Recommend: if orphan confirmed, deprecate with tombstone comment. NEVER delete without verifying zero API consumers."
+    }
+  ]
+}

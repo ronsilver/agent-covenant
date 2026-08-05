@@ -1,0 +1,20 @@
+{
+  "skill_name": "operational-excellence",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Define SLOs for the items API: availability 99.95% monthly, latency p95 < 500ms, error rate < 0.1%. Define SLIs to measure each. Set error budgets: if error budget consumed 50%, halt feature deploys until reliability improves.",
+      "expected_output": "SLI for availability: (total_requests - 5xx_errors) / total_requests over 30d window. SLI for latency: percentile of request_duration_ms, p95 measured at load balancer. SLI for error rate: (4xx+5xx) / total_requests. SLOs: availability >= 99.95% (21.6 min downtime allowed/month), latency p95 < 500ms, error rate < 0.1%. Error budget: when budget consumed > 50%, freeze deploys. Dashboard: Grafana SLO panel showing burn rate. NEVER define SLOs without SLIs. NEVER ignore error budget burn."
+    },
+    {
+      "id": 2,
+      "prompt": "Write a post-mortem for an API outage that lasted 45 minutes. Timeline: 14:00 deploy, 14:05 alert fires (5xx rate at 30%), 14:10 on-call responds, 14:20 identifies broken circuit breaker config, 14:30 reverts deploy, 14:45 service recovers. Document root cause, 5 whys, and action items.",
+      "expected_output": "Post-mortem: # Incident: Items API Outage 2026-05-15. SEV2, 45 minutes. Root cause: circuit breaker config incorrectly set open_threshold=0 (opens immediately on first call). 5 Whys: Why did it pass code review? (config change not highlighted). Why wasn't it caught in staging? (staging uses different config). Why was config different? (hardcoded env-specific values). Why not templated? (no config validation pipeline). Why no canary? (deploy policy skipped for config-only changes). Action items: config validation pipeline, mandatory canary for all changes, config drift detection. NEVER blame individuals. NEVER skip canary for any production change."
+    },
+    {
+      "id": 3,
+      "prompt": "Design an on-call rotation for the items team (6 engineers). Use follow-the-sun: 3 in Americas (UTC-6 to UTC-3), 3 in Europe/Asia. Define escalation policy: primary (15min ack) -> secondary (15min) -> manager (30min). Every alert links to a runbook.",
+      "expected_output": "Rotation: PagerDuty schedule with 3 layers. Layer 1: Americas (UTC-6 to UTC-3), Layer 2: Europe (UTC+1), Layer 3: Asia (UTC+8). Escalation: primary on-call (15min to acknowledge), secondary (15min if primary doesn't ack), engineering manager (30min if no response). Every alert must have: runbook_url, severity (SEV1:15min response, SEV2:30min, SEV3:4h). Weekly handoff: blameless review of all alerts. NEVER page for non-actionable alerts. NEVER skip runbook links in alerts."
+    }
+  ]
+}

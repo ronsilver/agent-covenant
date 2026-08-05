@@ -1,0 +1,20 @@
+{
+  "skill_name": "mongodb-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a MongoDB document schema for a Record with embedded Items: record_id, user_id, items (array of {product_id, quantity, unit_value}), total_units, category, status, created_at. Create compound indexes for user_id + created_at and status + created_at. Show Go mongo-driver query for records by user in last 7 days.",
+      "expected_output": "BSON document with embedded items array (never unbounded - limit to 500 items). Indexes: {user_id:1, created_at:-1}, {status:1, created_at:-1}. Go query: filter := bson.D{{Key:'user_id', Value:'usr_123'}, {Key:'created_at', Value: bson.D{{Key:'$gte', Value: time.Now().Add(-7*24*time.Hour)}}}}. opts := options.Find().SetSort(bson.D{{Key:'created_at', Value:-1}}).SetLimit(50). cursor, err := collection.Find(ctx, filter, opts). NEVER skip indexes on queried fields. NEVER use unbounded arrays."
+    },
+    {
+      "id": 2,
+      "prompt": "Write a MongoDB aggregation pipeline that calculates daily usage per user: $match on date range, $group by user_id+date, $sort by usage descending. Include a $lookup to the users collection for user name.",
+      "expected_output": "pipeline := mongo.Pipeline{ {{Key:'$match', Value: bson.D{{Key:'created_at', Value: bson.D{{'$gte', start}, {'$lte', end}}}}}}, {{Key:'$group', Value: bson.D{{Key:'_id', Value: bson.D{{'user', '$user_id'}, {'date', bson.D{{'$dateToString', bson.D{{'format','%Y-%m-%d'}, {'date','$created_at'}}}}}}}, {Key:'usage', Value: bson.D{{'$sum','$total_units'}}}, {Key:'records', Value: bson.D{{'$sum',1}}}}}}, {{Key:'$lookup', Value: bson.D{{'from','users'}, {'localField','_id.user'}, {'foreignField','_id'}, {'as','user'}}}}, {{Key:'$sort', Value: bson.D{{Key:'usage', Value:-1}}}} }. Ensure $lookup target field is indexed."
+    },
+    {
+      "id": 3,
+      "prompt": "Implement MongoDB Change Streams for CDC on the events collection. Watch for inserts and updates, publish to a Go channel for downstream processing (SQS, notification). Handle resume tokens for crash recovery.",
+      "expected_output": "stream, err := collection.Watch(ctx, mongo.Pipeline{}, options.ChangeStream().SetFullDocument(options.UpdateLookup)). for stream.Next(ctx) { var event bson.M; stream.Decode(&event); switch event['operationType'] { case 'insert': process(EventCreated{...}, event['resumeToken']); case 'update': process(EventUpdated{...}, event['resumeToken']) } }. Resume token: store last resume token on successful processing; on restart use resumeAfter. NEVER skip resume tokens (duplicate processing without them). Monitor change stream lag via serverStatus()."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+# Canonical deployment paths per agent and target type.
+# Used by scripts/validate-canonical-paths.sh to verify manifest.yaml paths
+# match official documentation references.
+#
+# Format:
+#   agents:
+#     <agent-id>:
+#       canonical_paths:
+#         <target-type>:
+#           - path: "<deployment path>"
+#             source: "<documentation reference>"
+
+agents:
+  windsurf:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.codeium/windsurf/memories/global_rules.md"
+          source: "https://docs.codeium.com/windsurf/memories"
+      skills:
+        - path: "${HOME}/.codeium/windsurf/skills"
+          source: "https://docs.codeium.com/windsurf/skills"
+      workflows:
+        - path: "${HOME}/.codeium/windsurf/global_workflows"
+          source: "https://docs.codeium.com/windsurf/workflows"
+        - path: "${HOME}/.windsurf/workflows"
+          source: "https://docs.codeium.com/windsurf/workflows"
+
+  windsurf-jetbrains:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.codeium/memories/global_rules.md"
+          source: "https://docs.codeium.com/windsurf/jetbrains"
+      workflows:
+        - path: "${HOME}/.codeium/global_workflows"
+          source: "https://docs.codeium.com/windsurf/jetbrains"
+      skills:
+        - path: "${HOME}/.codeium/skills"
+          source: "https://docs.codeium.com/windsurf/jetbrains"
+
+  claude-code:
+    canonical_paths:
+      rules:
+        - path: "${DETECTED_BASE}/CLAUDE.md"
+          source: "https://docs.anthropic.com/claude-code/memory"
+          note: "DETECTED_BASE resolves to ~/.claude (default) or ~/.claude-{name} (workspace)"
+      skills:
+        - path: "${DETECTED_BASE}/skills"
+          source: "https://docs.anthropic.com/claude-code/skills"
+      hooks:
+        - path: "${DETECTED_BASE}/hooks"
+          source: "https://docs.anthropic.com/claude-code/hooks"
+
+  claude-desktop:
+    canonical_paths: {}
+
+  copilot-cli:
+    canonical_paths:
+      instructions:
+        - path: "${HOME}/.config/gh-copilot/instructions.md"
+          source: "https://docs.github.com/en/copilot/using-github-copilot/copilot-cli"
+
+  copilot-vscode:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/Library/Application Support/Code/User/prompts"
+          source: "https://code.visualstudio.com/docs/copilot/copilot-customization"
+      prompts:
+        - path: "${HOME}/Library/Application Support/Code/User/prompts"
+          source: "https://code.visualstudio.com/docs/copilot/copilot-customization"
+
+  copilot-intellij:
+    canonical_paths: {}
+
+  gemini-cli:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.gemini/GEMINI.md"
+          source: "https://github.com/google-gemini/gemini-cli"
+      skills:
+        - path: "${HOME}/.gemini/skills"
+          source: "https://github.com/google-gemini/gemini-cli"
+
+  antigravity:
+    canonical_paths: {}
+
+  opencode:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.config/opencode/AGENTS.md"
+          source: "https://opencode.ai/docs/rules/"
+
+  codex-cli:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.codex/instructions.md"
+          source: "https://github.com/openai/codex"
+
+  cursor:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.cursor/rules/global.mdc"
+          source: "https://docs.cursor.com/context/rules-for-ai"
+
+  local-project:
+    canonical_paths: {}

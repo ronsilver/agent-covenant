@@ -1,0 +1,20 @@
+{
+  "skill_name": "mcp-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design an MCP server for this project system analytics. Expose tools: resources_search (by user/date/status with cursor pagination), user_summary (metric stats), and record_detail (by ID). Use streamable HTTP transport. Namespace tools as resources_{resource}_{action}.",
+      "expected_output": "MCP server with tools: resources_records_search (params: user_id, from_date, to_date, status, cursor, limit), resources_user_summary (params: user_id, period), resources_record_detail (params: record_id). Transport: streamable HTTP on /mcp endpoint. Tool schemas: all inputs validated server-side, all outputs paginated (cursor-based, maxLimit=100). Auth: X-API-Key header, validated against this project API gateway. Observability: structured JSON logs with trace_id, tool_call_duration_ms, tool_call_error. NEVER expose raw DB access without validation. NEVER return unbounded results."
+    },
+    {
+      "id": 2,
+      "prompt": "Test this MCP tool: resources_search returns 1000 results when called without limit parameter. The spec says maxLimit=100 but the implementation doesn't enforce it. Fix and add a test case verifying pagination enforcement.",
+      "expected_output": "Bug: missing server-side limit enforcement. Fix: if (!params.limit || params.limit > 100) params.limit = 100. Test: call resources_search without limit parameter -> verify response.data.length <= 100, verify response.has_more is true, verify response.next_cursor is present. Call with limit=200 -> verify capped to 100. Unit test: mock DB returning 500 rows, assert tool caps at 100. NEVER trust client-provided limits. NEVER skip server-side validation."
+    },
+    {
+      "id": 3,
+      "prompt": "Deploy the MCP server to npm registry. Configure package.json with name=@example/resources-mcp, version=1.0.0, bin pointing to server entry. Test with npx @example/resources-mcp. Include README with tool catalog and auth setup.",
+      "expected_output": "package.json: name=@example/resources-mcp, version=1.0.0, bin: { 'example-resources-mcp': './dist/server.js' }, files: ['dist/', 'README.md']. Build: tsc -> dist/. Publish: npm publish --access public. Test deployment: npx @example/resources-mcp -> server starts on port 3000. README: tool catalog table (tool name, description, params, example), auth setup (how to get API key, header format), rate limits (100 req/min per key). NEVER publish without testing npx invocation first. NEVER include .env or secrets in npm package."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "skill_name": "llm-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Estimate monthly Bedrock costs for a new the AI service stimulus that processes 100k queries/month. Each query: 2k input tokens (system prompt + context), 500 output tokens on average. Use Claude 3.5 Haiku ($0.0008/1K in, $0.0040/1K out). Factor in 20% safety margin for prompt iterations and cache misses.",
+      "expected_output": "Monthly tokens: input=100k*2000=200M, output=100k*500=50M. Cost: input=200M/1000*$0.0008=$160, output=50M/1000*$0.0040=$200. Total=$360/month base. With 20% margin: $432/month. Add cost gate: if estimated > $500/month, require stakeholder approval. Compare: same load with Sonnet ($0.003/$0.015) = $1350/month (3.75x more). Recommendation: start with Haiku, only upgrade to Sonnet if quality metrics below threshold. NEVER skip cost estimation before deploying new stimuli. NEVER forget prompt caching savings (system prompt reused = input cost ~0 for subsequent calls)."
+    },
+    {
+      "id": 2,
+      "prompt": "Instrument the Bedrock invoke pipeline with OpenTelemetry: add spans for each LLM call, log input_tokens/output_tokens/latency_ms/model_id per request, emit Prometheus metrics (llm_request_count, llm_latency_p50/p99, llm_token_usage_total, llm_cost_total). Create a Grafana dashboard for LLM monitoring.",
+      "expected_output": "OTel span: tracer.start_span('bedrock.converse') with attributes (model_id, input_tokens, output_tokens, stop_reason). Metrics: Counter for request_count{model,stimulus}, Histogram for latency_ms{model} with buckets [100,500,1000,2000,5000,10000], Counter for token_usage{model,direction} (direction=input|output), gauge for cost_total{model} (input_tokens*price+output_tokens*price). Grafana: row 1 (request volume by model), row 2 (p50/p99 latency), row 3 (token usage trend), row 4 (cost trend with daily budget line). NEVER log full prompts with PII in plain text. NEVER skip sampling (10%) for high-volume tracing."
+    },
+    {
+      "id": 3,
+      "prompt": "Detect prompt drift: the production prompt hash changed but no deployment was recorded. Compare the runtime prompt embedding vs the last-known-good baseline. Cosine similarity dropped from 1.0 to 0.72. Investigate and implement a drift alert.",
+      "expected_output": "Drift detection pipeline: on deploy, store prompt hash (SHA256) + embedding (from Cohere Embed) in baseline store. Scheduled check (every 1h): compute embedding of current runtime prompt, compare with baseline via cosine similarity. Threshold: alert if similarity < 0.95. Investigation: prompt diff shows a developer accidentally modified the few-shot example text in code review. Fix: revert to baseline, add prompt version pinning in deploy config. Alert: PagerDuty warning if drift detected (not pageable unless in production > 1h). NEVER deploy prompts without version pinning. NEVER allow manual prompt edits bypassing CI/CD."
+    }
+  ]
+}

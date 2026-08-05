@@ -1,0 +1,13 @@
+# Default reviewer for all changes
+* @ronsilver
+
+# Core protocol skills — require extra review
+/content/skills/operating-protocol/  @ronsilver
+/content/skills/engineering-standards/ @ronsilver
+/content/skills/context-management/  @ronsilver
+
+# Global rule packs — critical, require review
+/content/rules/agents/*-global.md   @ronsilver
+
+# Hooks — security-sensitive
+/content/hooks/  @ronsilver

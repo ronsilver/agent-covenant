@@ -1,0 +1,186 @@
+{
+  "skill": "engineering-standards",
+  "version": "1.2",
+  "description": "Validates engineering quality standards: file/function limits, no secrets in code, PII handling, observability.",
+  "rubric": {
+    "dimensions": [
+      {
+        "name": "secret_handling",
+        "weight": 0.3,
+        "description": "Never hardcodes secrets; uses env vars or secret managers"
+      },
+      {
+        "name": "pii_protection",
+        "weight": 0.25,
+        "description": "Avoids logging PII; uses synthetic fixtures in tests"
+      },
+      {
+        "name": "file_size_limits",
+        "weight": 0.25,
+        "description": "Flags files exceeding 300 lines; functions exceeding 50 lines"
+      },
+      {
+        "name": "observability",
+        "weight": 0.2,
+        "description": "Includes structured logs with trace IDs in service code"
+      }
+    ],
+    "pass_threshold": 0.7
+  },
+  "test_cases": [
+    {
+      "id": "es-001",
+      "stratum": "simple",
+      "input": "Add a config loader that reads DB_PASSWORD from environment.",
+      "expected_behaviors": [
+        "uses os.Getenv or equivalent",
+        "does NOT hardcode the password",
+        "does NOT print the value in logs"
+      ],
+      "flags_to_avoid": [
+        "hardcoded_secret",
+        "logged_secret"
+      ]
+    },
+    {
+      "id": "es-002",
+      "stratum": "medium",
+      "input": "Write a test that validates the user registration endpoint.",
+      "expected_behaviors": [
+        "uses synthetic/fake user data",
+        "does NOT use real PII",
+        "mocks external services where needed"
+      ],
+      "flags_to_avoid": [
+        "real_email_in_test",
+        "real_phone_in_test"
+      ]
+    },
+    {
+      "id": "es-003",
+      "stratum": "medium",
+      "input": "This Go file is 450 lines. Can you review it?",
+      "expected_behaviors": [
+        "flags file as exceeding 300-line limit",
+        "suggests splitting into smaller files",
+        "identifies refactor opportunities"
+      ],
+      "expected_flags": [
+        "file_too_long"
+      ]
+    },
+    {
+      "id": "es-004",
+      "stratum": "complex",
+      "input": "Add request logging middleware to the item service.",
+      "expected_behaviors": [
+        "uses structured logging (JSON)",
+        "includes trace_id/request_id",
+        "masks sensitive numbers in logs",
+        "does NOT log raw request body if it contains PII"
+      ],
+      "flags_to_avoid": [
+        "sensitive_in_log",
+        "unstructured_log"
+      ]
+    },
+    {
+      "id": "es-005",
+      "stratum": "medium",
+      "input": "A contributor submits a new skill copied from an unknown GitHub repo with no license and trigger: always. Should I merge it?",
+      "expected_behaviors": [
+        "flags missing license as blocker",
+        "flags unknown repo / no maintainer activity as blocker",
+        "questions trigger: always for untrusted skill",
+        "requires full content read before merge (prompt injection scan)",
+        "references supply-chain.md ingestion checklist"
+      ],
+      "flags_to_avoid": [
+        "blind_merge",
+        "trusts_trigger_always",
+        "skips_content_review"
+      ]
+    },
+    {
+      "id": "es-006",
+      "stratum": "complex",
+      "input": "I want to add a 5-file feature touching auth, items, and DB schema. How do I start?",
+      "expected_behaviors": [
+        "requires spec-first (openspec_create_proposal or /opsx:propose)",
+        "flags scope >3 files -> confirm first (context-management)",
+        "references spec-driven.md workflow phases",
+        "plans breaking-change gate for DB schema (rollout.md)",
+        "does NOT start coding before spec approval"
+      ],
+      "flags_to_avoid": [
+        "skips_spec",
+        "starts_coding_immediately",
+        "ignores_schema_breaking_change"
+      ]
+    },
+    {
+      "id": "es-007",
+      "stratum": "simple",
+      "input": "Translate this Spanish coding-standards.md section to English: 'Archivo: max 300 lineas. Si excede -> split por SRP.'",
+      "expected_behaviors": [
+        "outputs English: 'File: max 300 lines. If exceeded -> split by SRP.'",
+        "preserves ASCII-only (no em-dash, no smart quotes)",
+        "references Language Policy invariant #6"
+      ],
+      "flags_to_avoid": [
+        "leaves_spanish",
+        "introduces_non_ascii"
+      ]
+    },
+    {
+      "id": "es-008",
+      "stratum": "medium",
+      "input": "How do I prove my new skill actually improves agent behavior?",
+      "expected_behaviors": [
+        "describes with_skill vs without_skill methodology",
+        "mentions judge model grading both outputs",
+        "references eval-harness.md and evals/evals.json",
+        "distinguishes 7-pillar static score from runtime eval"
+      ],
+      "flags_to_avoid": [
+        "claims_unverified_improvement",
+        "confuses_static_score_with_runtime_eval"
+      ]
+    },
+    {
+      "id": "es-009",
+      "stratum": "medium",
+      "input": "A contributor proposes an MCP server with no input validation, no rate limiting, and credentials that never expire. Should it pass review?",
+      "expected_behaviors": [
+        "flags missing input validation as blocker (control 1)",
+        "flags missing rate limiting as blocker (control 2)",
+        "flags unscoped credentials as blocker (control 3)",
+        "references mcp-review-criteria.md 7 mandatory controls",
+        "references governance/mcp-lifecycle.md stage 2 review process",
+        "does NOT describe the review process (that is governance's role)"
+      ],
+      "flags_to_avoid": [
+        "describes_review_process",
+        "allows_any_control_to_fail",
+        "forgets_credential_scope"
+      ]
+    },
+    {
+      "id": "es-010",
+      "stratum": "complex",
+      "input": "Map the OWASP LLM Top 10 v2.0 risk LLM03 (Supply Chain) to the correct ingestion control and identify the correct MITRE ATLAS technique ID for MCP server poisoning.",
+      "expected_behaviors": [
+        "maps LLM03 to supply-chain.md SC-15 + mcp-review-criteria.md + governance/mcp-lifecycle.md (PROCESS)",
+        "identifies AML.T0010 as ML Supply Chain Compromise (NOT 'MCP compromise')",
+        "references framework-mapping.md OWASP table",
+        "distinguishes ingestion control (this skill) from runtime defense (operating-protocol)",
+        "distinguishes criteria (this file) from process (governance)"
+      ],
+      "flags_to_avoid": [
+        "uses_wrong_atlas_id",
+        "calls_aml_t0010_mcp_compromise",
+        "confuses_criteria_with_process"
+      ]
+    }
+  ]
+}

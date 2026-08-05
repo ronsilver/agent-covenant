@@ -1,0 +1,20 @@
+{
+  "skill_name": "github-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Configure branch protection for the api repo main branch: require 1 approving review, require CODEOWNERS review, require status checks (lint, test, build, security-scan), require signed commits, block force pushes, require conversation resolution before merge.",
+      "expected_output": "Settings -> Branches -> Add rule. Branch name pattern: main. Require a pull request before merging (1 approval, dismiss stale reviews, require code owner review). Require status checks to pass before merging (lint, test, build, security-scan, strict=true for up-to-date branch). Require signed commits. Require conversation resolution before merging. Include administrators (no bypass). NEVER skip 'Include administrators'. NEVER require <1 approval for shared branches."
+    },
+    {
+      "id": 2,
+      "prompt": "Set up CODEOWNERS for the monorepo: /content/skills/ owned by @ai-engineering, /terraform/ by @devops, /api/ by @backend, /web/ by @frontend, *.md files by @docs-team. Last match takes precedence.",
+      "expected_output": "CODEOWNERS file: * @platform-team (default). /content/skills/ @ai-engineering. /terraform/ @devops. /api/ @backend. /web/ @frontend. *.md @docs-team. Rule: last matching pattern wins. PRs touching /content/skills/ AND *.md -> @docs-team gets review request (last match). NEVER skip default owner. NEVER forget that order matters (last match wins)."
+    },
+    {
+      "id": 3,
+      "prompt": "Configure Dependabot for Go modules and Docker images. Check weekly, limit 5 open PRs, label 'dependencies', auto-merge patch updates after CI passes. Add OpenSSF Scorecard with weekly schedule.",
+      "expected_output": "dependabot.yml: package-ecosystem:gomod directory:'/' schedule{interval:weekly}, open-pull-requests-limit:5, labels:[dependencies], commit-message{prefix:'chore(deps)'}. Docker: package-ecosystem:docker same schedule. Auto-merge: add workflow with pull_request_target, if label=patch+dependencies AND CI passes, auto-approve+merge. Scorecard: ossf/scorecard-action@v2 on schedule cron '0 0 * * 0', upload SARIF results. NEVER auto-merge major version bumps. NEVER skip Scorecard for public repos."
+    }
+  ]
+}

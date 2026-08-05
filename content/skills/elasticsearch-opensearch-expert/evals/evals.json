@@ -1,0 +1,20 @@
+{
+  "skill_name": "elasticsearch-opensearch-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design an Elasticsearch index for document records with: doc_id (keyword), owner (nested with id+name), size (long), category (keyword), status (keyword), created_at (date). Write a bool query filtering by owner_id=USR123 AND status=active AND size>1000, with an aggregation counting documents by category.",
+      "expected_output": "PUT /documents with mappings: doc_id=keyword, owner=nested{id:keyword,name:text}, size=long, category=keyword, status=keyword, created_at=date. Query: bool{must:[term{owner.id:'USR123'},term{status:'active'},range{size:{gt:1000}}]}. Agg: terms{field:category}. NEVER change mapping on existing field. NEVER use * query prefix."
+    },
+    {
+      "id": 2,
+      "prompt": "Configure ILM for the documents index: hot phase (rollover at 50GB or 30d), warm phase (forcemerge to 1 segment after 7d), cold phase (move to ultra-warm after 30d), delete phase (remove after 90d). Set refresh_interval to 30s for bulk ingestion.",
+      "expected_output": "ILM policy: hot{rollover{max_size:50gb,max_age:30d}}, warm{min_age:7d, forcemerge{max_num_segments:1}}, cold{min_age:30d}, delete{min_age:90d}. Index template: settings{refresh_interval:30s, number_of_shards:3, number_of_replicas:2}. NEVER skip replicas in production. NEVER use scroll for real-time queries (use search_after)."
+    },
+    {
+      "id": 3,
+      "prompt": "Debug: Elasticsearch cluster RED status - 2 of 5 shards unassigned. Check cluster health, explain why unassigned shards can't be allocated, and propose recovery.",
+      "expected_output": "GET _cluster/health shows status=red, unassigned_shards=2. GET _cluster/allocation/explain returns 'cannot allocate because allocation is not permitted to any nodes' - likely disk watermark exceeded or node left cluster. Fix: check disk usage (df -h), if >95% -> DELETE old indices or add nodes. If node left -> wait for replica promotion or use reroute API to force allocate stale primary (data loss risk with accept_data_loss=true). NEVER force allocate without understanding data loss impact. ALWAYS monitor disk watermarks."
+    }
+  ]
+}

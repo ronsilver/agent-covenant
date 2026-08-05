@@ -1,0 +1,20 @@
+{
+  "skill_name": "aws-cloud-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create an ECS Fargate service for the items API with: task definition (512 CPU, 1024 memory), service with desired_count=2, ALB target group, security group allowing port 8080 from ALB only. Use least-privilege IAM task role.",
+      "expected_output": "AWS resources: ecs_task_definition (FARGATE), ecs_service (desired_count=2, launch_type=FARGATE), alb_target_group (port 8080, health_check /healthz), alb_listener_rule, security_group (ingress 8080 from ALB SG only), iam_role with ecsTaskExecutionRolePolicy + specific S3/KMS permissions. CloudFormation or CDK code. No wildcard IAM actions."
+    },
+    {
+      "id": 2,
+      "prompt": "Design a SQS + Lambda event-driven pipeline for item notifications. Include DLQ with 3 retries, Lambda concurrency limits (10), and SNS fan-out for email/push/webhook. Show IAM permissions for each component.",
+      "expected_output": "sqs_queue with redrive_policy (maxReceiveCount=3) pointing to dlq. lambda_event_source_mapping (batch_size=10, max_concurrency=10). sns_topic with subscriptions (email, push, https webhook). IAM: lambda role with sqs:ReceiveMessage+sns:Publish, SQS policy allowing Lambda to invoke. NEVER pass secrets in Lambda env vars — use Secrets Manager."
+    },
+    {
+      "id": 3,
+      "prompt": "Audit this IAM policy: { Action: ['s3:*', 'dynamodb:*'], Resource: '*', Effect: 'Allow' }. Refactor to least privilege.",
+      "expected_output": "Split into specific actions: s3:GetObject+s3:PutObject on specific bucket ARN, dynamodb:Query+dynamodb:GetItem on specific table ARN. Add conditions: s3:ResourceTag/Environment=prod. NEVER use * in Action or Resource. Add CloudTrail logging for all data access."
+    }
+  ]
+}

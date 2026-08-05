@@ -1,0 +1,20 @@
+{
+  "skill_name": "dynamodb-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a DynamoDB single-table schema for items with these access patterns: get item by ID, list items by customer sorted by date, get items by status. Show PK/SK design, GSI for status query, and Go SDK query code.",
+      "expected_output": "Single-table: PK=ITEM#{item_id}, SK=METADATA. GSI1: PK=CUST#{customer_id}, SK=DATE#{created_at} for customer list query. GSI2: PK=STATUS#{status}, SK=DATE#{created_at} for status query. Go: QueryInput{TableName, KeyConditionExpression:'GSI1PK = :pk AND begins_with(GSI1SK, :prefix)', ExpressionAttributeValues:...}. NEVER use Scan \u2014 always Query with index. NEVER design tables without listing all access patterns first. NEVER use more than 5 GSI."
+    },
+    {
+      "id": 2,
+      "prompt": "Set up DynamoDB Streams with Lambda trigger for data events. Process INSERT events: when a new record is created, publish to SNS for notifications. Handle batch failures with partial batch response. Use idempotency via the stream record eventID.",
+      "expected_output": "Lambda handler processing dynamodb:Records event. Filter: eventName = INSERT. Extract newImage, publish to SNS (topic ARN from env). Partial batch failure: return batchItemFailures with itemIdentifier for failed records to retry only those. Idempotency: use eventID + sequenceNumber as deduplication key (DynamoDB streams may retry). Never use batchSize > 100 without processing logic. TTL on idempotency store: 1 hour."
+    },
+    {
+      "id": 3,
+      "prompt": "Troubleshoot DynamoDB hot partition on a customer with 10x the normal write volume. The PK is CUST#{customer_id}. Propose an adaptive capacity strategy and write sharding to distribute load.",
+      "expected_output": "Hot partition diagnosis: CloudWatch WriteThrottleEvents metric spikes, SuccessfulRequestLatency p99 > 100ms for specific PK. Fix: Write sharding \u2014 add suffix to PK: CUST#{customer_id}#{rand(0,shard_count)}. Read: fan-out query across all shards, merge results. Shard count: 3-5 for 10x volume. Enable DynamoDB auto-scaling with min=100 WCU, max=5000 WCU. Adaptive capacity: DynamoDB auto-splits partitions when sustained throughput > 3000 RCU/WCU per partition (takes 15-30min). Short-term: increase provisioned capacity. NEVER use single entity as PK for high-volume entities."
+    }
+  ]
+}

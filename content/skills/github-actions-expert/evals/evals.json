@@ -1,0 +1,20 @@
+{
+  "skill_name": "github-actions-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a reusable workflow for Go microservice CI that: runs on push to main and PR, matrix test across Go 1.22+1.23, caches Go modules, runs lint+vulcheck+test with coverage, builds Docker image, and pushes to ECR. Use OIDC for AWS auth (no long-lived secrets).",
+      "expected_output": "Reusable workflow (.github/workflows/go-ci.yml): on: workflow_call with inputs (go_version, docker_tag). jobs: test (strategy matrix go-version, cache go modules, golangci-lint run, govulncheck ./..., go test -race -cover ./...). build-docker (needs:test, login to ECR via OIDC, docker/build-push with cache-from/to gha). Secrets: NEVER store AWS keys. OIDC: permissions id-token:write, aws-actions/configure-aws-credentials. Consumers call: uses: org/.github/.github/workflows/go-ci.yml@main. NEVER skip caching. NEVER use long-lived AWS creds."
+    },
+    {
+      "id": 2,
+      "prompt": "Secure this workflow: it uses actions/checkout@v4 (branch), has no permissions block, uses ${{ github.event.issue.title }} directly in a run command, and has an unpinned third-party action. Apply security hardening.",
+      "expected_output": "Harden: pin actions/checkout to full SHA (@11bd71901bbe5b1630ceea73d27597364c9af683), add permissions: {contents:read, id-token:write, packages:read} (minimum needed). Script injection fix: move ${{ github.event.issue.title }} to env var, use $TITLE in run command (never ${{ }} in shell). Pin all third-party actions to exact commit SHA. Add concurrency group to cancel redundant runs. NEVER use branch-based action versions. NEVER skip permissions block. NEVER use ${{ }} directly in shell commands."
+    },
+    {
+      "id": 3,
+      "prompt": "Debug a workflow failure: tests pass locally but CI fails with 'unknown option: -race' in Go 1.21. The workflow uses actions/setup-go@v3 with go-version '1.21'. Fix the version mismatch and add a matrix test to catch future breakage.",
+      "expected_output": "Root cause: -race flag requires CGO enabled + race detector binary (not available in Go 1.21 on ARM runners). Fix 1: use go-version 1.22+ (1.21 EOL). Fix 2: set env CGO_ENABLED=1 for race tests. Matrix: add go-version: ['1.22','1.23'] and os: [ubuntu-latest, macos-latest] to catch platform-specific issues. NEVER test with EOL Go versions. NEVER assume -race works on all platforms. ALWAYS matrix test across multiple OS."
+    }
+  ]
+}

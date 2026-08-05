@@ -1,0 +1,20 @@
+{
+  "skill_name": "reasoning-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit this agent reasoning trace: 'I found an error in handler.go. The error is in the auth middleware. I know this because auth middleware is the standard place for auth errors. Let me check only the auth middleware file.' Identify fallacies and propose fixes.",
+      "expected_output": "Fallacies: Circular Logic ('it's auth middleware because auth middleware is standard'). Confirmation Bias (reads only auth middleware, skips item handler and external service client). Premature Convergence (locks on first hypothesis without alternatives). Audit report: Evidence Score: STATIC 0/EXECUTED 0/INFERRED 3 (all inferred, zero verified). Quality: F. Fix: demand external evidence (check error stack trace, grep actual error message, read service logs). Enforce: list 3 alternatives (auth middleware, external service timeout, DB connection) before investigating."
+    },
+    {
+      "id": 2,
+      "prompt": "Implement a ReAct pattern for a debugging agent: THOUGHT (analyze problem, form hypothesis), ACTION (run diagnostic tool), OBSERVATION (read tool output), repeat until root cause found. Show a trace for debugging a 500 error in the items API.",
+      "expected_output": "ReAct trace: THOUGHT: 500 error could be DB connection, external service timeout, or nil pointer. Start with DB check. ACTION: grep logs for 'connection error' in last 5 min. OBSERVATION: 47 'connection refused' errors from PostgreSQL at 14:32-14:35. THOUGHT: PostgreSQL was unreachable. Check if this is a network issue or DB crash. ACTION: kubectl describe pod postgres-0. OBSERVATION: Pod restarted at 14:30 due to OOMKill. THOUGHT: Memory pressure killed PostgreSQL. Check memory config. ACTION: kubectl get pod postgres-0 -o yaml | grep memory. OBSERVATION: memory limit 256Mi, DB working set is 400Mi. ROOT CAUSE: insufficient memory allocation. FIX: increase limit to 512Mi."
+    },
+    {
+      "id": 3,
+      "prompt": "Compare reasoning quality between Claude Haiku and Sonnet on an item anomaly analysis task. Haiku: 'The item is anomalous because the quantity is high.' Sonnet: 'The item has 3 anomaly factors: quantity 5x above user average, IP geolocation 1000km from the configured region, and account used at 2 other users in last 10 min. Combined anomaly score: 87/100 (high).' Score both traces.",
+      "expected_output": "Haiku: Fallacy - Causal Confusion (high quantity = anomaly without evidence). Score: D (premature, no evidence chain). Sonnet: Evidence-backed (3 factors, explicit scoring). Score: A (all claims STATIC/EXECUTED, multiple factors considered, confidence score provided). Recommendation: route anomaly analysis to Sonnet/Opus tier, never Haiku. Audit shows 60% of Haiku anomaly analyses miss multi-factor signals. NEVER use cheap models for high-stakes operational decisions. ALWAYS audit model-specific reasoning patterns before deployment."
+    }
+  ]
+}

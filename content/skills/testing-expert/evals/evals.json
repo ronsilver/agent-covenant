@@ -1,0 +1,20 @@
+{
+  "skill_name": "testing-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a test strategy for a new item processing microservice with: external service dependency (external HTTP API), PostgreSQL, Redis cache, idempotency key support. Define test pyramid layers: unit tests (mock external service/DB), integration tests (testcontainers for PG+Redis), contract tests (Pact for external service API), E2E tests (critical flow: create item -> webhook confirmation).",
+      "expected_output": "Test Pyramid: 70% unit (mock external service, in-memory DB), 20% integration (testcontainers PG+Redis, real cache logic), 7% contract (Pact consumer/provider for external service API), 3% E2E (Playwright: submit -> item -> webhook confirmation). Unit: TDD per service method, table-driven. Integration: happy path + edge cases (external service timeout, DB connection lost, cache miss). Contract: verify external service API spec matches integration. E2E: only critical item flow. NEVER use real external service in E2E - sandbox only."
+    },
+    {
+      "id": 2,
+      "prompt": "Write property-based tests for a value converter function that takes input_value (int) and category (enum). Properties: result is always non-negative, same category returns same value (idempotent), zero input returns zero. Use hypothesis / rapid.",
+      "expected_output": "Python Hypothesis: @given(value=st.integers(min_value=0, max_value=99999999), category=st.sampled_from(['standard','premium','basic'])). Test: assert transform_value(value, category) >= 0 (non-negative). assert transform_value(transform_value(value, category), category) == transform_value(value, category) (idempotent). assert transform_value(0, category) == 0 (zero invariant). Go rapid: similar properties with rapid.Check. NEVER test with invalid categories - type system prevents it."
+    },
+    {
+      "id": 3,
+      "prompt": "Fix this flaky test: it uses time.Sleep(2s) to wait for async item processing, depends on test execution sequence (Test B relies on record created in Test A), and uses a shared database connection. Make all tests deterministic, independent, and isolated.",
+      "expected_output": "Remove time.Sleep: replace with waitFor condition checking status changed or retry loop with maxAttempts=10, interval=100ms. Remove test sequence dependency: each test creates its own test data in BeforeEach/setup. Shared DB: use testcontainers with unique database per test suite, or transactional rollback after each test (Spring @Transactional, pytest transactional). NEVER rely on test sequence. NEVER use fixed sleeps for async waits. Tag flaky tests @flaky and prioritize fixing."
+    }
+  ]
+}

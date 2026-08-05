@@ -1,0 +1,20 @@
+{
+  "skill_name": "finops-cost-optimization",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Analyze AWS monthly spend: EC2 $45k, RDS $18k, Bedrock $12k, S3 $5k, other $10k. Find optimization: right-size EC2 instances (average CPU 12%), convert RDS to reserved instances (1yr), enable S3 Intelligent-Tiering, set Bedrock token budget alerts. Estimate savings.",
+      "expected_output": "EC2 optimization: reduce instance sizes (from c5.2xlarge to c5.xlarge based on CPU 12%) saves ~$15k/month. RDS reserved instances (1yr all upfront): $18k -> $12k/month (33% savings, $6k saved). S3 Intelligent-Tiering: auto-moves infrequent objects to lower tiers, ~30% savings ($1.5k). Bedrock: set budget alert at $15k/month, optimize prompts (caching saves 20% = $2.4k). Total savings: $24.9k/month. Payback: RI 1yr commitment requires 1yr contract. NEVER right-size without analyzing actual utilization (CloudWatch metrics). NEVER commit to RIs without 12-month stability confidence."
+    },
+    {
+      "id": 2,
+      "prompt": "Implement AWS cost allocation tags for all this project resources: Environment (dev/staging/prod), Service (api/web/auth), Team (backend/frontend/ml-eng), CostCenter (engineering/infra/data). Enable tag enforcement via SCP to block creation of untagged resources in production.",
+      "expected_output": "Tags: mandatory 4 tags on every resource. SCP policy: Deny ec2:RunInstances, rds:CreateDBInstance, s3:CreateBucket if Condition StringNotLike for aws:RequestTag/Environment,Service,Team,CostCenter. Exceptions: auto-scaling groups (inherit from launch template), spot instances (tag post-creation). Retrospective: AWSTagEditor for existing resources, AWS Config rule to detect untagged resources. NEVER create production resources without mandatory tags. NEVER skip tag enforcement in prod account."
+    },
+    {
+      "id": 3,
+      "prompt": "The Bedrock invoice jumped from $12k to $38k this month. Investigate: which model/stimulus drove the increase? Check if prompt caching is enabled, analyze token usage by model tier, identify runaway conversations exceeding max_tokens. Propose immediate cost controls.",
+      "expected_output": "Cost attribution: Data warehouse query analysis shows Claude 3.5 Sonnet usage 4x increase (1.2B tokens vs 300M baseline). Root cause: new stimulus 'deep_analytics' uses Sonnet for every query (no model routing to Haiku). Fix 1: route simple queries to Haiku (80% of queries), keep Sonnet only for complex analyses. Fix 2: enable prompt caching (system prompt cached -> input cost 90% reduction). Fix 3: set per-conversation max_tokens=4096 (was unlimited -> 3 conversations used 200k tokens each). Cost controls: budget alert at $15k, auto-throttle if > $20k. Immediate savings: $38k -> $16k/month. NEVER use premium models for all queries without routing. NEVER skip max_tokens limits."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "skill_name": "kotlin-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create the Android feature SDK with a ViewModel-driven feature flow. Use Kotlin coroutines and StateFlow. Define public API (suspend fun startFeature), a sealed class for feature state (Idle/Loading/Success/Error), and Jetpack Compose UI with Material3. Package as AAR for Maven/JitPack. Minify with R8 in release builds.",
+      "expected_output": "FeatureViewModel with MutableStateFlow<FeatureState>, sealed class with data subclasses, viewModelScope.launch for async. Public API: suspend fun startFeature(config:FeatureConfig): FeatureResult. Compose: ItemInput composable with OutlinedTextField. build.gradle.kts with minifyEnabled true and proguardRules. Gradle KTS (NOT Groovy). NEVER block main thread. NEVER hardcode API keys in production SDK. AAR release with ProGuard/R8 obfuscation."
+    },
+    {
+      "id": 2,
+      "prompt": "Set up Fastlane CI/CD for the Android SDK. Test lane runs unit tests (gradle test) and instrumented tests (connectedAndroidTest with Espresso) on API levels 29 and 34. Release lane bumps version, runs tests, publishes to Maven with signing, and git tags android/v{version}. GitHub Actions with Java 17 setup, Gradle caching, and emulator runner.",
+      "expected_output": "fastlane/Fastfile: platform :android, test lane (gradle test, gradle connectedAndroidTest), release lane (android_set_version_name, test, gradle publish with signing.properties, git_tag android/v{VERSION}). GitHub Actions: ubuntu-latest, setup-java@v4 temurin 17, gradle/actions/setup-gradle@v3, reactivecircus/android-emulator-runner@v2 for instrumented tests. NEVER store signing keys in Git — use GitHub secrets. NEVER skip tests before release."
+    },
+    {
+      "id": 3,
+      "prompt": "Create a React Native bridge module for the Android SDK. Export startFeature() method from Kotlin to JavaScript via @ReactMethod. Handle configuration as ReadableMap. Return results via Promise. Ensure the AAR is properly linked in the React Native project.",
+      "expected_output": "Kotlin class FeatureModule extending ReactContextBaseJavaModule. getName() returns 'FeatureModule'. @ReactMethod fun startFeature(config: ReadableMap, promise: Promise) that parses config, calls native feature, resolves/rejects promise. JavaScript bridge: NativeModules.FeatureModule.startFeature({value: 1000, unit: 'USD'}). Register module in package provider. Test on physical device + emulator."
+    }
+  ]
+}

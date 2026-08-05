@@ -1,0 +1,20 @@
+{
+  "skill_name": "golang-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a new Go microservice with Gin for resource processing. It needs an endpoint POST /v1/items that validates value (int64 units) and kind (standard/premium), calls an external service, and stores the result in PostgreSQL via GORM. Include graceful shutdown, structured logging with Zap, and OpenTelemetry spans.",
+      "expected_output": "A complete Go project with cmd/server/main.go (graceful shutdown), internal/handler/item.go (thin handler), internal/service/item.go (business logic + OTel spans), internal/repository/item.go (GORM), internal/middleware/ (RequestID, logging), go.mod with gin+gorm+pgx+zap+otel dependencies. POST handler validates inputs, ALWAYS uses context.Context, wraps errors with fmt.Errorf, and returns structured JSON errors."
+    },
+    {
+      "id": 2,
+      "prompt": "Define a gRPC proto3 service for the resource system with ProcessItem RPC. Include request/response messages with field numbers 1-15 for frequent fields, an enum for item status with _UNSPECIFIED=0, and pagination for listing. Show the buf.yaml and buf.gen.yaml configs.",
+      "expected_output": "A .proto file with package resources.v1, option go_package, ProcessItemRequest (fields 1-5), ProcessItemResponse (fields 1-4) with ItemStatus enum (UNSPECIFIED=0, PENDING, ACTIVE, COMPLETED), and ListItems RPC with cursor-based page_token. buf.yaml with lint+breaking config. buf.gen.yaml with go+grpc plugins. Quantity fields as int64 units. NEVER float/double."
+    },
+    {
+      "id": 3,
+      "prompt": "Review this Go handler code that's returning raw SQL errors to clients: ```go func (h *ItemHandler) Create(c *gin.Context) { var req ItemRequest; c.BindJSON(&req); item, err := h.svc.Create(c.Request.Context(), req); if err != nil { c.JSON(500, err.Error()); return }; c.JSON(201, item) }``` Fix all anti-patterns: business logic in handler, raw error exposure, no input validation, no span recording. Apply golangci-lint rules.",
+      "expected_output": "Refactored handler: thin layer that only parses JSON, calls service, returns HTTP status. Error wrapping with meaningful messages (never raw DB errors). Input validation before service call. Service layer has OTel spans + error recording. golangci-lint passes: no bare returns, context is first param, error last return, proper wrapping."
+    }
+  ]
+}

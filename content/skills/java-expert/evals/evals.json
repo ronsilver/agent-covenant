@@ -1,0 +1,20 @@
+{
+  "skill_name": "java-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Spring Boot 3 REST controller for item processing. POST /v1/items accepts a DTO with quantity (BigDecimal), category (enum), ownerId (UUID). Implement service layer with @Transactional, JPA repository, and @ControllerAdvice for global error handling. Use Java 17+ records for DTOs. NEVER expose @Entity in API responses.",
+      "expected_output": "ItemController (@RestController, @PostMapping), ItemDTO (record with @NotNull/@Positive annotations), ItemService (@Service, @Transactional - NEVER on controller), ItemRepository (@Repository extending JpaRepository), ItemEntity (@Entity with @Id). @ControllerAdvice maps exceptions to RFC 7807 errors. BigInteger for quantities (NEVER double). Input validated with @Valid. JPQL parameterized (no string concat)."
+    },
+    {
+      "id": 2,
+      "prompt": "Implement a plugin for this project. The plugin should handle item provisioning, dispatch, and return via the ItemPluginApi interface. Include lifecycle handling (create/change/cancel) and webhook signature validation. MySQL is the database - use InnoDB with proper buffer pool sizing.",
+      "expected_output": "plugin implementing ItemPluginApi with provision/dispatch/return methods. Lifecycle handlers: create (provision), change (modify plan), cancel (deactivate). Webhook handler with HMAC signature validation. Entity classes mapped to InnoDB tables with proper indexes. ALWAYS validate webhook signatures before processing. NEVER block event loop - use async processing for long operations."
+    },
+    {
+      "id": 3,
+      "prompt": "Write JUnit 5 + Mockito unit tests for the item service. Test success path, insufficient capacity (custom exception), provider timeout, and invalid category. Use Testcontainers for PostgreSQL integration tests. Run SpotBugs and Checkstyle before committing.",
+      "expected_output": "Unit tests with @ExtendWith(MockitoExtension.class): test_provision_returns_confirmed, test_insufficient_capacity_throws_exception, test_provider_timeout_throws_exception, test_invalid_category_throws_422. Mock provider client with @Mock. Integration tests with @Testcontainers: real PostgreSQL container, test full create->save->retrieve flow. Golden chain: mvn spotbugs:check -> mvn checkstyle:check -> mvn test. NEVER skip linters in CI. @Transactional on service, never on controller."
+    }
+  ]
+}

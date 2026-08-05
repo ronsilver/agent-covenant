@@ -1,0 +1,20 @@
+{
+  "skill_name": "kubernetes-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a K8s Deployment for items-api with: 3 replicas, resource limits (CPU 500m/1, memory 256Mi/512Mi), readiness probe (HTTP /healthz, initialDelay 10s), liveness probe (HTTP /healthz, initialDelay 30s), securityContext (runAsNonRoot, readOnlyRootFilesystem), PodDisruptionBudget (minAvailable 2), NetworkPolicy (ingress from ingress-controller only).",
+      "expected_output": "apiVersion apps/v1 Deployment with spec.replicas=3, containers[0].resources with limits and requests, readinessProbe (httpGet path=/healthz port=8080, initialDelaySeconds=10, periodSeconds=5), livenessProbe (initialDelaySeconds=30), securityContext.runAsNonRoot=true+readOnlyRootFilesystem=true. PodDisruptionBudget minAvailable=2. NetworkPolicy with ingress from namespace with label app=ingress-nginx. ALWAYS use resources (limits+requests). ALWAYS use probes. NEVER run as root."
+    },
+    {
+      "id": 2,
+      "prompt": "Debug this issue: pod in CrashLoopBackOff, logs show 'connection refused' to PostgreSQL. The service name is 'postgres' but the app config uses 'localhost'. Fix the configuration and explain the K8s networking model.",
+      "expected_output": "Diagnosis: Service DNS is postgres.N.example.svc.cluster.local. Fix app config to use service name (not localhost). K8s networking: each Pod gets its own IP, Services provide stable DNS + load balancing. NEVER hardcode localhost for inter-Pod communication. Check with kubectl describe pod + kubectl logs --previous. If IP changes, Service DNS handles it."
+    },
+    {
+      "id": 3,
+      "prompt": "Configure an HPA for the items service: scale on CPU > 70% and memory > 80%, min 2 max 10 replicas, scale down stabilization window 300s. Add ResourceQuota and LimitRange for the namespace.",
+      "expected_output": "HorizontalPodAutoscaler (apiVersion autoscaling/v2) with metrics: cpu averageUtilization=70, memory averageUtilization=80. behavior.scaleDown.stabilizationWindowSeconds=300. minReplicas=2, maxReplicas=10. ResourceQuota (requests.cpu=20, requests.memory=40Gi, limits.cpu=40, limits.memory=80Gi). LimitRange (defaultRequest cpu=200m memory=256Mi, defaultLimit cpu=500m memory=512Mi). NEVER deploy without limits. NEVER skip HPA cooldown."
+    }
+  ]
+}

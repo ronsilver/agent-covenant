@@ -1,0 +1,8 @@
+# =============================================================================
+# ShellCheck - Configuración global del proyecto
+# =============================================================================
+# Requiere: bash 4+ (usa compgen, shopt, process substitution)
+# =============================================================================
+
+# Ignorar source de archivos externos (los paths se resuelven en runtime)
+disable=SC1091

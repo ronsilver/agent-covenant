@@ -1,0 +1,20 @@
+{
+  "skill_name": "debugging-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Debug: resources API returns 500 errors starting at 14:32 UTC. Logs show 'connection timeout' from PostgreSQL. Metrics show DB CPU at 95%, connections at 450/500. Reproduce the issue, form a hypothesis, test it, and propose a fix with a post-mortem.",
+      "expected_output": "Reproduction: DB CPU spike correlates with batch job starting at 14:30. Hypothesis: unoptimized batch query (SELECT * without WHERE) causing full table scan + connection exhaustion. Test: run EXPLAIN on batch query \u2014 confirms Seq Scan on 50M rows. Fix: add WHERE clause with date range, add index, increase connection pool max, add PgBouncer. Post-mortem: incident timeline, root cause (batch job), 5 whys (no query review gate, no connection monitoring), action items (query review policy, PgBouncer, connection alert). Regression test: add perf test for batch query."
+    },
+    {
+      "id": 2,
+      "prompt": "Use git bisect to find the commit that broke item processing. The bug: items with value > 10000 units are rejected. Last known good release: v2.3.0. Current HEAD: broken. Bisect through commits to identify the exact change.",
+      "expected_output": "git bisect start; git bisect bad HEAD; git bisect good v2.3.0. At each step: run test suite or manual test (create item with value=15000). Mark good/bad. Bisect narrows to commit abc123: 'Add value validation'. Show: git log abc123 -1, git show abc123 --stat. Root cause: validation function uses > instead of >= for amount check. Fix: change to >= with new test case at boundary value."
+    },
+    {
+      "id": 3,
+      "prompt": "Investigate a memory leak in a Node.js service. RSS grows from 200MB to 2GB over 24 hours. Use heapdump, clinic.js, and Chrome DevTools to identify retained objects. Form a hypothesis about the leak source.",
+      "expected_output": "Profiling: heapdump.writeSnapshot() at startup + after 1h + after 6h. Compare snapshots in DevTools: search for largest retained objects. Hypothesis: event listeners not removed on WebSocket disconnect \u2014 emitter.listenerCount shows 50k+ listeners retained. Fix: add cleanup on WebSocket close event (removeListener) and WeakMap for listener references. Verify: monitor RSS over 24h with fix deployed \u2014 should stabilize at 250MB. Regression: add memory test with autocannon load test + RSS monitoring."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "skill_name": "agent-architecture-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a RAG pipeline for the AI service context layer that searches across customer operation data and external service documentation. Use recursive chunking (512 tokens, 20% overlap), Cohere Embed for multilingual embeddings (ES/PT), hybrid search (vector + BM25), and cross-encoder reranking. Ground responses with source citations.",
+      "expected_output": "Pipeline: Documents -> Semantic chunking (by heading section) -> Embed with Cohere Embed v3 (multilingual, 1024 dims) -> Store in pgvector with HNSW index. Retrieval: vector search (cosine similarity, top 20) + BM25 keyword search (top 20) -> reciprocal rank fusion -> cross-encoder rerank (top 5). Grounding: each LLM response cites source document by filename + section. Confidence: reject response if max similarity < 0.7. NEVER single retrieval strategy for operational data. NEVER embed without metadata (source, date, section). NEVER mix embedding model versions."
+    },
+    {
+      "id": 2,
+      "prompt": "Evaluate retrieval quality on a test set of 50 queries about this project customer operations. Measure recall@5, MRR, and NDCG. The current pipeline has recall@5=0.45. Propose improvements: query expansion, hypothetic document embedding (HyDE), or fine-tuned embeddings on this project data.",
+      "expected_output": "Metrics per stratum: simple queries recall@5=0.72, complex=0.31, very complex=0.18. Bottleneck: complex queries (multi-hop reasoning needed). Improvement options: HyDE (generate hypothetical answer first, embed that, retrieve similar) improves recall@5 to 0.62. Fine-tuned embeddings on this project operation data: recall@5=0.58. Query expansion: recall@5=0.51. Recommendation: HyDE (best cost/quality ratio, no training needed). ALWAYS evaluate per stratum (not aggregate). ALWAYS establish baseline before changes."
+    },
+    {
+      "id": 3,
+      "prompt": "Debug RAG hallucination: the AI service generates incorrect SQL because it retrieved an outdated schema document. The workflows table has a new column 'usage_units' but the retrieved document is from v1 (without it). Fix the retrieval pipeline to prefer recent documents and implement version filtering.",
+      "expected_output": "Root cause: no version/date filtering in retrieval - old schema doc (v1) has higher BM25 score for 'workflow value query' than new doc (v2). Fix 1: metadata filtering - only retrieve documents with version=latest OR date > 30 days ago. Fix 2: add recency boost to retrieval score (multiply vector similarity by date_decay_factor). Fix 3: store schema version in document metadata, use semantic version comparison in retrieval filter. Post-fix validation: query 'what are the value columns in workflows?' must retrieve v2 document (contains usage_units), not v1. NEVER serve outdated schema docs in production RAG."
+    }
+  ]
+}

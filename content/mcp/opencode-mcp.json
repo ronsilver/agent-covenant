@@ -1,0 +1,128 @@
+{
+  "instructions": [
+    "~/.config/opencode/skills/operating-protocol/SKILL.md",
+    "~/.config/opencode/skills/governance/SKILL.md",
+    "~/.config/opencode/skills/engineering-standards/SKILL.md",
+    "~/.config/opencode/skills/context-management/SKILL.md",
+    "~/.config/opencode/skills/token-efficiency/SKILL.md",
+    "~/.config/opencode/skills/tool-usage/SKILL.md",
+    "~/.config/opencode/skills/skill-router/SKILL.md"
+  ],
+  "mcp": {
+    "fetch": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "--with",
+        "mcp<2",
+        "mcp-server-fetch"
+      ],
+      "enabled": true
+    },
+    "filesystem": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ],
+      "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "mcp-github"
+      ],
+      "enabled": true,
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_TOKEN}"
+      }
+    },
+    "memory": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "enabled": true,
+      "environment": {
+        "MEMORY_FILE_PATH": "${HOME}/mcp/memory/memory.json"
+      }
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "enabled": true
+    },
+    "time": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "--with",
+        "mcp<2",
+        "mcp-server-time"
+      ],
+      "enabled": true
+    },
+    "aws-docs": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "awslabs.aws-documentation-mcp-server@latest"
+      ],
+      "enabled": true
+    },
+    "aws-pricing": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "awslabs.aws-pricing-mcp-server@latest"
+      ],
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "enabled": true
+    },
+    "gitmcp": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://gitmcp.io/docs"
+      ],
+      "enabled": true
+    },
+    "openspec": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "openspec-mcp"
+      ],
+      "enabled": true
+    },
+    "graphify": {
+      "type": "local",
+      "command": [
+        "/Users/silver/.local/share/uv/tools/graphifyy/bin/python",
+        "-m",
+        "graphify.serve",
+        "/Users/silver/Documents/Repositories/Silver/agent-covenant/graphify-out/graph.json"
+      ],
+      "enabled": true
+    }
+  }
+}

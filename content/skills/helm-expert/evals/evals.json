@@ -1,0 +1,20 @@
+{
+  "skill_name": "helm-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Helm chart for items-api with: values.yaml for dev/staging/prod overrides, deployment template (replicas from values, resources, probes), service template, configmap for env vars, secret for DB credentials (external — not in chart), ingress with TLS, and NOTES.txt for post-install instructions.",
+      "expected_output": "Chart.yaml (apiVersion v2, name items-api, appVersion 1.0.0). templates/: deployment.yaml (.Values.replicas, resources from values, liveness/readiness probes), service.yaml (ClusterIP), configmap.yaml (NODE_ENV, LOG_LEVEL), secret.yaml (placeholder — NEVER store secrets in chart), ingress.yaml (host from values, tls secretName). values.yaml with production/staging overrides. values-dev.yaml with lower resources. NOTES.txt with access instructions. helm lint passes."
+    },
+    {
+      "id": 2,
+      "prompt": "Implement a Helm pre-upgrade hook that runs database migrations and a post-upgrade hook that runs smoke tests. Use hook weights to ensure ordering. Set hook-delete-policy to delete completed jobs.",
+      "expected_output": "templates/hooks/migration-job.yaml: kind Job with helm.sh/hook: pre-upgrade, helm.sh/hook-weight: '1' (before deployment). templates/hooks/smoke-test-job.yaml: kind Job with helm.sh/hook: post-upgrade, helm.sh/hook-weight: '5' (after deployment). Both with helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded. migration container with DB URL from secret reference. Smoke test pings /healthz endpoint."
+    },
+    {
+      "id": 3,
+      "prompt": "Debug: helm upgrade fails with 'Error: UPGRADE FAILED: cannot patch with kind Deployment'. The developer changed the selector labels. Explain why changing selectors breaks upgrades and propose a fix.",
+      "expected_output": "K8s Deployment spec.selector is immutable after creation. Changing selector.matchLabels breaks upgrades because K8s can't identify which Pods belong to the Deployment. Fix: recreate the Deployment (helm delete + install) with the new selectors, OR keep selectors unchanged and use different labels for other purposes. NEVER change selector in Helm chart upgrades. Document in NOTES.txt if recreation is needed."
+    }
+  ]
+}

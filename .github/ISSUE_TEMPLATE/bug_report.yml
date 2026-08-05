@@ -1,0 +1,34 @@
+name: Bug Report
+description: A skill behaves incorrectly, a hook fails, or a rule pack has a mistake.
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Skill (SKILL.md)
+        - Rule pack (global rule file)
+        - Hook (PreToolUse/PostToolUse/Stop/UserPromptSubmit)
+        - Sync / distribution
+        - CI / validation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Skill/file name
+      placeholder: "e.g. operating-protocol, content/hooks/claude-code/require-read.sh"
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did you expect vs what actually occurred?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Invoke skill X with prompt Y\n2. Observe ..."

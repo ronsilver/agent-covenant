@@ -1,0 +1,20 @@
+{
+  "skill_name": "redis-cache-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement cache-aside pattern in Go for item status lookups. On cache miss, fetch from PostgreSQL, populate Redis with TTL=300s, on hit return cached value. Handle Redis connection failures gracefully (return DB data, log warning, never fail the request).",
+      "expected_output": "func (s *Service) GetItemStatus(ctx context.Context, id string) (string, error) { cached, err := s.redis.Get(ctx, cacheKey(id)).Result(); if err == nil { return cached, nil }; if !errors.Is(err, redis.Nil) { s.logger.Warn('redis error', zap.Error(err)) }; status, err := s.db.GetItemStatus(ctx, id); if err != nil { return '', err }; go func() { s.redis.Set(context.Background(), cacheKey(id), status, 5*time.Minute) }(); return status, nil }. Use pipelined writes for multi-key sets. NEVER block requests on Redis failure."
+    },
+    {
+      "id": 2,
+      "prompt": "Design a Redis Sorted Set for a real-time user leaderboard. ZADD operations with score=value, ZREVRANGEBYSCORE top 10. Implement a Redis Lua script to atomically update score and trim to top 1000. Handle TTL for inactive users.",
+      "expected_output": "ZADD leaderboard:daily {value} {user_id}. ZREVRANGEBYSCORE leaderboard:daily +inf 0 WITHSCORES LIMIT 0 10 for top 10. Lua script: EVAL 'redis.call(\"ZADD\", KEYS[1], ARGV[1], ARGV[2]) redis.call(\"ZREMRANGEBYRANK\", KEYS[1], 0, -1001) return 1' 1 leaderboard:daily {amount} {user_id}. TTL: EXPIRE on inactive leaderboard keys at midnight. Use atomic Lua for update+trim \u2014 never two separate calls."
+    },
+    {
+      "id": 3,
+      "prompt": "Troubleshoot cache stampede during a traffic spike. 1000 concurrent requests hit the same cache key simultaneously. Implement probabilistic early recomputation (XFetch algorithm) and Redis SETNX-based mutex to prevent DB overload.",
+      "expected_output": "Cache stampede fix: before expiration, use XFetch \u2014 at time delta = expiry - beta * log(random()), if delta < 0, recompute early. Mutex lock via SETNX lock:{key} with TTL=10s \u2014 only one goroutine recomputes, others serve stale data or wait. Config: beta=1.0, recompute at 80% TTL remaining. NEVER allow all requests to hit DB simultaneously. NEVER use DEL+SET (non-atomic, causes stampede on delete)."
+    }
+  ]
+}

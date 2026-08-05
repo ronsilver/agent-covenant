@@ -1,0 +1,20 @@
+{
+  "skill_name": "scripting-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a Bash deployment script with 'set -euo pipefail'. It must validate that AWS CLI is installed, check if a config directory exists (create if not), set up a trap for cleanup on EXIT, use $() not backticks, quote all variables, and return meaningful exit codes. Run shellcheck and fix any warnings.",
+      "expected_output": "Script with #!/usr/bin/env bash, set -euo pipefail. Pre-flight check: command -v aws. Idempotent mkdir -p with directory existence check. trap cleanup EXIT function. All variables quoted: \"${VAR}\" not $VAR. Command substitution: $(find . -name '*.go'), never backticks. shellcheck passes with zero warnings. Exit codes: 0 on success, non-zero with error message to stderr on failure."
+    },
+    {
+      "id": 2,
+      "prompt": "Create a Helm pre-upgrade hook Job that runs a database migration script. The script should be idempotent (safe to run multiple times), log to stderr for diagnostics and stdout for data, validate input parameters, and fail fast on errors. Write a bats-core test suite for it.",
+      "expected_output": "migrate.sh with set -euo pipefail, parameter validation (--db-url required, default values for optional flags), idempotency checks (table_exists before CREATE, column_exists before ALTER), stderr logging with timestamps, stdout for results. Helm Job YAML with helm.sh/hook: pre-upgrade annotation. bats test: @test 'script exits 0 on valid input', @test 'script exits non-zero on missing db-url', @test 'script is idempotent (run twice, same result)'. shellcheck passes."
+    },
+    {
+      "id": 3,
+      "prompt": "Write a PowerShell 7+ cross-platform script to validate infrastructure configurations. Must use $ErrorActionPreference = 'Stop', check file existence with Test-Path, create directories idempotently, and read configuration from JSON. Contrast with a Bash equivalent and explain when to choose each shell.",
+      "expected_output": "PowerShell script with $ErrorActionPreference = 'Stop', Test-Path guard, New-Item -ItemType Directory (idempotent), Get-Content | ConvertFrom-Json. Bash equivalent with jq. Decision table in comments: macOS/Linux CI -> Bash, Cross-platform -> PowerShell 7+, Airflow operators -> Bash (Linux workers), Windows targets -> PowerShell. PSScriptAnalyzer passes."
+    }
+  ]
+}

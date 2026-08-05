@@ -1,0 +1,20 @@
+{
+  "skill_name": "reviewer-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this PR diff: a new endpoint POST /v1/imports was added but has no input validation, no auth check, catches Exception but returns raw error to client, and uses float for size. Write a structured review with BLOCKER/MAJOR/PRAISE labels and security findings with CWE references.",
+      "expected_output": "Report with: Summary of what the PR does (adds import endpoint). Strengths: endpoint follows REST conventions, proper HTTP method. Issues: [BLOCKER] no input validation (CWE-20: Improper Input Validation), [BLOCKER] no authentication check (CWE-306: Missing Authentication), [BLOCKER] float for precise values (CWE-682: Incorrect Calculation), [MAJOR] raw error exposure (CWE-209: Information Exposure). Security: 4 findings (HIGH: auth, validation; MEDIUM: error leak, float precision). Verdict: REQUEST CHANGES."
+    },
+    {
+      "id": 2,
+      "prompt": "Review a PR that adds a new Go microservice. It has proper handler/service/repo layers, OTel spans, structured logging, graceful shutdown, and table-driven tests. But it has a single 200-line function in the service layer and no circuit breaker on external service calls. Write the review.",
+      "expected_output": "Strengths: well-structured layered architecture, proper tracing+logging, graceful shutdown, good test coverage. Issues: [MAJOR] 200-line service function — extract to named helpers (engineering-standards: fn≤50L). [MAJOR] No circuit breaker on external service calls — add resilience pattern for external service dependency. [PRAISE] Excellent observability instrumentation and test structure. Verdict: COMMENT — merge after addressing 2 MAJOR items."
+    },
+    {
+      "id": 3,
+      "prompt": "Review a massive PR (800 lines changed) that refactors auth, adds a new feature, and fixes 3 unrelated bugs in one PR. The CI is failing on lint and tests. Write the review.",
+      "expected_output": "Issues: [BLOCKER] PR too large (>500 LOC) with multiple concerns — split into separate PRs: auth refactor, feature, bug fixes. [BLOCKER] CI failing — lint + test failures must be fixed. [PRAISE] Good direction on auth modernization. Verdict: REQUEST CHANGES — split PR and fix CI before re-review."
+    }
+  ]
+}

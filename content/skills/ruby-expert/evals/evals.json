@@ -1,0 +1,20 @@
+{
+  "skill_name": "ruby-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Rails decorator to extend the Article model with a belongs_to tenant association and delegate tenant_name. Use class_eval (NEVER modify Rails source code directly). Add a migration for the tenant_id foreign key on rails_articles. Write RSpec model tests.",
+      "expected_output": "app/decorators/rails/article_decorator.rb: Rails::Article.class_eval with belongs_to :tenant, delegate :tenant_name. db/migrate/*_add_tenant_to_articles.rb: add_reference :rails_articles, :tenant, foreign_key: true. RSpec: describe Rails::Article, type: :model with shoulda-matchers (validate_presence_of :name), custom test for tenant_name delegation. FactoryBot for test data. NEVER use save(validate: false) without explicit reason."
+    },
+    {
+      "id": 2,
+      "prompt": "Implement a custom booking flow step in Rails that validates tenant-specific business rules. Create a service object (not controller logic), a decorator for the booking flow, and Capybara feature specs for the complete booking flow.",
+      "expected_output": "app/services/tenant_booking_validator.rb (service object with call method, validates tenant rules). app/decorators/rails/booking_decorator.rb (extends BookingsController). spec/features/booking_spec.rb (Capybara: visit article, add to booking, fill booking form, verify booking confirmation). RSpec feature specs with Capybara. Service objects for business logic (NEVER in controllers/models). Use strong parameters. FactoryBot over fixtures."
+    },
+    {
+      "id": 3,
+      "prompt": "Write a Rails migration to add an index on rails_bookings(tenant_id, completed_at) and a partial index WHERE completed_at IS NOT NULL. Also write the rollback. Run rubocop before commit.",
+      "expected_output": "class AddBookingIndexes < ActiveRecord::Migration[7.0] with add_index :rails_bookings, [:tenant_id, :completed_at] and add_index :rails_bookings, :tenant_id, where: 'completed_at IS NOT NULL'. Rollback: remove_index calls. bundle exec rubocop. NEVER skip validations. NEVER eval/class_eval on user input. Use Bundler, not system gems."
+    }
+  ]
+}

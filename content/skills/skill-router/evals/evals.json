@@ -1,0 +1,111 @@
+{
+  "skill": "skill-router",
+  "version": "3.0",
+  "description": "Validates skill routing accuracy: domain matching, disambiguation between overlapping skills, no-skill rejection.",
+  "rubric": {
+    "dimensions": [
+      {
+        "name": "correct_routing",
+        "weight": 0.4,
+        "description": "Routes to the most specific skill covering the task"
+      },
+      {
+        "name": "disambiguation",
+        "weight": 0.3,
+        "description": "Correctly disambiguates between similar skills using trigger keyword comparison"
+      },
+      {
+        "name": "no_skill_case",
+        "weight": 0.15,
+        "description": "Correctly routes to 'no skill' when zero skills match"
+      },
+      {
+        "name": "token_efficiency",
+        "weight": 0.15,
+        "description": "Uses system prompt catalog, does not load secondary references for simple routing"
+      }
+    ],
+    "pass_threshold": 0.7
+  },
+  "test_cases": [
+    {
+      "id": "sr-001",
+      "stratum": "simple",
+      "input": "Debug why my pod is CrashLoopBackOff.",
+      "expected_skill": "kubernetes-expert",
+      "must_not_route_to": [
+        "helm-expert"
+      ],
+      "reasoning": "Pod debug = kubernetes-expert, not helm charting"
+    },
+    {
+      "id": "sr-002",
+      "stratum": "simple",
+      "input": "Create a Helm chart for the item service.",
+      "expected_skill": "helm-expert",
+      "must_not_route_to": [
+        "kubernetes-expert"
+      ],
+      "reasoning": "Chart creation = helm-expert, not raw K8s"
+    },
+    {
+      "id": "sr-003",
+      "stratum": "medium",
+      "input": "Write a PostgreSQL migration to add a NOT NULL column to the items table.",
+      "expected_skill": "postgres-database-expert",
+      "must_not_route_to": [
+        "mysql-expert"
+      ],
+      "reasoning": "Migration + schema = postgres-database-expert; not mysql"
+    },
+    {
+      "id": "sr-004",
+      "stratum": "medium",
+      "input": "Create a new SKILL.md for a React testing skill.",
+      "expected_skill": "skill-creator",
+      "must_not_route_to": [
+        "typescript-expert",
+        "testing-expert"
+      ],
+      "reasoning": "Creating SKILL.md = skill-creator regardless of domain"
+    },
+    {
+      "id": "sr-005",
+      "stratum": "complex",
+      "input": "Sort a list of numbers in Python.",
+      "expected_skill": null,
+      "routing": "no_skill",
+      "reasoning": "General programming — no domain-specific skill needed"
+    },
+    {
+      "id": "sr-006",
+      "stratum": "simple",
+      "input": "Review my pull request #42 for security vulnerabilities.",
+      "expected_skill": "reviewer-expert",
+      "must_not_route_to": [
+        "security-expert"
+      ],
+      "reasoning": "PR review = reviewer-expert; separate security audit = security-expert"
+    },
+    {
+      "id": "sr-007",
+      "stratum": "medium",
+      "input": "Optimize a slow PostgreSQL query in the item service.",
+      "expected_skill": "postgres-database-expert",
+      "must_not_route_to": [
+        "mysql-expert"
+      ],
+      "reasoning": "Query optimization = postgres-database-expert, not mysql"
+    },
+    {
+      "id": "sr-008",
+      "stratum": "simple",
+      "input": "Fix a Terraform plan error in the VPC module.",
+      "expected_skill": "terraform-expert",
+      "must_not_route_to": [
+        "aws-cloud-expert"
+      ],
+      "reasoning": "IaC/tf files = terraform-expert, not AWS service configuration"
+    }
+  ]
+}

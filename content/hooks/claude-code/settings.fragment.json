@@ -1,0 +1,72 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/agent-covenant/hooks/baseline-skills.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/agent-covenant/hooks/require-read.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(git *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/agent-covenant/hooks/git-guardrails.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/agent-covenant/hooks/word-budget.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/agent-covenant/hooks/injection-scan.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/agent-covenant/hooks/done-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.config/agent-covenant/hooks/memory-persist.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

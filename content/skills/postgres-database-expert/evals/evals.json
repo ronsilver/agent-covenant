@@ -1,0 +1,20 @@
+{
+  "skill_name": "postgres-database-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a PostgreSQL schema for a resources system with tables: tenants (id UUID PK, name, created_at), resources (id UUID PK, tenant_id FK, value bigint, status enum, created_at). Add indexes for querying resources by tenant_id + created_at, and a BRIN index on created_at. Use EXPLAIN ANALYZE to verify.",
+      "expected_output": "DDL: CREATE TABLE tenants (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name VARCHAR NOT NULL, created_at TIMESTAMPTZ DEFAULT now()). CREATE TABLE resources (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), tenant_id UUID REFERENCES tenants(id), value BIGINT NOT NULL CHECK(value > 0), status resource_status DEFAULT 'active', created_at TIMESTAMPTZ DEFAULT now()). Indexes: CREATE INDEX idx_resources_tenant_time ON resources(tenant_id, created_at DESC). CREATE INDEX idx_resources_created_brin ON resources USING BRIN(created_at). EXPLAIN ANALYZE output showing index usage."
+    },
+    {
+      "id": 2,
+      "prompt": "Optimize this slow query: SELECT r.*, t.name FROM resources r JOIN tenants t ON r.tenant_id = t.id WHERE r.status = 'active' AND r.created_at > now() - interval '30 days' ORDER BY r.value DESC LIMIT 10. Add necessary indexes and show EXPLAIN.",
+      "expected_output": "Index: CREATE INDEX idx_resources_status_created ON resources(status, created_at DESC) INCLUDE (value). EXPLAIN: Index Scan or Bitmap Index Scan using new index, no Seq Scan. Consider partial index: CREATE INDEX ... WHERE status = 'active'. Show EXPLAIN before/after with execution time and row count estimates."
+    },
+    {
+      "id": 3,
+      "prompt": "Set up logical replication for the resources DB to a read replica. Configure pg_hba.conf, create publication for resources+tenants tables, create subscription on replica, and monitor replication lag.",
+      "expected_output": "Publisher: CREATE PUBLICATION resources_pub FOR TABLE resources, tenants. wal_level = logical in postgresql.conf. pg_hba.conf entry for replica user with replication privilege. Subscriber: CREATE SUBSCRIPTION resources_sub CONNECTION 'host=publisher dbname=resources' PUBLICATION resources_pub. Monitor: SELECT slot_name, pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn) FROM pg_replication_slots. Alert if lag > 10MB or > 5 seconds."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "skill_name": "performance-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The items API p99 latency is 2s, up from 500ms last month. Profile with pprof: CPU profile shows 45% time in JSON serialization, 30% in DB query. Fix both bottlenecks. Re-baseline and verify improvement.",
+      "expected_output": "CPU profiling: go tool pprof cpu.prof -> top shows json.Marshal 45%. Fix JSON: switch to jsoniter or easyjson (10x faster), OR use protobuf for internal communication. DB 30%: EXPLAIN shows missing index - add composite index. Re-baseline: p99 drops from 2s to 400ms. BEFORE making changes, establish baseline (current p50/p99). NEVER optimize without profiling. NEVER micro-optimize non-hot paths (<5% CPU)."
+    },
+    {
+      "id": 2,
+      "prompt": "Diagnose N+1 query pattern in user dashboard: GET /users/{id}/dashboard loads user config + last 100 items + item stats. Three separate DB queries visible in traces. Implement batch loading with single query.",
+      "expected_output": "Before: 3 queries - SELECT * FROM users WHERE id=?, SELECT * FROM items WHERE user_id=? ORDER BY created_at DESC LIMIT 100, SELECT COUNT(*), SUM(size) FROM items WHERE user_id=?. After: single query with CTE OR query with INNER JOIN LATERAL to get all data in 1 round trip. Use DataLoader pattern for Go: batch user IDs, fetch all at once, distribute to callers. Verify: trace shows 1 DB span instead of 3, p99 latency drops 60%."
+    },
+    {
+      "id": 3,
+      "prompt": "Implement a multi-level cache for item status: L1 in-memory (TTL 10s), L2 Redis (TTL 300s), origin PostgreSQL. Cache on read-through, invalidate on item status update via pub/sub. Measure cache hit rate at each level.",
+      "expected_output": "L1: sync.Map or ristretto with TTL=10s, capacity=10000. L2: Redis with TTL=300s. Cache-aside: check L1 -> L2 -> DB, populate L2+L1 on miss. Invalidation: on status update, publish to Redis Pub/Sub channel; subscribers invalidate L1 + L2 for that key. Metrics: hit rate per level (L1 target >80%, L2 target >95%). NEVER cache user-specific PII in shared caches. NEVER use SET+DEL pattern (atomic only via Lua)."
+    }
+  ]
+}

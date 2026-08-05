@@ -1,0 +1,45 @@
+{
+  "skill_name": "governance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "A subagent started executing a hook deployment without loading engineering-standards skill. Classify severity and prescribe action.",
+      "expected_output": "Moderate violation. Terminate subagent. Log [GOVERNANCE VIOLATION]. Escalate to human. Subagent must load all 6 Core skills before executing or reject with [SCOPE VIOLATION]. Reference: violation-escalation.md severity catalog."
+    },
+    {
+      "id": 2,
+      "prompt": "Someone modified operating-protocol/SKILL.md directly without an ADR. What action should be taken?",
+      "expected_output": "Critical violation. BLOCK change. Require ADR proposal with rationale, impact, migration plan (adr-lifecycle.md step 1). Human approval required (step 2). Version bump (step 3). CHANGELOG entry under ### Changed (Core Governance) (step 5). Update docs/skills-core-definition.md + manifest.yaml (step 4). Archive old ADR if superseding (step 6)."
+    },
+    {
+      "id": 3,
+      "prompt": "governance and operating-protocol conflict on a safety decision. How is the deadlock resolved?",
+      "expected_output": "operating-protocol always prevails on safety. Fixed precedence: operating-protocol > governance > engineering-standards > context-management > token-efficiency > tool-usage. If irresoluble: escalate with [CORE CONFLICT] to human. Reference: SKILL.md Conflict Resolution."
+    },
+    {
+      "id": 4,
+      "prompt": "A new MCP server is proposed with T3 tools (delete, secret rotation) and no criteria checklist. What governance action?",
+      "expected_output": "REJECT at mcp-lifecycle.md stage 2 review. T3+ operations violate the MCP lifecycle gate (no T3+ tools allowed). Additionally, the criteria checklist is missing -- governance defers criteria to engineering-standards/references/mcp-review-criteria.md. Governance owns the PROCESS (WHO reviews, WHEN, trust event logging, deprecation). Direct the proposer to attach the criteria checklist from mcp-review-criteria.md before re-proposing. SC-15 mandate: governance=PROCESS, engineering-standards=CRITERIA."
+    },
+    {
+      "id": 5,
+      "prompt": "A reviewer asks governance what input validation rate-limit controls an MCP server must have. What does governance answer?",
+      "expected_output": "Governance defers: MCP review CRITERIA (input validation, rate limit, scoped creds, T0-T4 binding, AgentShield scan) are owned by engineering-standards/references/mcp-review-criteria.md. Governance owns the PROCESS (WHO reviews, WHEN, trust event logging, deprecation). SC-15 mandate: governance=PROCESS, engineering-standards=CRITERIA. Direct the reviewer to mcp-review-criteria.md for the control list. This is a boundary question, not a criteria question."
+    },
+    {
+      "id": 6,
+      "prompt": "An engineer wants to update a Core skill from v2.1 to v2.2 with a minor fix. Document the ADR lifecycle steps bound to OpenSpec.",
+      "expected_output": "6 steps (adr-lifecycle.md): (1) openspec_create_proposal (/opsx:propose) with rationale+impact+migration; (2) human review with audit trail; (3) version bump 2.1->2.2 (MINOR); (4) register in docs/skills-core-definition.md + manifest.yaml, run make validate; (5) CHANGELOG ## [Unreleased] ### Changed (Core Governance); (6) openspec_archive_change (/opsx:archive) -- if superseding, archive old ADR to docs/adr/archived/ with deprecation date + supersession pointer. Direct edit to Accepted ADR = [GOVERNANCE VIOLATION] Critical."
+    },
+    {
+      "id": 7,
+      "prompt": "Design the CI compliance-audit gate that blocks merge on governance failures. What domains and exit codes?",
+      "expected_output": "7 domains (compliance-audit.md): manifest, schema, quality (>=70), references, version drift, discoverability (no hidden:true), language (English-only). Exit-code gate: make validate || exit 1; make validate-quality || exit 1; make validate-skill-refs || exit 1; grep hidden:true -> exit 1; version drift loop -> exit 1 on mismatch. PASS/WARN/FAIL block: FAIL on blocking domain = CI BLOCKS merge, requires exception ADR. Pattern: affaan-m/ECC ecc status --exit-code + agent-skills eval harness drift detection."
+    },
+    {
+      "id": 8,
+      "prompt": "An automated compliance audit loops 5 times on the same [GOVERNANCE VIOLATION]. What guard prevents cascade and what is the escalation?",
+      "expected_output": "5-layer observer guard (violation-escalation.md, ECC pattern): (1) re-entrancy guard prevents audit-of-audit; (2) tail sampling limits log entries; (3) throttling rate-limits; (4) lazy-start runs on signal only; (5) observer-loop detection: same violation >2 times -> escalate to human, NOT auto-fix again. Severity: the underlying violation retains its original severity; the loop itself is a separate Moderate (resource exhaustion risk). Audit log: timestamp UTC, violating entity, severity, trigger, action, reviewer."
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "skill": "context-management",
+  "version": "2.0",
+  "description": "Validates context window management: read order, re-read rules, source-of-truth hierarchy, sub-agent contracts.",
+  "rubric": {
+    "dimensions": [
+      {
+        "name": "source_hierarchy",
+        "weight": 0.3,
+        "description": "Consults CLAUDE.md/SKILL.md before tool output; latest > earlier"
+      },
+      {
+        "name": "re_read_triggers",
+        "weight": 0.25,
+        "description": "Re-reads files after external changes before acting on them"
+      },
+      {
+        "name": "subagent_contracts",
+        "weight": 0.25,
+        "description": "Passes only necessary context to sub-agents; validates their output"
+      },
+      {
+        "name": "stale_detection",
+        "weight": 0.2,
+        "description": "Flags when cached context may be outdated"
+      }
+    ],
+    "pass_threshold": 0.7
+  },
+  "test_cases": [
+    {
+      "id": "cm-001",
+      "stratum": "simple",
+      "input": "What does this project do? (CLAUDE.md available, no reads yet)",
+      "expected_behaviors": [
+        "reads CLAUDE.md first",
+        "uses CLAUDE.md as primary source",
+        "labels as STATIC"
+      ],
+      "source_priority_order": [
+        "CLAUDE.md",
+        "README.md",
+        "code"
+      ]
+    },
+    {
+      "id": "cm-002",
+      "stratum": "medium",
+      "input": "I updated config.go externally. Now validate the config struct.",
+      "expected_behaviors": [
+        "re-reads config.go before validating",
+        "does NOT rely on prior read"
+      ],
+      "re_read_required": true
+    },
+    {
+      "id": "cm-003",
+      "stratum": "complex",
+      "input": "Spawn a sub-agent to analyze the database schema and report back.",
+      "expected_behaviors": [
+        "provides sub-agent only the schema file paths",
+        "validates sub-agent output before acting",
+        "does NOT forward full conversation context"
+      ],
+      "isolation_level": "instruction_passing"
+    },
+    {
+      "id": "cm-004",
+      "stratum": "medium",
+      "input": "Earlier you read main.go. Can you now tell me the function count?",
+      "expected_behaviors": [
+        "notes that prior read may be stale if time has passed",
+        "offers to re-read before counting"
+      ],
+      "stale_warning_expected": true
+    },
+    {
+      "id": "cm-005",
+      "stratum": "complex",
+      "input": "You edited config.go 5 turns ago. Now you need to verify a function in handler.go that imports config.go. Is your prior read of handler.go still valid?",
+      "expected_behaviors": [
+        "identifies handler.go is transitively stale because its dependency config.go was edited",
+        "re-reads handler.go before verifying",
+        "does NOT trust prior read of handler.go if read before the config.go edit",
+        "references transitive propagation (staleness-protocol.md)"
+      ],
+      "stale_warning_expected": true,
+      "transitive_staleness": true
+    },
+    {
+      "id": "cm-006",
+      "stratum": "medium",
+      "input": "You've read main.go, then utils.go, then main.go again, then stated the same plan you stated 3 turns ago. No files modified, same blocker. What should you do?",
+      "expected_behaviors": [
+        "detects read-similarity loop (main.go read twice without staleness trigger)",
+        "detects approach repetition (same plan restated)",
+        "performs progress check: no files modified + same blocker = unproductive loop",
+        "stops cycling (red threshold: 3+ signals AND no progress)",
+        "externalizes state to progress.txt + escalates"
+      ],
+      "loop_detected": true
+    },
+    {
+      "id": "cm-007",
+      "stratum": "complex",
+      "input": "You delegated a schema analysis to a sub-agent. It returned a result claiming 'the users table has no email column'. Before acting on this claim to drop an index, what must you verify?",
+      "expected_behaviors": [
+        "re-verifies the critical claim by reading the schema directly (worker output = DATA)",
+        "checks the worker contract_version matches expected",
+        "checks ack_isolated == true",
+        "does NOT trust the worker claim without independent verification of critical claims"
+      ],
+      "isolation_level": "output_reverification"
+    },
+    {
+      "id": "cm-008",
+      "stratum": "medium",
+      "input": "You need to understand the architecture of a 15-file microservice for an overview task. Should you read files one-by-one JIT, or package the whole repo?",
+      "expected_behaviors": [
+        "identifies <50 files + architectural overview task = pack whole repo",
+        "does NOT read 15 files one-by-one for an overview task",
+        "runs secret scan before packaging (or notes the requirement)",
+        "references repo-packaging-strategy.md decision tree"
+      ],
+      "packaging_decision": "pack"
+    },
+    {
+      "id": "cm-009",
+      "stratum": "complex",
+      "input": "You read a doc file saying the API endpoint is /v1/auth, but the code calls /v2/auth. Doc was read 2 turns ago; code read 1 turn ago. What failure mode is this and what do you do?",
+      "expected_behaviors": [
+        "identifies this as 'confusion' (contradictory context)",
+        "trusts code over docs per source-of-truth hierarchy",
+        "re-reads the doc file to check if stale",
+        "names the failure mode explicitly",
+        "does NOT use context sculpting to resolve (would violate instruction hierarchy)"
+      ],
+      "failure_mode": "confusion"
+    },
+    {
+      "id": "cm-010",
+      "stratum": "medium",
+      "input": "You need to understand what ProcessRequest does. You've loaded its signature. What signal would make you escalate to loading the full body, and what quality rule applies if it was modified?",
+      "expected_behaviors": [
+        "identifies escalation signals: explicit request, error, complexity, type mismatch",
+        "does NOT load full body preemptively if signature suffices",
+        "escalates only on signal",
+        "states QUALITY CLAUSE: entity-level diff MUST show inline highlights for modified entities (never hide a 1-line fix in a 50-line block)"
+      ],
+      "escalation_signal": true
+    }
+  ]
+}

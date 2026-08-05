@@ -1,0 +1,20 @@
+{
+  "skill_name": "terraform-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Terraform module for an AWS ECS service. Include main.tf (ECS task definition, service, target group), variables.tf (required type+description for every variable: container_image, cpu, memory, desired_count, environment, vpc_id, subnets), outputs.tf (service_name, service_arn, task_role_arn), and versions.tf (terraform >=1.0, aws provider pinned). Use for_each over count. Run tflint+checkov+trivy validation.",
+      "expected_output": "Module with 4 files minimum. Variables ALL have type + description (never empty). Resources use for_each over count. Tags: Environment, Service, Owner minimum on every resource. versions.tf pins terraform and aws provider versions. Golden chain: tflint -> checkov -> trivy -> terraform-docs -> terraform validate -> terraform plan. Remote state with S3+DynamoDB locking. Secrets via sops or AWS Secrets Manager (never in code)."
+    },
+    {
+      "id": 2,
+      "prompt": "Set up CI/CD pipeline for Terraform: configure remote state with S3+DynamoDB, add GitHub Actions workflow that runs tflint+checkov+trivy on PR, terraform plan on push, and terraform apply on merge to main. Include OPA policy 'no public S3 buckets' with checkov.",
+      "expected_output": "CI/CD: GitHub Actions workflow with 3 jobs (validate: tflint+checkov+trivy, plan: terraform plan, apply: terraform apply on main). Remote state: S3 backend with DynamoDB locking. checkov policy: CKV2_AWS_6 (Ensure S3 bucket has public access blocked). Secrets via GitHub Actions secrets (AWS credentials). Plan output posted as PR comment. Apply requires manual approval before execution. Pre-commit hooks: terraform validate + terraform fmt --check. NEVER skip terraform plan -> review -> apply."
+    },
+    {
+      "id": 3,
+      "prompt": "Debug this Terraform state issue: a developer ran terraform destroy without approval on staging, then wants to recover the infrastructure. Use terraform state list to verify what was destroyed, terraform import to recover resources, and terraform refresh for reconciliation. Propose a state locking strategy to prevent this.",
+      "expected_output": "Diagnosis: terraform state list (empty = everything destroyed), terraform import for each resource (check ARNs from AWS console), terraform plan to verify recovery matches expected state. State locking: S3 backend with DynamoDB table + versioning. terraform force-unlock as last resort (with human approval). Breaking change gate: STOP -> warn -> migration strategy on resource rename/ARN change. NEVER skip terraform plan -> review -> apply. Pre-commit git hook to prevent direct main pushes."
+    }
+  ]
+}

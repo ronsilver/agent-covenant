@@ -1,0 +1,20 @@
+{
+  "skill_name": "playwright-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a Playwright E2E test for the form submission flow: fill name field (Jane Doe), email field (jane@example.com), message field (Hello), click Submit, verify success message appears, verify confirmation ID is visible. Use role+name locators. Mock the submission API at network level.",
+      "expected_output": "test('complete form submission flow', async ({ page }) => { await page.route('**/api/submissions', async route => { await route.fulfill({ status: 201, json: { id: 'sub_test', status: 'received' } }) }); await page.goto('/contact'); await page.getByLabel('Full name').fill('Jane Doe'); await page.getByLabel('Email address').fill('jane@example.com'); await page.getByLabel('Message').fill('Hello'); await page.getByRole('button', { name: /submit/i }).click(); await expect(page.getByText('Submission received')).toBeVisible(); await expect(page.getByTestId('confirmation-id')).toBeVisible() }). Use locator priority: role > label > text > testid. NEVER CSS/XPath primary locators."
+    },
+    {
+      "id": 2,
+      "prompt": "This Playwright test is flaky: it uses page.waitForTimeout(5000), checks visibility of dynamic content that loads at variable speed, and uses CSS selector '.success-message'. Fix all flakiness and use resilient locators.",
+      "expected_output": "Remove page.waitForTimeout(5000): replace with await expect(page.getByText('Submission received')).toBeVisible({ timeout: 30000 }); or page.waitForResponse(url => url.includes('/api/submissions')). CSS selector: replace with page.getByText('Submission received') or page.getByRole('heading', { name: 'Success' }). Dynamic content: use waitForResponse to confirm API call completed BEFORE checking UI. trace: 'on-first-retry' for debugging flaky failures. Retry flaky test: run 10x in CI to confirm fix."
+    },
+    {
+      "id": 3,
+      "prompt": "Set up Playwright visual regression testing for the contact page. Take a screenshot on CI, compare against baseline with 1% tolerance. Handle dynamic content (date, value) by masking. Configure GitHub Actions with sharding (4 workers).",
+      "expected_output": "Visual test: await expect(page).toHaveScreenshot('contact-page.png', { maxDiffPixelRatio: 0.01 }). Dynamic content: use mask option with locator for date/time elements or inject fixed date via page.addInitScript. CI: npx playwright test --shard=1/4 (repeat for shards 2,3,4). GitHub Actions matrix: shard: [1,2,3,4]. Upload artifacts: playwright-report/, test-results/. Baseline: store in repo, update on intentional changes. NEVER skip trace generation on failure. NEVER ignore visual diffs > 0.01 without review."
+    }
+  ]
+}

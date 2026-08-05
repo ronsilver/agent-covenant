@@ -1,0 +1,20 @@
+{
+  "skill_name": "git-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a conventional commit message for: adding a config export feature to the config service, with a new external service adapter, UI component, and webhook handler. The sprint reference is PROJ-456.",
+      "expected_output": "feat(config-export): add config export with external service adapter, UI, and webhook handler. Closes PROJ-456. Follow conventional commits: type=feat (new feature), scope=config-export, body describes components. NEVER include breaking changes in feat type. NEVER skip scope for multi-service changes."
+    },
+    {
+      "id": 2,
+      "prompt": "A developer accidentally committed an .env file with production database credentials to the main branch. Use git filter-branch or BFG to purge it from history, rotate all exposed credentials, and add a pre-commit hook to prevent future leaks.",
+      "expected_output": "1) Immediate: rotate all exposed credentials (DB password, API keys). 2) git filter-branch --tree-filter 'rm -f .env' HEAD or BFG --delete-files .env. 3) git push --force-with-lease origin main (warn team to rebase). 4) Pre-commit hook: git-secrets --scan or gitleaks to block commits with credential patterns. NEVER force push without team coordination. NEVER skip credential rotation after leak."
+    },
+    {
+      "id": 3,
+      "prompt": "Set up commit signing with SSH key on GitHub. Configure git, sign a test commit, push to a branch, and verify the commit shows as 'Verified' on GitHub.",
+      "expected_output": "1) git config --global gpg.format ssh; git config --global user.signingkey ~/.ssh/id_ed25519.pub; git config --global commit.gpgsign true. 2) Upload SSH public key to GitHub Settings -> SSH and GPG keys -> New SSH signing key. 3) git commit -m 'test signed commit'; git push. 4) GitHub shows 'Verified' badge on commit. NEVER configure signing without testing on a throwaway branch first. ALWAYS use ed25519 over RSA for SSH signing."
+    }
+  ]
+}

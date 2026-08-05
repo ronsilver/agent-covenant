@@ -1,0 +1,20 @@
+{
+  "skill_name": "agent-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a multi-agent pipeline for external service integration using the supervisor pattern. The supervisor delegates to: a discovery agent (extracts external service API), a mapping agent (creates .mapping DSL), a codegen agent (generates adapter), and a validation agent (runs CI/CD gates). Define handoffs, context isolation, and permission boundaries.",
+      "expected_output": "Supervisor agent: receives task input, routes to specialists sequentially. Each subagent: isolated context (only receives relevant input), explicit tool allowlist (Read/Write only, no Bash), permissionMode=acceptEdits. Handoffs: supervisor waits for agent completion, validates output, passes to next. Context isolation: discovery output -> structured JSON; mapping input = JSON only (not full conversation). Supervisor NEVER shares raw orchestrator state with subagents. Model routing: cheap model for discovery (Claude Haiku), powerful for codegen (Claude Sonnet)."
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze the agent runner capabilities matrix: Claude Code (stdio/HTTP MCP, hooks, subagents) vs OpenCode (stdio/HTTP/SSE MCP, plugins, subagents) vs Cursor (JSON MCP, no hooks, subagents) vs Windsurf (6KB rule limit, no subagents). Recommend which runner to use for a self-healing infrastructure agent that needs: MCP server access, hooks for pre-commit, and subagents for parallel tasks.",
+      "expected_output": "Decision matrix: Claude Code wins (full hooks + subagents + MCP). OpenCode close second (plugin-based hooks vs native). Cursor eliminated (no hooks). Windsurf eliminated (no subagents, 6KB rule limit). Recommendation: Claude Code for production self-healing agent. Runner-specific constraints: Claude Code SSE deprecation (use stdio), OpenCode plugin API (wrap hooks as plugins), Cursor needs VS Code extension for hook-like behavior, Windsurf needs MCP callbacks for hooks."
+    },
+    {
+      "id": 3,
+      "prompt": "Design a subagent with restricted permissions for database migration validation. It must only Read SQL files, Bash (liquibase status), and Read DB schemas. Configure permissionMode=acceptEdits, model=claude-sonnet, allowed-tools=[Read, Bash(liquibase *)] with explicit denylist for Write/Delete operations.",
+      "expected_output": "Subagent manifest: name=migration-validator, permissionMode=acceptEdits (NEVER default/inherit), model=claude-sonnet-4-20250514, allowed-tools: [Read, Bash(liquibase status), Bash(liquibase validate), Grep(sql)]. Denylist: [Write, Bash(liquibase update), Bash(liquibase rollback)] \u2014 read-only access only. Task contract: {task_id, input: {changelog_path, db_url}, expected_output: {valid: bool, issues: [string], recommendation: string}}. NEVER allow mutation tools in validation subagent."
+    }
+  ]
+}

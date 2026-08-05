@@ -1,0 +1,104 @@
+{
+  "$schema": "https://github.com/modelcontextprotocol/servers/raw/main/schema.json",
+  "mcpServers": {
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp<2",
+        "mcp-server-fetch"
+      ],
+      "description": "Fetch and extract content from URLs"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ],
+      "description": "File system access for reading and writing files"
+    },
+    "github": {
+      "command": "mcp-github",
+      "args": [],
+      "description": "GitHub API integration via Go runtime (wrapper resolves token at spawn)"
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "/Users/silver/mcp/memory/memory.json"
+      },
+      "description": "Persistent memory storage for AI context"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "description": "Multi-step reasoning and chain-of-thought processing"
+    },
+    "time": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp<2",
+        "mcp-server-time"
+      ],
+      "description": "Time zone conversion and time-based operations"
+    },
+    "aws-docs": {
+      "command": "uvx",
+      "args": [
+        "awslabs.aws-documentation-mcp-server@latest"
+      ],
+      "description": "AWS official documentation search and retrieval"
+    },
+    "aws-pricing": {
+      "command": "uvx",
+      "args": [
+        "awslabs.aws-pricing-mcp-server@latest"
+      ],
+      "description": "AWS pricing information and cost estimation"
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "description": "Up-to-date library docs and code examples via Context7"
+    },
+    "gitmcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://gitmcp.io/docs"
+      ],
+      "description": "Search and read any GitHub repository documentation via GitMCP"
+    },
+    "openspec": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "openspec-mcp"
+      ],
+      "description": "OpenSpec spec-driven development workflow"
+    },
+    "graphify": {
+      "command": "/Users/silver/.local/share/uv/tools/graphifyy/bin/python",
+      "args": [
+        "-m",
+        "graphify.serve",
+        "/Users/silver/Documents/Repositories/Silver/agent-covenant/graphify-out/graph.json"
+      ],
+      "description": "Knowledge graph query server (query_graph, get_node, get_neighbors, get_community, god_nodes, graph_stats, shortest_path)"
+    }
+  }
+}

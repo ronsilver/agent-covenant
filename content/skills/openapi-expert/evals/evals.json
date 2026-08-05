@@ -1,0 +1,20 @@
+{
+  "skill_name": "openapi-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write an OpenAPI 3.1 spec for POST /v1/items. Request body: amount (integer, minimum 1), type (string enum standard/premium/enterprise), owner_id (UUID), idempotency_key (header, required). Responses: 201 (created), 400 (validation), 409 (duplicate idempotency key), 422 (validation failed).",
+      "expected_output": "openapi:3.1.0 paths./v1/items.post with parameters:Idempotency-Key in header required. requestBody:application/json schema{required:[amount,type,owner_id], properties:{amount:{type:integer,minimum:1,description:'Quantity'}, type:{type:string,enum:[...]}, owner_id:{type:string,format:uuid}}}. responses:201{description:'Created', content schema $ref ItemResponse}, 400{description:'Validation error', content schema $ref ErrorResponse}, 409{description:'Duplicate request'}, 422{description:'Validation failed'}. NEVER skip idempotency_key in write APIs. NEVER use GET for state-changing operations."
+    },
+    {
+      "id": 2,
+      "prompt": "Implement RFC 7807 error responses for the items API. Define: type (URL to error docs), title (human-readable), status (HTTP code), detail (specific problem), instance (request path), code (machine-readable enum). Create an example for INVALID_REQUEST error.",
+      "expected_output": "{type:'https://api.example.com/errors/validation-error', title:'Validation failed', status:422, detail:'Value of 1000 units exceeds available value of 500 units', instance:'/v1/items/req_abc123', request_id:'req_xyz789', code:'INVALID_REQUEST'}. All errors follow this schema. type = documentation URL. code = enum for client code handling. NEVER expose stack traces in detail. NEVER skip request_id for debugging."
+    },
+    {
+      "id": 3,
+      "prompt": "Add cursor-based pagination to GET /v1/items. Accept cursor and limit (max 100) query params. Return data array, next_cursor (null if last page), has_more boolean. Generate client SDK from the OpenAPI spec using openapi-generator.",
+      "expected_output": "Endpoint: GET /v1/items. parameters: cursor (string, optional), limit (integer, minimum 1, maximum 100, default 50). Response: {data:[{...}], next_cursor:'abc123'|null, has_more:true|false}. Server-side: validate limit <= 100, use cursor for database query (WHERE id > cursor). openapi-generator: generate Go client, TypeScript SDK, and Python client from spec. NEVER use offset pagination for datasets > 1000 items. NEVER allow unbounded limits."
+    }
+  ]
+}

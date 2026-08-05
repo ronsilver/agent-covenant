@@ -1,0 +1,20 @@
+{
+  "skill_name": "scalability-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a circuit breaker for external service calls in Go. After 5 consecutive failures in 1 minute, open the circuit for 30s. During open state, return cached or default response. After 30s, transition to half-open - allow 1 test request. If it succeeds, close; if it fails, re-open.",
+      "expected_output": "Circuit breaker states: Closed (normal, count failures) -> Open (after threshold, fast-fail) -> Half-Open (after timeout, 1 test). Implementation: atomic counter for failures, time-based reset. Go: use gobreaker or sony/gobreaker with Settings{MaxRequests:1, Interval:30*time.Second, Timeout:30*time.Second, ReadyToTrip: func(counts Counts) bool { return counts.ConsecutiveFailures >= 5 }}. Wrap external service calls: cb.Execute(func() (interface{}, error) { return providerClient.Validate(ctx, req) }). NEVER skip circuit breakers on external dependencies. NEVER use without logging state transitions."
+    },
+    {
+      "id": 2,
+      "prompt": "Design a sharding strategy for the records database handling 1000 TPS. Define 16 shards by user_id hash. Implement a connection router that maps user_id -> shard_id -> connection pool. Handle cross-shard queries (user summary) via scatter-gather with timeout.",
+      "expected_output": "Shard function: shard_id = fnv.New32a(user_id) % 16. Connection pools: map[shard_id]*sql.DB, each with maxOpenConns=25, maxIdleConns=10. Router: func getDB(userID string) *sql.DB { return pools[hash(userID)%16] }. Cross-shard: launch 16 goroutines with context + timeout (2s), collect results, aggregate. If any shard times out, return partial results with warning. NEVER query all shards without timeout. NEVER change shard function once deployed (migration required)."
+    },
+    {
+      "id": 3,
+      "prompt": "The api service is overloaded during a traffic spike: queue depth at 50k, p99 latency at 30s. Implement graceful degradation: return 429 (rate limit) for non-critical requests, shed non-essential log processing, increase consumer count from 5 to 20, and add backpressure via queue-depth-based throttling.",
+      "expected_output": "Rate limiting: token bucket per user, return 429 when exhausted, with Retry-After header. Load shedding: identify critical path (request validation) vs non-critical (analytics, logging enrichment) - drop non-critical processing. Consumer scaling: auto-scale based on queue depth: if depth > 10k, scale to 20 consumers; if < 1k, scale down to 5. Backpressure: consumer checks queue depth before accepting new work; if > 80% capacity, slow down producer via 503 + Retry-After. NEVER accept unbounded queue growth. NEVER block critical path for non-critical work."
+    }
+  ]
+}

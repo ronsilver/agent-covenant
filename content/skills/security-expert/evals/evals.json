@@ -1,0 +1,20 @@
+{
+  "skill_name": "security-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit this Go handler for OWASP Top 10: it uses fmt.Sprintf to build SQL queries with user input, logs the full request body including sensitive data, has no rate limiting, and returns database error messages to clients. Report all violations with CWE references and fixes.",
+      "expected_output": "Findings: 1) [BLOCKER] SQL Injection (CWE-89) — fmt.Sprintf('SELECT * FROM items WHERE id = %s', userInput). Fix: parameterized query (GORM Where). 2) [BLOCKER] Sensitive Data Exposure (CWE-532) — log full request with sensitive data. Fix: mask/hash sensitive data, log only first chars. 3) [MAJOR] Information Exposure (CWE-209) — raw DB errors in client response. Fix: wrap errors, return generic 500 message. 4) [MAJOR] Missing Rate Limiting (CWE-770) — no per-IP or per-customer limits. Fix: add token bucket middleware. OWASP: A03 Injection, A09 Logging Failures, A01 Access Control. NEVER build SQL with string concatenation. NEVER log sensitive data in plain text."
+    },
+    {
+      "id": 2,
+      "prompt": "Run a secret scan on this codebase: there's a hardcoded AWS key in a test file, a .env committed to git history, and a JWT secret in a config comment. Use gitleaks/truffleHog patterns. Document findings and remediation.",
+      "expected_output": "Secret scan findings: 1) tests/test_utils.go: aws_access_key_id=AKIA... (HARDCODED_KEY). Fix: remove, use IAM roles or env vars. 2) config/app.yaml: jwt_secret: 'mySuperSecretKey' (HARDCODED_SECRET). Fix: move to Vault/Secrets Manager. 3) git history: .env file committed in commit abc123 (2025-03). Fix: git filter-branch or BFG to purge, rotate all exposed secrets. 4) docker-compose.yml: POSTGRES_PASSWORD=admin123. Fix: use .env.sample with placeholder, real values in .env (gitignored). NEVER commit secrets even in comments. NEVER use real keys in test files. ALWAYS rotate secrets after accidental exposure."
+    },
+    {
+      "id": 3,
+      "prompt": "Hunt for threats in CloudTrail logs: unauthorized API calls from an unknown IP, S3 bucket made public, IAM user created outside business hours. Write Sigma rules to detect these patterns and map to MITRE ATT&CK TTPs.",
+      "expected_output": "Sigma rules: 1) title: Unauthorized API Call from External IP. logsource: cloudtrail. detection: sourceIPAddress NOT in allowed_cidr_list AND errorCode='AccessDenied'. MITRE: T1078 (Valid Accounts). 2) title: S3 Bucket Made Public. detection: eventName='PutBucketAcl' AND requestParameters.AccessControlPolicy.AccessControlList.Grant.Grantee.URI='http://acs.amazonaws.com/groups/global/AllUsers'. MITRE: T1530 (Data from Cloud Storage). 3) title: IAM User Created Outside Business Hours. detection: eventName='CreateUser' AND eventTime NOT between 08:00-18:00. MITRE: T1136 (Create Account). NEVER write Sigma rules without MITRE mapping. ALWAYS test rules against historical logs before production deployment."
+    }
+  ]
+}

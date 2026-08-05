@@ -1,0 +1,20 @@
+{
+  "skill_name": "argocd-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Configure an ArgoCD ApplicationSet for deploying 10 service-specific instances. Use a Git generator that reads customer configs from a directory. Each instance needs: unique namespace, per-customer resource limits, and automated sync with selfHeal=true.",
+      "expected_output": "ApplicationSet with git generator: spec.generators[0].git.repoURL, files list pointing to customers/*.yaml. Template: application.namePrefix={customer-name}, spec.destination.namespace=example-{customer}, spec.source.path based on customer config. Automated syncPolicy: prune=true, selfHeal=true, allowEmpty=false. NEVER deploy without namespace isolation. NEVER skip resource limits per instance."
+    },
+    {
+      "id": 2,
+      "prompt": "Debug: ArgoCD shows 'OutOfSync' on a deployment, but git diff shows no changes. A developer ran 'kubectl edit deployment' to add an annotation temporarily. Fix the drift and implement drift detection alert.",
+      "expected_output": "Root cause: manual kubectl edit bypassed ArgoCD \u2014 resource differs from git state. Fix: delete annotation via kubectl or revert manually, let ArgoCD reconcile. Prevent: enable selfHeal=true to auto-fix drift. Alert: Prometheus metric argocd_app_sync_status{status='OutOfSync'} > 0 for > 5min triggers PagerDuty. NEVER allow manual edits to ArgoCD-managed resources. ALWAYS use git as single source of truth."
+    },
+    {
+      "id": 3,
+      "prompt": "Set up External Secrets Operator to sync AWS Secrets Manager entries into a Kubernetes namespace. Map secrets: DB_PASSWORD from prod/api/db, API_KEY from prod/api/keys. Configure refresh interval of 1 hour with jitter to prevent thundering herd.",
+      "expected_output": "ClusterSecretStore: provider.aws.secretsManager with region+accessKeyRef. ExternalSecret: spec.refreshInterval=1h. spec.data: [{secretKey:DB_PASSWORD, remoteRef:key='prod/api/db', property:'password'}, {secretKey:API_KEY, remoteRef:key='prod/api/keys', property:'api_key'}]. Jitter: spec.refreshInterval=3600s with randomization. NEVER map secrets to configmaps (plaintext storage). NEVER skip refresh jitter."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "skill_name": "accessibility-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit a registration form for WCAG 2.2 AA violations: form has divs as buttons, no labels on inputs, fixed font sizes in px, color-only error indicators (red border). Fix all issues with semantic HTML, ARIA, and accessible error messages.",
+      "expected_output": "Fix 1: replace <div onclick='submit()'> with <button type='submit'>, add aria-label if no visible text. Fix 2: add <label for='username'> or aria-labelledby for each input. Fix 3: use rem/em for font sizes (not px). Fix 4: error state: add text message 'Username is invalid' + aria-describedby linking input to error, not just red border (WCAG 1.4.1 Use of Color). Add aria-live='polite' region for dynamic errors. Test: axe-core devtools + manual keyboard navigation."
+    },
+    {
+      "id": 2,
+      "prompt": "Implement keyboard navigation for a contact method selector with 4 options (Email, Phone SMS, In-app notification, Webhook). Each option must be focusable via Tab, selectable via Enter, and announce selection state via aria-selected. Manage focus trap in the contact modal.",
+      "expected_output": "Radio button group: <fieldset><legend>Contact method</legend>, each method with <input type='radio' name='method'> + <label>. Tab into group, Arrow keys to change selection, Enter to confirm. aria-selected on selected option. Modal: on open, focus first focusable element; trap focus (Tab cycles within modal, Shift+Tab goes to last); on close, restore focus to triggering element. NEVER use tabindex > 0 (breaks natural order). NEVER remove focus outline without alternative indicator."
+    },
+    {
+      "id": 3,
+      "prompt": "Test the form workflow page with VoiceOver (macOS) and axe-core. Document findings: missing alt text on form icons, unlabeled form fields, poor heading hierarchy (h1 -> h4), low contrast on error text (3.1:1). Fix all issues and re-test.",
+      "expected_output": "Fix 1: add alt='User' to form icons (or aria-label on parent). Fix 2: label all inputs with for/id or aria-labelledby. Fix 3: heading hierarchy: h1 (Submit Form) -> h2 (Contact Details) -> h3 (Review) — no skipped levels. Fix 4: error text color contrast: increase from #FF6B6B on white to #D32F2F (meets 4.5:1 AA). Re-test: axe-core 0 violations, VoiceOver reads all labels/headings in correct order, keyboard navigation complete without dead ends."
+    }
+  ]
+}

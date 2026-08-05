@@ -1,0 +1,20 @@
+{
+  "skill_name": "scala-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a Spark job in Scala that reads record CSV files from S3, filters positive measures, joins with user dimension table (broadcast join for <10MB table), and writes results to Delta Lake with date partitioning. Use case classes for schemas. Enable AQE (spark.sql.adaptive.enabled=true). NEVER collect() on large datasets.",
+      "expected_output": "Scala Spark job with SparkSession builder (AQE enabled), read.csv with header=true, select+cast to proper types, filter measure > 0, broadcast join with users (broadcast(smallDF)). Write with .format('delta').mode('append').partitionBy('date'). Use case class Record(record_id: String, measure: Long, status: String). Test with local[2] master. NEVER collect() - use take(n) or aggregation."
+    },
+    {
+      "id": 2,
+      "prompt": "Write the equivalent PySpark job for the reconciliation pipeline. Use the same logic as the Scala version but from Python. Show DataFrame API and how to share schemas between Scala and Python jobs.",
+      "expected_output": "PySpark script: SparkSession.builder, read.csv, filter, select, broadcast join via hint('broadcast'), write with Delta format and partitionBy. Same schema as Scala - field names, types, and transformations identical. Use Python for orchestration, call Scala UDFs for performance-critical operations."
+    },
+    {
+      "id": 3,
+      "prompt": "Write a ScalaTest suite for the reconciliation job. Test that matching records are correctly paired, missing source records are flagged, and measure mismatches trigger a reconciliation exception. Use local[2] master for test SparkSession.",
+      "expected_output": "ScalaTest FlatSpec with before/after (SparkSession master local[2]). Tests: 'should match records by record_id', 'should flag missing records', 'should detect measure mismatches'. Test data as in-memory DataFrames (Seq.tupled). Assert on row count and content. NEVER connect to production cluster from tests."
+    }
+  ]
+}

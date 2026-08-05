@@ -1,0 +1,20 @@
+{
+  "skill_name": "swift-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create the iOS feature SDK entry point. Define a public API protocol with startFeature(value:unit:ownerId:), a completion handler, and configuration (theme, environment). Expose via @objc for Obj-C compatibility. Version the SDK with SemVer - MAJOR.MINOR.PATCH.",
+      "expected_output": "FeatureSDK.swift with public protocol (async/await with throws). FeatureConfig struct (theme, env: sandbox/production). @objc/@objcMembers for Obj-C bridge. Podspec with s.version matching SemVer. SPM Package.swift with targets. Version must follow MAJOR.MINOR.PATCH - NEVER break API in MINOR/PATCH. No hardcoded API keys. Keychain for sensitive token storage."
+    },
+    {
+      "id": 2,
+      "prompt": "Set up Fastlane for the iOS SDK CI pipeline. Include test lane (XCTest on iPhone 15 Pro, parallel targets), release lane (bump podspec version, run tests, build Release framework, push to CocoaPods trunk, git tag ios/v{version}), and GitHub Actions workflow with macOS-14 runner, Ruby setup, Pods caching, and artifact upload.",
+      "expected_output": "fastlane/Fastfile with default_platform(:ios), test lane (run_tests with scheme+devices+xcargs), release lane (set_podspec_version, test, build_ios_app Release, pod_push with allow_warnings, git_tag ios/v{VERSION}, push_git_tags). GitHub Actions: macos-14, actions/checkout@v4, setup-ruby@v1, cache Pods, pod install, fastlane test, upload test_output artifacts. NEVER store signing certs in Git - use Fastlane Match or secrets."
+    },
+    {
+      "id": 3,
+      "prompt": "Fix this anti-pattern in the SDK: ```swift class FeatureManager { static var apiKey: String = 'hardcoded-key' } func processFeature(value: Double, unit: String) { ... }``` Refactor to inject config, use Int for units (never Double for precise values), remove hardcoded key, and add Obj-C compatibility.",
+      "expected_output": "Refactored: inject FeatureConfig via init(). value as Int64 units (NEVER Double). apiKey from config (never hardcoded). Public class with @objc/@objcMembers. Store sensitive values in Keychain, never UserDefaults. ARC: weak self in closures. Test backward compatibility with oldest supported iOS version."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "skill_name": "alternative-skill-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a new skill for 'csv-validation' following the skill creation workflow. Run init_skill.py, write SKILL.md with schema v2 frontmatter (name, description with 'Use when', license, metadata with author/version/category/status), create references/ for complex validation logic, and validate with quick_validate.py --strict.",
+      "expected_output": "1) python init_skill.py csv-validation --path content/skills --category data. 2) SKILL.md frontmatter: name=csv-validation, description='Validation of CSV imports between this project and external service records... Use when comparing import logs'. 3) references/validation-algorithms.md with matching logic. 4) quick_validate.py --strict PASS. 5) Add to manifest.yaml skills.directories. NEVER skip 'Use when' in description. NEVER forget metadata.category enum value."
+    },
+    {
+      "id": 2,
+      "prompt": "Audit this skill for progressive disclosure: SKILL.md is 400 lines with all validation algorithms inline. Extract the algorithm details to references/ and add a navigation table in SKILL.md linking each algorithm guide.",
+      "expected_output": "Split: SKILL.md (now 120 lines) with overview + quick start + navigation table: |Algorithm|Guide|When|. references/exact-match.md (50L), references/tolerance.md (60L), references/date-range.md (45L), references/edge-cases.md (40L). SKILL.md links: 'For exact field matching: references/exact-match.md'. NEVER dump all algorithms in SKILL.md. NEVER create reference files <20 lines."
+    },
+    {
+      "id": 3,
+      "prompt": "Write evals/evals.json for the csv-validation skill with 3 test cases: simple matching, partial mismatch with tolerance, and complete mismatch (alert generation). Follow the evaluating-skills.md guide.",
+      "expected_output": "evals.json: {skill_name:'csv-validation', evals:[{id:1, prompt:'Validate records.csv and provider_records.csv -- find exact matches', expected_output:'JSON with matched: 847, unmatched_source: 12, unmatched_target: 5, discrepancies: 3'}, {id:2, prompt:'Validate with 1% tolerance -- values within 1% are considered matched', expected_output:'...tolerance_applied:true...'}, {id:3, prompt:'No matches found -- all records from external service are for different date range', expected_output:'matched:0, alert: \"No matching records found. Possible date range mismatch.\"'}]}"
+    }
+  ]
+}
