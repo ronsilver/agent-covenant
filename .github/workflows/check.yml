@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Reusable tool-installation steps are inlined per-job to keep jobs independent
 # and fully parallel.  Each job installs only what it needs.
