@@ -1,7 +1,6 @@
 ---
 name: security-auditor
-description: Use when SAST, OWASP Top 10, secret scanning, IAM review, input validation,
-  or AI safety audits are needed; delivers findings and remediation plan.
+description: Audits SAST results, OWASP Top 10, secret scanning, IAM review, input validation, and AI safety, delivering findings and a remediation plan.
 permissionMode: read
 mode: subagent
 targets:

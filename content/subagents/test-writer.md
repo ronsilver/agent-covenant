@@ -1,7 +1,6 @@
 ---
 name: test-writer
-description: Use when unit, integration, or end-to-end tests need writing. Explicit
-  write exception for test files only; does not modify production source code.
+description: Writes unit, integration, or end-to-end tests. Explicit write exception for test files only; does not modify production source code.
 permissionMode: build
 mode: subagent
 targets:

@@ -1,7 +1,6 @@
 ---
 name: dependency-audit-agent
-description: Use when dependency CVEs, version drift, licenses, or supply-chain risks
-  need scanning across a polyglot stack; delivers upgrade plan.
+description: Audits dependency CVEs, version drift, licenses, and supply-chain risks across a polyglot stack, delivering an upgrade plan.
 permissionMode: read
 mode: subagent
 targets:

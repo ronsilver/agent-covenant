@@ -1,6 +1,6 @@
 ---
 name: "[NAME]"
-description: "[One-line purpose: when to use this agent and what it delivers. State whether it implements or is read-only.]"
+description: One-line description of what this subagent is, the artifact it delivers, and its write or read-only boundary. Written in third person; must not start with Use when, Use before, or Use after instruction phrasing.
 permissionMode: read # read | build | full
 mode: subagent
 targets:

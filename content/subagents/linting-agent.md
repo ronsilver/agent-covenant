@@ -1,8 +1,6 @@
 ---
 name: linting-agent
-description: Use when multi-language linting and formatting checks are needed; runs
-  formatters, linters, type checkers, and security scanners in order; reports violations
-  only.
+description: Runs multi-language linting and formatting checks, executing formatters, linters, type checkers, and security scanners in order, reporting violations only.
 permissionMode: read
 mode: subagent
 targets:

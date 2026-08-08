@@ -7,7 +7,8 @@ Canonical frontmatter and contract for all subagents under `content/subagents/`.
 ```yaml
 ---
 name: kebab-case-name
-description: "One-line purpose. Use when ..."
+description: One-line third-person purpose stating role, artifact delivered, and read or write boundary.
+# Boundary note: skills retain the imperative "Use when" convention per ADR-0002; subagents must use third-person self-descriptions.
 permissionMode: read | build | full
 model: provider/model-id     # optional; required when deviating from default
                               # example: anthropic/claude-sonnet-4

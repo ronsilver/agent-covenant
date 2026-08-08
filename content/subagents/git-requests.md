@@ -1,8 +1,6 @@
 ---
 name: git-requests
-description: Use after implementation is done to handle branch, commit, push, and
-  pull-request flow end to end using git best practices. Writes only to git, never
-  to app logic.
+description: Handles the branch, commit, push, and pull-request flow end to end after implementation is done, using git best practices. Writes only to git, never to app logic.
 permissionMode: full
 mode: subagent
 targets:

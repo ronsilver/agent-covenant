@@ -215,6 +215,65 @@ validate_frontmatter() {
     return 0
 }
 
+# Validate that every subagent description is a single-line, plain-scalar-safe
+# self-description: must NOT start with "Use when/Use before/Use after"
+# (case-insensitive, quote-tolerant). Scans the FULL folded value (line 1 plus
+# continuation lines) so a clean line 1 cannot mask a banned prefix on line 2.
+# Manifest-driven: reads subagents.source_dir so bats fixtures stay isolated.
+validate_subagent_descriptions() {
+    log_section "Validating subagent descriptions"
+
+    local source_dir
+    source_dir=$(yq '.subagents.source_dir // "subagents"' "$MANIFEST_FILE")
+    local base="${CONTENT_DIR}/${source_dir}"
+
+    if [[ ! -d "${base}" ]]; then
+        return 0
+    fi
+
+    local desc_errors=0
+
+    while IFS= read -r file; do
+        [[ -z "${file}" ]] && continue
+        local rel_path="${file#"${CONTENT_DIR}"/}"
+
+        # Extract the full description value: from the ^description: line through
+        # all folded continuation lines, stopping at the next top-level key or the
+        # closing frontmatter marker (any non-space-starting line).
+        local desc_block
+        desc_block=$(awk '
+            BEGIN { in_fm=0; found=0 }
+            NR==1 && /^---$/ { in_fm=1; next }
+            in_fm && /^---$/ { exit }
+            in_fm && found && /^[^[:space:]]/ { exit }
+            in_fm && /^description:/ { found=1 }
+            found { print }
+        ' "${file}")
+
+        if [[ -z "${desc_block}" ]]; then
+            log_error "  Missing description in frontmatter: ${rel_path}"
+            desc_errors=$((desc_errors + 1))
+            continue
+        fi
+
+        # Banned prefix at the START of the description value (quote-tolerant).
+        # Mid-text occurrences (e.g. the template's explanatory note) are allowed.
+        if printf '%s\n' "${desc_block}" | grep -qiE '^description:[[:space:]]*["'"'"']?[[:space:]]*(use when|use before|use after)'; then
+            log_error "  Subagent description must not start with 'Use when/Use before/Use after': ${rel_path}"
+            desc_errors=$((desc_errors + 1))
+        fi
+    done < <(find "${base}" -name "*.md" -type f ! -name "README.md" 2>/dev/null)
+
+    if [[ ${desc_errors} -gt 0 ]]; then
+        log_error "Found ${desc_errors} invalid subagent descriptions"
+        ERRORS=$((ERRORS + desc_errors))
+    else
+        log_success "All subagent descriptions are valid"
+    fi
+
+    return 0
+}
+
 validate_skills() {
     log_section "Validating skills"
 
@@ -522,6 +581,7 @@ main() {
     if [[ $ERRORS -eq 0 ]]; then
         validate_files || true
         validate_frontmatter || true
+        validate_subagent_descriptions || true
         validate_skills || true
         validate_skill_coherence || true
         validate_agents || true

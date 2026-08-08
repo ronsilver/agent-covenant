@@ -1,8 +1,6 @@
 ---
 name: ultraplan
-description: Produces deterministic, zero-reasoning execution plans emitted to
-  stdout so the implementer executes without making design decisions; host agent
-  decides if/where to persist. Does not implement.
+description: Produces deterministic, zero-reasoning execution plans emitted to stdout so the implementer executes without making design decisions. Does not implement.
 permissionMode: read
 mode: subagent
 targets:

@@ -1,7 +1,6 @@
 ---
 name: code-review
-description: Use when a PR diff needs review; orchestrates 5 read-only specialists
-  in parallel and emits a structured verdict with file:line anchors.
+description: Reviews a pull request diff, orchestrating 5 read-only specialists in parallel and emitting a structured verdict with file and line anchors.
 permissionMode: read
 mode: subagent
 targets:

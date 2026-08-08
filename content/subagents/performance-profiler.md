@@ -1,8 +1,6 @@
 ---
 name: performance-profiler
-description: Use when hot paths, N+1 queries, memory leaks, GC pressure, or algorithmic
-  complexity need profiling; delivers profile report with optimization plan and before/after
-  targets.
+description: Profiles hot paths, N+1 queries, memory leaks, GC pressure, and algorithmic complexity, delivering a profile report with an optimization plan and before and after targets.
 permissionMode: read
 mode: subagent
 targets:
