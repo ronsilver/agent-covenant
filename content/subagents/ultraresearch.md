@@ -1,10 +1,6 @@
 ---
 name: ultraresearch
-description: Use BEFORE integrating, adopting, or deciding on an external provider,
-  vendor, library, API, or standard -- NEVER for diagnosing an existing failure
-  (that is ultradebugger). Surveys and cross-verifies external sources into a
-  Research Dossier; does not decide (that is ultrathinking) and does not
-  implement.
+description: Surveys and cross-verifies external sources on a provider, vendor, library, API, or standard before integration decisions. Emits a Research Dossier; does not decide or implement.
 permissionMode: read
 mode: subagent
 targets:

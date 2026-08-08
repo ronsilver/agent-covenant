@@ -1,7 +1,6 @@
 ---
 name: idempotency-agent
-description: Use when critical write operations need idempotency verification (keys,
-  retries, deduplication); delivers design assessment and remediation spec.
+description: Idempotency verification specialist for critical write operations (keys, retries, deduplication, and concurrency safety). Delivers a design assessment and remediation spec; read-only.
 permissionMode: read
 mode: subagent
 targets:

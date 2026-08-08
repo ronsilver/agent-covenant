@@ -1,7 +1,6 @@
 ---
 name: research
-description: Use when a codebase or technical topic needs investigation; produces
-  a findings document with citations, options, and trade-offs. Does not implement.
+description: Investigates a codebase or technical topic and produces a findings document with citations, options, and trade-offs. Does not implement.
 permissionMode: read
 mode: subagent
 targets:

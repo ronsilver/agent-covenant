@@ -1,7 +1,6 @@
 ---
 name: ultradebugger
-description: Use when a failure must be root-caused before any fix; delivers cause,
-  minimal fix proposal, and regression test spec for ultracode to implement.
+description: Root-causes a failure before any fix, delivering cause, minimal fix proposal, and regression test spec for ultracode to implement.
 permissionMode: read
 mode: subagent
 targets:

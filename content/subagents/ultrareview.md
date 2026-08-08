@@ -1,8 +1,6 @@
 ---
 name: ultrareview
-description: Use when a code change needs elite review across security, performance,
-  maintainability, and style with security awareness. Orchestrates 5 read-only
-  specialists and emits a verdict.
+description: Reviews a code change across security, performance, maintainability, and style with security awareness. Orchestrates 5 read-only specialists and emits a verdict.
 permissionMode: read
 mode: subagent
 targets:

@@ -1,9 +1,6 @@
 ---
 name: ultrathinking
-description: Use BEFORE ultraplan when a decision is High-complexity, ambiguous,
-  or irreversible. Explores k candidate approaches, stress-tests them, and emits
-  a Reasoning Dossier that settles the design so downstream plans require zero
-  implementer reasoning. Does not plan tasks, does not implement.
+description: Runs before ultraplan when a decision is High-complexity, ambiguous, or irreversible. Explores candidate approaches, stress-tests them, and emits a Reasoning Dossier that settles the design so downstream plans require zero implementer reasoning. Does not plan tasks or implement.
 permissionMode: read
 mode: subagent
 targets:

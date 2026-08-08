@@ -1,6 +1,6 @@
 ---
 name: ultracode
-description: Use after a plan or to-do is approved to implement it end-to-end, task by task, and run the project tests. Only agent that writes project source code.
+description: Implements an approved plan or to-do end-to-end, task by task, and runs the project tests. Only agent that writes project source code.
 permissionMode: build
 mode: subagent
 targets:
