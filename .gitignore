@@ -41,6 +41,7 @@ ecosystem-quality-report*.json
 # Test fixtures (generated)
 tests/fixtures/
 
+docs/plans
 plans
 
 # Local manifest (use manifest.example.yaml as committed template)
