@@ -740,3 +740,86 @@ REAL_REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
         return 1
     }
 }
+
+# =============================================================================
+# validate_subagent_descriptions tests
+# =============================================================================
+
+@test "validate_subagent_descriptions returns 0 when subagents dir absent" {
+    # setup() fixtures have no content/subagents directory; manifest has no
+    # subagents: section so source_dir defaults to "subagents".
+    run validate_subagent_descriptions
+    [[ "$status" -eq 0 ]]
+}
+
+@test "validate_subagent_descriptions passes a valid description" {
+    mkdir -p "${TEST_FIXTURES}/content/subagents"
+    cat >"${TEST_FIXTURES}/content/subagents/good-agent.md" <<'MD'
+---
+name: good-agent
+description: Audits dependency CVEs and delivers an upgrade plan.
+permissionMode: read
+---
+MD
+
+    run validate_subagent_descriptions
+    [[ "$status" -eq 0 ]]
+    [[ "$output" == *"All subagent descriptions are valid"* ]]
+    [[ "$ERRORS" -eq 0 ]]
+}
+
+@test "validate_subagent_descriptions rejects Use when prefix" {
+    mkdir -p "${TEST_FIXTURES}/content/subagents"
+    cat >"${TEST_FIXTURES}/content/subagents/bad-agent.md" <<'MD'
+---
+name: bad-agent
+description: Use when a failure must be root-caused.
+permissionMode: read
+---
+MD
+
+    validate_subagent_descriptions
+    [[ "$ERRORS" -gt 0 ]]
+}
+
+@test "validate_subagent_descriptions rejects Use BEFORE case-insensitive" {
+    mkdir -p "${TEST_FIXTURES}/content/subagents"
+    cat >"${TEST_FIXTURES}/content/subagents/bad-agent.md" <<'MD'
+---
+name: bad-agent
+description: Use BEFORE ultraplan when a decision is complex.
+permissionMode: read
+---
+MD
+
+    validate_subagent_descriptions
+    [[ "$ERRORS" -gt 0 ]]
+}
+
+@test "validate_subagent_descriptions rejects quoted Use when prefix" {
+    mkdir -p "${TEST_FIXTURES}/content/subagents"
+    cat >"${TEST_FIXTURES}/content/subagents/bad-agent.md" <<'MD'
+---
+name: bad-agent
+description: "Use when a code change needs review."
+permissionMode: read
+---
+MD
+
+    validate_subagent_descriptions
+    [[ "$ERRORS" -gt 0 ]]
+}
+
+@test "validate_subagent_descriptions ignores README.md" {
+    mkdir -p "${TEST_FIXTURES}/content/subagents"
+    cat >"${TEST_FIXTURES}/content/subagents/README.md" <<'MD'
+---
+description: Use when this is only an illustration, not a subagent.
+---
+# Catalog
+MD
+
+    run validate_subagent_descriptions
+    [[ "$status" -eq 0 ]]
+    [[ "$ERRORS" -eq 0 ]]
+}
