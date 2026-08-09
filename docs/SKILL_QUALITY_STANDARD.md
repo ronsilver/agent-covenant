@@ -177,7 +177,7 @@ description: Security audit rules for cloud-native services. Trigger: OWASP revi
 
 | Resource | URL | Last verified |
 |---|---|---|
-| Official OWASP Top 10 | https://owasp.org/www-project-top-ten/ | 2026-05-25 |
+| Official OWASP Top 10 (2025) | https://owasp.org/Top10/ | 2026-08-08 |
 | AWS IAM Best Practices | https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html | 2026-05-25 |
 ```
 
