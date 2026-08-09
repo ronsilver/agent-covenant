@@ -76,7 +76,7 @@ Each `content/` subdirectory has its own `README.md` with purpose, format, and l
 
 | Directory | Contents |
 |---|---|
-| `docs/adr/` | 24 Architecture Decision Records (0001–0024) |
+| `docs/adr/` | 31 Architecture Decision Records (0001–0032) |
 | `docs/architecture/` | Architecture diagram |
 | `docs/grafana/` | Importable skill usage dashboard (JSON) |
 | `docs/plans/` | Active revision plans: [refactor-05-aug-2026.md](docs/plans/refactor-05-aug-2026.md) (fintech-bias removal) |

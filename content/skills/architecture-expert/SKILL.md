@@ -4,7 +4,7 @@ description: "Software architecture design (modular monolith, decoupled microser
 license: MIT
 metadata:
   author: Community
-  version: "1.1"
+  version: "1.2"
   category: process
   status: stable
 ---
@@ -115,6 +115,17 @@ Consequences: what becomes easier/harder
 - NEVER optimize for scale before proving need
 - ALWAYS document architecture decisions as ADRs
 - ALWAYS define bounded contexts before designing services
+
+## Threat Modeling
+
+- ALWAYS threat-model with STRIDE-lite before finalizing architecture (OWASP 2025 A06 Insecure Design)
+- Spoofing: enforce authentication at every trust boundary
+- Tampering: sign and verify data in transit and at rest
+- Repudiation: emit audit logs with trace_id for state-changing actions
+- Information disclosure: minimize PII exposure, encrypt at rest, apply zero trust
+- Denial of service: bounded queues, rate limits, circuit breakers
+- Elevation of privilege: least privilege, RBAC, never trust internal networks
+- Cross-refs: ../security-expert/references/zero-trust.md | ../engineering-standards/references/security-practices.md
 
 ## Overview
 

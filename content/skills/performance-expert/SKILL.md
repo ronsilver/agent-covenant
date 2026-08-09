@@ -62,6 +62,12 @@ L3: CDN (static assets, TTL: hours/days)
 - ALWAYS test under production-like load (not local only)
 - NEVER sacrifice correctness for performance
 
+## Security
+
+- NEVER cache PII in shared caches — follow ../engineering-standards/references/security-practices.md PII rules
+- ALWAYS isolate per-user cached data; encrypt at rest when user-derived values are cached
+- ALWAYS keep validation and authz checks intact when optimizing hot paths
+
 ## Overview
 
 Systematic performance profiling and optimization covering CPU profiling (pprof, py-spy, async-profiler), memory analysis, GC tuning, N+1 query detection, multi-level caching strategies (L1 in-memory, L2 Redis, L3 CDN), and connection pooling. Focused on reducing P99 latency and improving throughput for cloud-native services.
@@ -140,6 +146,7 @@ func processRequest(value float64) error {
 - [ ] Re-baseline measurement taken after each optimization to verify improvement
 - [ ] Caching added only after measuring miss rate and hit ratio
 - [ ] No optimization performed on non-hot paths (focus on top consumers)
+- [ ] PII never cached in shared caches; security-practices PII rules applied
 
 ## Troubleshooting
 

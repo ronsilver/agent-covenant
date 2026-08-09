@@ -133,6 +133,13 @@ Stop on first failure. Never `|| true` in CI.
 - ALWAYS propagate `request_id` via `contextvars`
 - NEVER `from langchain_community import *` — pin exact imports
 
+## Security
+
+- ALWAYS run `bandit` in CI and `pip-audit` for dependency CVEs (OWASP A03)
+- NEVER use `pickle` or `yaml.load` on untrusted input (CWE-502) — use `yaml.safe_load` or JSON
+- NEVER pass user input into URLs fetched by httpx/requests without validation (SSRF)
+- ALWAYS use parameterized queries — never string-concatenate SQL (SQLi)
+
 ## Overview
 
 Python services in this project use FastAPI for async APIs, LangGraph on AWS Bedrock for agent orchestration, and pandas/scikit-learn for data science. This skill covers the full stack from route handlers to LangGraph state machines to linting.
@@ -226,6 +233,7 @@ def analyze_node(state: State) -> dict:
 - [ ] Golden chain passed: `ruff format` → `ruff check` → `mypy` → `bandit`
 - [ ] `request_id` propagated via `contextvars` throughout request lifecycle
 - [ ] No PII logged (tokens, government IDs)
+- [ ] `bandit` and `pip-audit` run clean; no `pickle`/`yaml.load` on untrusted input
 
 ## Troubleshooting
 

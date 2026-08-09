@@ -10,7 +10,7 @@ security-expert). The review PROCESS is owned by governance/mcp-lifecycle.md.
 
 Source: OWASP LLM Top 10 v2.0 (2025) https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/tree/main/2_0_vulns (accessed 2026-07-02, CC BY-SA 4.0).
 Source: NIST AI RMF 1.0 + GenAI Profile (AI 600-1, July 2024) https://airc.nist.gov/AI_RMF (accessed 2026-07-02).
-Source: MITRE ATLAS v5.4 https://atlas.mitre.org (accessed 2026-07-02).
+Source: MITRE ATLAS release 2026.07 (format v6.0.0) https://atlas.mitre.org (accessed 2026-08-08).
 Source: NIST CSF 2.0 (Feb 2024) https://www.nist.gov/cyberframework (accessed 2026-07-02).
 
 ## OWASP LLM Top 10 v2.0 -- Ingestion Controls
@@ -48,24 +48,27 @@ for organizations complying with NIST AI RMF. This mapping is directly
 relevant to regulatory compliance for this project AI features (the AI service).
 Source: Colorado AI Act (SB 24-205), not NIST AI RMF itself.
 
-## MITRE ATLAS v5.4 -- Agentic AI Threat Governance (CORRECTED IDs)
+## MITRE ATLAS 2026.07 -- Agentic AI Threat Governance (CORRECTED IDs)
 
-ATLAS v5.4 covers 16 tactics, 84 techniques including agentic AI vectors.
+ATLAS release 2026.07 (format v6.0.0) covers 16 tactics, 178 techniques including agentic AI vectors.
 IDs below use official MITRE ATLAS names (verified against cybersecurity-skills
 repo mappings, accessed 2026-07-02).
 
 | ATLAS ID | Official name | Ingestion control |
 |----------|---------------|-------------------|
 | AML.T0051 | LLM Prompt Injection | Reject skills that fetch external data without isolation boundary |
-| AML.T0010 | ML Supply Chain Compromise | mcp-review-criteria.md stage 2 review gate (provenance + license + signature) |
+| AML.T0010 | AI Supply Chain Compromise | mcp-review-criteria.md stage 2 review gate (provenance + license + signature) |
+| AML.T0110 | AI Agent Tool Poisoning | Reject skill-defined tool descriptions/implementations with embedded instructions; tool args validated at boundary (ADR-0030) |
 | AML.T0057 | LLM Data Leakage | Discoverability invariant #8 + subagent mandatory binding |
 | AML.T0080 | AI Agent Context Poisoning | Reject skills with supremacy-override patterns; require isolation boundary |
-| AML.T0000 | ML Model Access | Scoped credentials (mcp-review-criteria.md control 3) |
+| AML.TA0000 | AI Model Access | Scoped credentials (mcp-review-criteria.md control 3) |
 
 NOTE: AML.T0051 is "LLM Prompt Injection" (not "context poisoning" -- that is
-AML.T0080). AML.T0010 is "ML Supply Chain Compromise" (not "MCP compromise").
-AML.T0057 is "LLM Data Leakage" (not "malicious agent"). These corrections
-are based on MITRE ATLAS official technique names.
+AML.T0080). AML.T0053 is "AI Agent Tool Invocation"; tool poisoning is
+AML.T0110. AML.T0010 is "AI Supply Chain Compromise" (renamed ML to AI in
+2025). AML.TA0000 is "AI Model Access"; AML.T0000 is "Search Open Technical
+Databases". AML.T0057 is "LLM Data Leakage" (not "malicious agent"). These
+corrections are based on MITRE ATLAS official technique names (release 2026.07).
 
 ## NIST CSF 2.0 -- Govern Function (new in v2.0)
 

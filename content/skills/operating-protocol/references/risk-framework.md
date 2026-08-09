@@ -68,8 +68,9 @@ techniques (pattern: mukul975/Anthropic-Cybersecurity-Skills, V):
 | AML.T0051 | LLM Prompt Injection | Initial access via crafted input |
 | AML.T0051.000 | Direct Prompt Injection | "ignore previous instructions" |
 | AML.T0051.001 | Indirect Prompt Injection | Poisoned tool desc / RAG chunks |
-| AML.T0053 | LLM Plugin Compromise | Tool/MCP poisoning |
-| AML.T0010 | ML Supply Chain Compromise | Malicious MCP server |
+| AML.T0053 | AI Agent Tool Invocation | Tool call execution surface |
+| AML.T0110 | AI Agent Tool Poisoning | Tool/MCP poisoning (.000/.001/.002) |
+| AML.T0010 | AI Supply Chain Compromise | Malicious MCP server |
 | AML.T0054 | LLM Jailbreak | Guardrail bypass |
 | AML.T0057 | LLM Data Leakage | System-prompt leakage |
 

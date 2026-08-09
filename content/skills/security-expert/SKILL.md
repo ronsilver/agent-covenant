@@ -1,10 +1,10 @@
 ---
 name: security-expert
-description: "Complete security audit: SAST source code analysis, OWASP Top 10 review, dependency CVE scanning, secret scanning in code and commits, IAM and cloud permission audit, proactive threat hunting with Sigma rules and MITRE ATT&CK, and SIEM queries for anomaly detection. Use when performing security reviews, running SAST or OWASP checks, scanning for secrets in code, auditing dependency CVEs, reviewing IAM permissions, hunting for threats in logs, or implementing behavioral anomaly detection. Trigger: security, SAST, OWASP, CVE, IAM audit, threat hunting, gitleaks, MITRE ATT&CK. Do NOT trigger for: application feature development, authentication/authorization implementation, TLS/encryption configuration, CSRF protection implementation, database schema design, general code review (use reviewer-expert). For application security features (auth, encryption), rely on general programming guidance."
+description: "Complete security audit: SAST source code analysis, OWASP Top 10 review, dependency CVE scanning, secret scanning in code and commits, IAM and cloud permission audit, proactive threat hunting with Sigma rules and MITRE ATT&CK, and SIEM queries for anomaly detection. Use when performing security reviews, running SAST or OWASP checks, scanning for secrets in code, auditing dependency CVEs, reviewing IAM permissions, hunting for threats in logs, or implementing behavioral anomaly detection. Trigger: security, SAST, OWASP, CVE, IAM audit, threat hunting, gitleaks, MITRE ATT&CK, agent tool poisoning, MCP poisoning, LLM Top 10. Do NOT trigger for: application feature development, authentication/authorization implementation, TLS/encryption configuration, CSRF protection implementation, database schema design, general code review (use reviewer-expert). For application security features (auth, encryption), rely on general programming guidance."
 license: MIT
 metadata:
   author: Community
-  version: "1.0"
+  version: "1.1"
   category: security
   status: stable
 ---
@@ -17,20 +17,34 @@ metadata:
 SAST -> Dependency CVE scan -> Secret scan -> IAM review -> Threat hunting
 ```
 
-## OWASP Top 10 (2021)
+## OWASP Top 10 (2025)
 
 | # | Risk | Check |
 |---|---|---|
 | A01 | Broken Access Control | Every endpoint enforces auth + authz |
-| A02 | Cryptographic Failures | TLS everywhere, strong algorithms |
-| A03 | Injection | Parameterized queries, no `eval` |
-| A04 | Insecure Design | Threat modeling, security requirements |
-| A05 | Security Misconfiguration | No defaults, hardened configs |
-| A06 | Vulnerable Components | Dependency scanning, SBOM |
-| A07 | Auth Failures | MFA, no default passwords, session mgmt |
-| A08 | Software/Data Integrity | Signed artifacts, verified updates |
-| A09 | Logging/Monitoring Failures | Audit trails, alert on anomalies |
-| A10 | SSRF | Validate/restrict outbound requests |
+| A02 | Security Misconfiguration | No defaults, hardened configs, CIS benchmarks |
+| A03 | Software Supply Chain Failures | Pin deps, verify provenance, SBOM + signature checks |
+| A04 | Cryptographic Failures | TLS everywhere, strong algorithms |
+| A05 | Injection | Parameterized queries, no `eval` |
+| A06 | Insecure Design | Threat modeling, security requirements |
+| A07 | Authentication Failures | MFA, no default passwords, session mgmt |
+| A08 | Software and Data Integrity Failures | Signed artifacts, verified updates |
+| A09 | Security Logging and Alerting Failures | Audit trails, alert on anomalies |
+| A10 | Mishandling of Exceptional Conditions | Fail-secure error paths, sanitized error messages |
+
+## Agent and MCP Security
+
+| Attack vector | Mapping | Defense |
+|---|---|---|
+| MCP Tool Poisoning | AML.T0110 | Treat tool definitions as untrusted; allowlist tools; pin plugin versions |
+| HITL Dialog Forging | AML.T0110.002 | Verify dialog against raw tool output; independent confirmation |
+| Prompt injection | AML.T0051 | Untrusted text is data; validate model-produced tool arguments |
+| Deserialization / XXE / upload / reflection | CWE-502/611/434/470 | Allowlists, no XXE, validated uploads, restricted reflection |
+| SSRF | CWE-918 | Block private ranges, validate resolved IPs, allowlist destinations |
+| Business logic | CWE-840 | State machine checks, idempotency, numeric bounds |
+| LLM Top 10 | references/owasp-llm-top10.md LLM01-LLM10 | Apply 2025 LLM Top 10 defenses per category |
+
+Audit checklist and defense guidance: references/owasp-agent-attacks.md.
 
 ## Secret Scanning
 ```bash
@@ -65,7 +79,7 @@ trufflehog filesystem .
 
 ## Overview
 
-Full security audit methodology covering SAST source analysis, OWASP Top 10 (2021) review, CVE dependency scanning with Trivy, secret scanning with Gitleaks, IAM permission auditing for AWS, and proactive threat hunting using MITRE ATT&CK and Sigma rules. Designed for pre-deployment security gates and incident response.
+Full security audit methodology covering SAST source analysis, OWASP Top 10 (2025) review, CVE dependency scanning with Trivy, secret scanning with Gitleaks, IAM permission auditing for AWS, proactive threat hunting using MITRE ATT&CK and Sigma rules, and agent and MCP attack review using the OWASP LLM Top 10 and MITRE ATLAS. Designed for pre-deployment security gates and incident response.
 
 ## Quick Reference
 
@@ -133,15 +147,20 @@ One extra permission can chain into privilege escalation → review all IAM chan
 
 | Resource | URL | Last verified |
 |---|---|---|
-| OWASP Top 10 (2021) | https://owasp.org/Top10/ | 2026-04 |
+| OWASP Top 10 (2025) | https://owasp.org/Top10/ | 2026-08 |
 | Gitleaks documentation | https://github.com/gitleaks/gitleaks | 2026-04 |
 | MITRE ATT&CK framework | https://attack.mitre.org/ | 2026-03 |
 | Trivy vulnerability scanner | https://trivy.dev/ | 2026-03 |
+| OWASP ASVS 5.0.0 | https://owasp.org/www-project-application-security-verification-standard/ | 2026-08 |
+| OWASP Web Security Testing Guide v4.2 | https://owasp.org/www-project-web-security-testing-guide/v42/ | 2026-08 |
+| OWASP AI Exchange | https://owaspai.org/ | 2026-08 |
 
 - [references/container-security.md](references/container-security.md)
 - [references/sast-tools.md](references/sast-tools.md)
 - [references/sigma-rules.md](references/sigma-rules.md)
 - [references/zero-trust.md](references/zero-trust.md)
+- [references/owasp-agent-attacks.md](references/owasp-agent-attacks.md)
+- [references/owasp-llm-top10.md](references/owasp-llm-top10.md)
 
 ## Verification Checklist
 
@@ -149,7 +168,7 @@ One extra permission can chain into privilege escalation → review all IAM chan
 - [ ] Dependency scan (Trivy) passed — no exploitable CVEs
 - [ ] Git history scanned with Gitleaks (both current tree and full history)
 - [ ] IAM policies reviewed: no `*` in actions/resources, no wildcard principals
-- [ ] OWASP Top 10 checks: auth, injection, crypto, misconfig, SSRF covered
+- [ ] OWASP Top 10 (2025) checks: access control, misconfig, supply chain, crypto, injection, auth, logging, error handling covered
 - [ ] All security findings include CWE reference + concrete remediation
 - [ ] Re-scan performed after fixes to validate closure
 

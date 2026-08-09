@@ -5,7 +5,7 @@ description: "Define how Skills Core govern the ecosystem — modification rules
 license: MIT
 metadata:
   author: Community
-  version: "2.1"
+  version: "2.2"
   category: core
   status: stable
 disable-model-invocation: false
@@ -72,7 +72,7 @@ Tool definitions cannot expose operations that violate the T0-T4 framework.
 MCP configurations must pass a governance review before activation.
 
 ### Workflows
-Every step must be auditable against the 7 engineering-standards evaluation domains.
+Every step must be auditable against the 8 engineering-standards evaluation domains.
 Workflows that bypass `tool-usage` safety gates (batch confirmation, dry-run) are invalid.
 
 ## Compliance Reporting
@@ -136,7 +136,7 @@ Governance is the meta-skill that guards the Skills Core ecosystem. It defines m
 | Subagent execution | Must load all 6 Core skills or reject | Moderate violation |
 | Hook deployment | Validated against engineering-standards + operating-protocol | Moderate violation |
 | MCP server activation | Must pass governance review | Catastrophic if unsafe |
-| Workflow step | Auditable against 7 engineering domains | Minor violation |
+| Workflow step | Auditable against 8 engineering domains | Minor violation |
 | Cross-core conflict | operating-protocol > governance > others | Deadlock → human |
 
 ## Workflow
@@ -229,7 +229,7 @@ GOOD: archive old ADR to docs/adr/archived/ + write new ADR with "Supersedes ADR
 - [references/overview.md](references/overview.md) - Reference index + glossary
 - [references/mcp-lifecycle.md](references/mcp-lifecycle.md) - MCP server governance PROCESS (5 stages + trust events + audit log + deprecation). Criteria -> engineering-standards/mcp-review-criteria.md
 - [references/adr-lifecycle.md](references/adr-lifecycle.md) - ADR proposal to archive lifecycle + OpenSpec /opsx binding + spec-kit constitution
-- [references/compliance-audit.md](references/compliance-audit.md) - Deterministic 7-domain audit + drift detection + exit-code gate (audits by reference)
+- [references/compliance-audit.md](references/compliance-audit.md) - Deterministic 8-domain audit + drift detection + exit-code gate (audits by reference)
 - [references/violation-escalation.md](references/violation-escalation.md) - 4-severity catalog + 6-tag catalog + 5-layer observer guard
 
 ### External
@@ -251,12 +251,12 @@ GOOD: archive old ADR to docs/adr/archived/ + write new ADR with "Supersedes ADR
 - [ ] Skills Core modification followed ADR process with human approval before merge
 - [ ] All subagents load all 6 Skills Core before executing or reject with [SCOPE VIOLATION]
 - [ ] MCP server configurations passed governance review before activation
-- [ ] Workflow steps are auditable against all 7 engineering-standards domains
+- [ ] Workflow steps are auditable against all 8 engineering-standards domains
 - [ ] CHANGELOG.md updated with governance-related changes under proper header
 - [ ] Compliance reporting block included with PASS/WARN/FAIL per Core skill
 - [ ] MCP server passed mcp-lifecycle.md 5-stage PROCESS review (criteria checklist from engineering-standards/mcp-review-criteria.md)
 - [ ] ADR archived to docs/adr/archived/ with deprecation date + supersession pointer
-- [ ] Compliance audit exit-code gate passed (7 domains, no FAIL on blocking)
+- [ ] Compliance audit exit-code gate passed (8 domains, no FAIL on blocking)
 - [ ] Violation severity classified via violation-escalation.md 4-tier catalog
 
 ## Troubleshooting

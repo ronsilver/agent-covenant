@@ -16,7 +16,7 @@ Direct modification without ADR is BLOCKED.
 - Subagents: MUST load 6 Core skills as precondition (note: plus skill-router as mandatory domain = 7 boot skills) or reject task with `[SCOPE VIOLATION]`
 - Hooks: validate against engineering-standards + operating-protocol before deploy
 - MCP servers: tools MUST NOT violate T0-T4 framework
-- Workflows: every step auditable against 7 engineering evaluation domains
+- Workflows: every step auditable against 8 engineering evaluation domains
 
 ## Compliance - MANDATORY
 Every change MUST include compliance block:

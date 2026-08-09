@@ -172,9 +172,9 @@ terraform validate && tflint && checkov -d . && trivy config .
 
 ## References
 
-- [Terraform Documentation](https://developer.hashicorp.com/terraform/docs) · last_verified: 2025-05
-- [checkov — Infrastructure Security](https://www.checkov.io/) · last_verified: 2025-05
-- [trivy — Vulnerability Scanning](https://trivy.dev/latest/) · last_verified: 2025-05
+- [Terraform Documentation](https://developer.hashicorp.com/terraform/docs) · last_verified: 2026-08-08
+- [checkov — Infrastructure Security](https://www.checkov.io/) · last_verified: 2026-08-08
+- [trivy — Vulnerability Scanning](https://trivy.dev/latest/) · last_verified: 2026-08-08
 
 - [references/module-patterns.md](references/module-patterns.md)
 

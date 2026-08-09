@@ -132,6 +132,13 @@ func TestProcessItem(t *testing.T) {
 - NEVER `go fmt || true` — stop on lint failure
 - NEVER hardcode secrets — use env/config with secrets manager
 
+## Security
+
+- ALWAYS run `gosec` in CI and `govulncheck` for dependency CVEs (supply chain, OWASP A03)
+- NEVER allow SSRF (CWE-918): validate and allowlist all URLs passed to HTTP clients
+- NEVER deserialize untrusted bytes into structs (CWE-502) — decode with strict schemas only
+- ALWAYS pin direct and transitive dependencies; review `go mod graph` for drift
+
 ## Overview
 
 Go microservices in this project use Gin for HTTP, gRPC+Protobuf for internal RPC, GORM/pgx for data access, and OpenTelemetry for observability. The `example.org` library suite provides shared infrastructure across 20+ services.
@@ -228,6 +235,7 @@ lint:
 - [ ] gRPC protos pass `buf lint` and `buf breaking` checks
 - [ ] OpenTelemetry spans created with `RecordError` on all error paths
 - [ ] Table-driven tests written with `go test -race ./...` passing
+- [ ] `gosec` and `govulncheck` run clean in CI (no HIGH/Critical findings)
 
 ## Troubleshooting
 

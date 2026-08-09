@@ -5,7 +5,7 @@ description: "Apply engineering quality standards for architecture, security, pe
 license: MIT
 metadata:
   author: Community
-  version: "2.2"
+  version: "2.3"
   category: core
   status: stable
 disable-model-invocation: false
@@ -204,7 +204,7 @@ jobs:
 ### External
 
 - Google Engineering Practices: https://google.github.io/eng-practices/ (last_verified: 2026-05)
-- OWASP Top 10: https://owasp.org/www-project-top-ten/ (last_verified: 2026-05)
+- OWASP Top 10 (2025): https://owasp.org/Top10/ (last_verified: 2026-08-08)
 - 12 Factor App: https://12factor.net/ (last_verified: 2026-05)
 - agent-skills-eval (with_skill vs without_skill): https://github.com/darkrishabh/agent-skills-eval (last_verified: 2026-06)
 - OpenSpec artifact-guided workflow: https://github.com/Fission-AI/OpenSpec (last_verified: 2026-06)

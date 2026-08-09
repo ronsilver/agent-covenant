@@ -58,6 +58,13 @@ Cooldown: 300s minimum between scale events
 - ALWAYS set timeouts on every outbound call
 - ALWAYS plan for graceful degradation (what degrades, not what fails)
 
+## Security
+
+- ALWAYS rate limit per client as API security (OWASP API4 Unrestricted Resource Consumption, API10 Unsafe Consumption of APIs)
+- ALWAYS return 429 with `Retry-After` and shed load before overload causes DoS
+- ALWAYS protect against DoS: bounded queues, circuit breakers, connection limits
+- ALWAYS validate and cap request sizes and concurrency at the edge
+
 ## Overview
 
 Scalability in this project means elastic systems that handle traffic spikes (peak traffic) without degradation and absorb failures without cascading. This skill covers horizontal scaling via sharding and consistent hashing, distributed caching (Redis Cluster, CDN), async decoupling via message queues (SQS, Kafka), resilience patterns (circuit breakers, bulkheads, retries), auto-scaling based on real-time metrics, and systematic elimination of single points of failure.
@@ -151,6 +158,7 @@ producer gets 429 and must retry with backoff.
 - [ ] Graceful degradation plan documented (what degrades, what stays at full capacity)
 - [ ] No shared database across services (no contention)
 - [ ] Queues bounded with dead letter handling and back-pressure
+- [ ] Per-client rate limiting returns 429 + `Retry-After`; DoS protections (bounded queues, caps) active
 
 ## Troubleshooting
 

@@ -171,7 +171,7 @@
       "input": "Map the OWASP LLM Top 10 v2.0 risk LLM03 (Supply Chain) to the correct ingestion control and identify the correct MITRE ATLAS technique ID for MCP server poisoning.",
       "expected_behaviors": [
         "maps LLM03 to supply-chain.md SC-15 + mcp-review-criteria.md + governance/mcp-lifecycle.md (PROCESS)",
-        "identifies AML.T0010 as ML Supply Chain Compromise (NOT 'MCP compromise')",
+        "identifies AML.T0010 as AI Supply Chain Compromise (NOT 'MCP compromise')",
         "references framework-mapping.md OWASP table",
         "distinguishes ingestion control (this skill) from runtime defense (operating-protocol)",
         "distinguishes criteria (this file) from process (governance)"

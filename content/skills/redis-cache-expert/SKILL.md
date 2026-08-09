@@ -71,6 +71,13 @@ return deserialize(value)
 - NEVER use Redis as primary store for transactional data → PostgreSQL is SoT
 - ALWAYS handle `ConnectionError` / `TimeoutError` with fallback to source
 
+## Security
+
+- NEVER deserialize cached blobs from outside the service (CWE-502) — only decode own-service data
+- ALWAYS use Redis ACLs — never run as default user with full permissions
+- ALWAYS enable TLS for Redis transport and require auth (ACL user)
+- ALWAYS namespace keys per service to prevent cross-service access
+
 ## Overview
 
 Design and implement Redis caching strategies for cloud-native services including cache-aside, write-through, and write-behind patterns. Covers data structure selection (String, Hash, List, Set, Sorted Set), connection pooling, TTL management, and cache invalidation. Includes troubleshooting for cache stampede, hot-key issues, and memory eviction.
@@ -190,6 +197,7 @@ redis.setex("user:123", 300, json.dumps({"role": "admin", "permissions": ["read"
 - [ ] Fallback to source implemented on `ConnectionError` / `TimeoutError`
 - [ ] No PII cached without encryption
 - [ ] Redis is not used as primary store for transactional data
+- [ ] Only own-service blobs deserialized; ACLs and TLS enforced on Redis
 
 ## Troubleshooting
 

@@ -50,7 +50,7 @@ Before executing any mutation operation (T2+), execute this internal checklist:
 
 - `operating-protocol`: Is the task classified in T0-T4?
 - `governance`: Is the operation within allowed scope?
-- `engineering-standards`: Does it comply with the 7 evaluation domains?
+- `engineering-standards`: Does it comply with the 8 evaluation domains?
 - `context-management`: Is context within the safe threshold?
 - `token-efficiency`: Was the correct model selected for this task?
 
@@ -107,6 +107,7 @@ Read BEFORE Edit/Write — always.
 - [ ] Response limits: pagination + truncation with steering message
 - [ ] Params unambiguous (`user_id` not `user`)
 - [ ] Errors actionable: `Error: <what>. Fix: <how>.` (one line)
+- [ ] Arg validation: schema-validate args at the tool boundary; reject unknown/extra args (see engineering-standards Tool-Boundary Argument Validation)
 - [ ] Evaluated on ≥5 real task examples
 
 → Full ACI checklist + evaluation: [references/aci-checklist.md](references/aci-checklist.md)

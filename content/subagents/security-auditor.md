@@ -142,15 +142,15 @@ NEVER proceed to step 1 until all 7 are loaded. Domain skills listed under "Skil
 | ID  | Category                  | Detection focus                            | Typical fix                                |
 | --- | ------------------------- | ------------------------------------------ | ------------------------------------------ |
 | A01 | Broken Access Control     | Missing authz checks, path traversal, IDOR | Enforce RBAC, validate ownership           |
-| A02 | Cryptographic Failures    | Hardcoded secrets, weak TLS, no hashing    | Use KMS, TLS 1.3, bcrypt/Argon2            |
-| A03 | Injection                 | SQL, NoSQL, OS command, LDAP injection     | Parameterized queries, input validation    |
-| A04 | Insecure Design           | No threat modeling, missing rate limits    | Threat model, rate limiting, safe defaults |
-| A05 | Security Misconfiguration | Default creds, debug endpoints, open S3    | Harden configs, CIS benchmarks             |
-| A06 | Vulnerable Components     | Outdated deps with known CVEs              | Dependency audit, patch management         |
-| A07 | ID and Auth Failures      | Weak passwords, session fixation, no MFA   | OAuth2/OIDC, MFA, secure sessions          |
-| A08 | Data Integrity Failures   | No signatures, unsigned software           | Sign artifacts, verify signatures          |
-| A09 | Logging Failures          | No audit logs, logs with secrets           | Immutable logs, no secrets/PII             |
-| A10 | SSRF                      | Server-side requests to internal hosts     | URL allowlists, network segmentation       |
+| A02 | Security Misconfiguration | Default creds, debug endpoints, open S3    | Harden configs, CIS benchmarks             |
+| A03 | Software Supply Chain Failures | Unpinned deps, unsigned artifacts, no SBOM | SBOM + provenance, pin digests, verify signatures |
+| A04 | Cryptographic Failures    | Hardcoded secrets, weak TLS, no hashing    | Use KMS, TLS 1.3, bcrypt/Argon2            |
+| A05 | Injection                 | SQL, NoSQL, OS command, LDAP injection     | Parameterized queries, input validation    |
+| A06 | Insecure Design           | No threat modeling, missing rate limits    | Threat model, rate limiting, safe defaults |
+| A07 | Authentication Failures   | Weak passwords, session fixation, no MFA   | OAuth2/OIDC, MFA, secure sessions          |
+| A08 | Software and Data Integrity Failures | No signatures, unsigned software, tampered updates | Sign artifacts, verify signatures, verify update chains |
+| A09 | Security Logging and Alerting Failures | No audit logs, logs with secrets, no alerting | Immutable logs, no secrets/PII, alert on anomalies |
+| A10 | Mishandling of Exceptional Conditions | Unhandled errors leak internals, fail-open paths | Fail-secure handlers, sanitized error messages |
 
 ## SAST command table
 

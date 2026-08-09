@@ -62,6 +62,13 @@ pt-online-schema-change \
 - NEVER disable `sql_mode` strict mode (`STRICT_TRANS_TABLES`)
 - NEVER use `SELECT *` in production queries (column drift breaks clients)
 
+## Security
+
+- ALWAYS enforce TLS (ssl-mode=REQUIRED) for client connections — never plaintext auth
+- ALWAYS grant least-privilege roles per service — never root or wildcard grants
+- ALWAYS use parameterized queries to prevent SQL injection (OWASP 2025 A05 Injection)
+- ALWAYS encrypt backups and enable KMS/CMK encryption for RDS/Aurora volumes
+
 ## Overview
 
 MySQL (InnoDB) is a transactional relational database for production workloads. This skill covers InnoDB tuning (buffer pool, redo log, flush methods), replication topology (async, semi-sync, Group Replication, Aurora), online schema changes via pt-online-schema-change, query optimization through EXPLAIN plan analysis, and AWS-managed MySQL deployment (RDS, Aurora).
@@ -141,6 +148,7 @@ cursor.execute("SELECT id, quantity, status FROM items")
 - [ ] Replication topology chosen and verified (async/semi-sync/group per requirements)
 - [ ] No MyISAM tables in production (all InnoDB for ACID compliance)
 - [ ] `SELECT *` eliminated from production queries (explicit column lists)
+- [ ] TLS required on all connections; least-privilege roles; parameterized queries only
 
 ## Troubleshooting
 

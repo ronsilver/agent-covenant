@@ -158,6 +158,12 @@ Backend:
 - ALWAYS `helmet()` for security headers
 - ALWAYS validate request bodies with zod before processing
 
+## Security
+
+- ALWAYS configure helmet with CSP, SRI on scripts/styles, `SameSite` cookies and `HttpOnly` flags
+- ALWAYS run `eslint-plugin-security` as part of the linting golden chain
+- ALWAYS run `npm audit` (or `pnpm audit`) in CI; block HIGH/Critical CVEs (OWASP A03)
+
 ## Overview
 
 Full-stack TypeScript development for cloud-native covering Next.js 14 App Router frontend, Node.js (Express/Fastify) backend APIs, state management with Zustand and TanStack Query, and testing with Vitest/Jest + React Testing Library + MSW. Includes Server vs Client Component patterns, form validation with React Hook Form + Zod, and ESLint/Prettier/tsc linting pipeline.
@@ -233,6 +239,7 @@ function processEntry(data: unknown) {
 - [ ] Request bodies validated with Zod before processing in backend handlers
 - [ ] Loading, error, and empty states handled in all components
 - [ ] Structured logger used (not `console.log` in production)
+- [ ] helmet CSP/SRI/SameSite/HttpOnly configured; `eslint-plugin-security` and `npm audit` clean
 
 ## Troubleshooting
 
