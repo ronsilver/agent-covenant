@@ -140,7 +140,7 @@ PASS: Security checklist: "Is this new route authenticated? Are inputs validated
 | Resource | URL | Last verified |
 |---|---|---|
 | Google Code Review Guide | https://google.github.io/eng-practices/review/ | 2025-05 |
-| OWASP Top 10 (2021) | https://owasp.org/www-project-top-ten/ | 2025-05 |
+| OWASP Top 10 (2025) | https://owasp.org/Top10/ | 2026-08 |
 | GitHub PR Review Docs | https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes | 2025-05 |
 | CWE Common Weakness Enumeration | https://cwe.mitre.org/ | 2025-05 |
 

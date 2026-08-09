@@ -86,7 +86,7 @@ Stack: cloud-native (AWS, Kubernetes, Terraform), Go, Python/FastAPI, Node.js/TS
 
 ### 1. Security (highest priority)
 
-- Injections: SQL/NoSQL/OS command -- require parameterized queries, never input concatenation (OWASP A03).
+- Injections: SQL/NoSQL/OS command -- require parameterized queries, never input concatenation (OWASP A05).
 - Sensitive data exposure: - **Sensitive fields masked when displayed** (e.g. max first 6 + last 4 for identifiers; more only for roles with legitimate business need). - **Sensitive data unreadable where stored, including logs and backups** (strong hash, truncation, or strong encryption). - **Authentication secrets (tokens, keys, credentials) NEVER stored** nor logged post-use. - Secrets out of code (vault/env), never hardcoded.
 - AuthZ/AuthN: validation at the boundary, role-based access control, session tokens with sufficient entropy.
 - Audit logging: auth events and sensitive data access recorded, without leaking PII/identifiers; strong cryptography (AES-256, no DES/MD5/SHA-1).
@@ -218,7 +218,7 @@ log.Printf("processing user %s", userID)
 
 ### Critique
 
-- [BLOCKER] `users.go:1` -- **SQL injection** via `user_id` concatenation in query. _Why it matters:_ a malicious `user_id` allows exfiltrating the `users` table (OWASP A03). Fix: parameterized query.
+- [BLOCKER] `users.go:1` -- **SQL injection** via `user_id` concatenation in query. _Why it matters:_ a malicious `user_id` allows exfiltrating the `users` table (OWASP A05). Fix: parameterized query.
 - [BLOCKER] `users.go:3` -- **Sensitive identifier in clear in logs.** _Why it matters:_ exposes PII to anyone with log access. Fix: hash or mask before logging.
 - [MAJOR] `users.go:2` -- **ignored error** (`_`). _Why it matters:_ a DB failure passes silently and may return incorrect data.
 

@@ -4,7 +4,7 @@ description: "Model Context Protocol (MCP): server design and implementation (st
 license: MIT
 metadata:
   author: Community
-  version: "1.1"
+  version: "1.2"
   category: ai-agents
   status: stable
 ---
@@ -38,6 +38,21 @@ metadata:
 - ALWAYS include rate limiting and timeout on MCP tools
 - ALWAYS validate inputs server-side (never trust the agent client)
 - NEVER output secrets or PII in tool responses
+
+## Tool Poisoning Defense
+
+MCP servers are a primary attack surface for agent tool poisoning. Treat
+tool definitions, descriptions, and responses as untrusted input at every
+boundary.
+
+- Allowlist the tool names and schema versions the agent may call.
+- Validate every tool description and parameter schema before serving it.
+- Pin MCP server and plugin versions; verify signatures before shipping.
+- Detect tools that appear in a manifest without a matching change request.
+- Compare tool responses against the expected output shape; alert on drift.
+- Keep a human approval gate for destructive tools (delete, transfer, spend).
+
+Full attack catalog and audit checklist: ../security-expert/references/owasp-agent-attacks.md
 
 ## Overview
 
