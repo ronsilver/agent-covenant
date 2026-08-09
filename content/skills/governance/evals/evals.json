@@ -34,7 +34,7 @@
     {
       "id": 7,
       "prompt": "Design the CI compliance-audit gate that blocks merge on governance failures. What domains and exit codes?",
-      "expected_output": "7 domains (compliance-audit.md): manifest, schema, quality (>=70), references, version drift, discoverability (no hidden:true), language (English-only). Exit-code gate: make validate || exit 1; make validate-quality || exit 1; make validate-skill-refs || exit 1; grep hidden:true -> exit 1; version drift loop -> exit 1 on mismatch. PASS/WARN/FAIL block: FAIL on blocking domain = CI BLOCKS merge, requires exception ADR. Pattern: affaan-m/ECC ecc status --exit-code + agent-skills eval harness drift detection."
+      "expected_output": "8 domains (compliance-audit.md): manifest, schema, quality (>=70), references, version drift, discoverability (no hidden:true), language (English-only), ATLAS canonicalization (no stale ATLAS names per ADR-0029). Exit-code gate: make validate || exit 1; make validate-quality || exit 1; make validate-skill-refs || exit 1; grep hidden:true -> exit 1; version drift loop -> exit 1 on mismatch. PASS/WARN/FAIL block: FAIL on blocking domain = CI BLOCKS merge, requires exception ADR. Pattern: affaan-m/ECC ecc status --exit-code + agent-skills eval harness drift detection."
     },
     {
       "id": 8,

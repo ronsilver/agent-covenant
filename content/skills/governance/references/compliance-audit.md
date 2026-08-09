@@ -4,7 +4,7 @@
 
 Defines the deterministic, CI-enforceable compliance audit for the skills
 ecosystem. Replaces advisory checks with exit-code gates. Audits by reference
-against the 7 engineering-standards evaluation domains -- does NOT duplicate
+against the 8 engineering-standards evaluation domains -- does NOT duplicate
 criteria.
 
 Patterns adopted from affaan-m/ECC (`ecc status --exit-code`) and
@@ -13,7 +13,7 @@ anthropics/financial-services (`scripts/check.py` drift detection).
 Source: https://github.com/affaan-m/ECC (accessed 2026-07-02, [unverified] adoption; pattern from README).
 Source: https://github.com/anthropics/financial-services (accessed 2026-07-02) -- check.py lints manifests, verifies cross-file refs, fails on skill drift.
 
-## 7-Domain Audit
+## 8-Domain Audit
 
 | Domain | Check | Pass criterion | Tool |
 |--------|-------|----------------|------|
@@ -24,6 +24,7 @@ Source: https://github.com/anthropics/financial-services (accessed 2026-07-02) -
 | 5. Version drift | manifest version == frontmatter version | grep comparison exits 0 | manual / CI script |
 | 6. Discoverability | No hidden: true in content/subagents/ | grep "hidden: true" exits 1 | grep |
 | 7. Language | content/ + docs/ English-only | grep non-English pattern exits 1 | quarterly_review.py |
+| 8. ATLAS canonicalization | No stale ATLAS names in F9 scope (content/skills/, content/rules/core/, docs/reference/skills-catalog.md, docs/SKILL_QUALITY_STANDARD.md) | grep stale names exits 1 | grep |
 
 ## PASS / WARN / FAIL Gate
 
@@ -39,7 +40,7 @@ Every audit run produces a `## Core Skills Compliance` block:
 - governance: [PASS] / [WARN] / [FAIL]
 ```
 
-- PASS: all 7 domains pass. CI proceeds.
+- PASS: all 8 domains pass. CI proceeds.
 - WARN: 1-2 domains fail non-blockingly. CI proceeds with warning.
 - FAIL: any domain fails blockingly (version drift, hidden subagent, schema
   invalid). CI BLOCKS merge. Each FAIL requires documented justification +
@@ -53,6 +54,8 @@ make validate || exit 1
 make validate-quality || exit 1
 make validate-skill-refs || exit 1
 grep -r "hidden: true" content/subagents/ && exit 1 || true
+# ATLAS canonicalization check (domain 8, F9 scope; exclude this gate file from self-match)
+grep -rnE "ML Model Access|ML Supply Chain Compromise|LLM Plugin Compromise" content/skills/ content/rules/core/ docs/reference/skills-catalog.md docs/SKILL_QUALITY_STANDARD.md --exclude="compliance-audit.md" && exit 1 || true
 # version drift check
 for skill in $(grep -E "^\s+- \w" manifest.example.yaml | sed 's/.*- //'); do
   mv=$(grep "version:" manifest.example.yaml | head -1 | sed 's/.*: //')
