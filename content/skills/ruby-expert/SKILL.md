@@ -109,6 +109,13 @@ end
 - NEVER log PII (customer names, emails, addresses) in plain text
 - NEVER store sensitive data in plain text — use a dedicated secrets/PII vault service
 
+## Security
+
+- ALWAYS run `brakeman` in CI (static security analysis) — fail on HIGH findings
+- ALWAYS use strong parameters; never permit mass-assignment of role/permission attributes
+- ALWAYS enable CSRF protection (`protect_from_forgery`) on state-changing endpoints
+- ALWAYS parameterize SQL via ActiveRecord bindings — never interpolate user input
+
 ## Overview
 
 Ruby on Rails for web application development. This skill covers ActiveRecord models and migrations, service objects, RSpec testing with Capybara, engine customization via decorators, and background job processing with Sidekiq.
@@ -205,6 +212,7 @@ booking.save(validate: false)  # Skipping validation because partial restore fro
 - [ ] No PII logged in plain text (names, emails, addresses)
 - [ ] No sensitive data stored in plain text — routed via dedicated secrets/PII vault service
 - [ ] `save(validate: false)` only used with explicit documented reason
+- [ ] `brakeman` clean; strong parameters, CSRF protection, no mass-assignment exposure
 
 ## Troubleshooting
 

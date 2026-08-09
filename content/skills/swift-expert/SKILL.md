@@ -115,6 +115,13 @@ jobs:
 - ALWAYS tag with platform prefix: `ios/v1.2.3`
 - ALWAYS handle ARC retain cycles (weak self in closures)
 
+## Security
+
+- ALWAYS follow OWASP MASVS v2.1.0 STORAGE, CRYPTO, and NETWORK controls on iOS
+- ALWAYS store secrets and tokens in Keychain, never in UserDefaults or files
+- ALWAYS enforce App Transport Security (ATS) — no insecure HTTP exceptions without review
+- ALWAYS strip symbols and enable bitcode hardening for release builds
+
 ## Overview
 
 Swift with SwiftUI for native iOS client SDK development. This skill covers SDK packaging via CocoaPods/SPM, async/await networking, Obj-C bridge compatibility, Fastlane CI/CD, and code signing with Fastlane Match.
@@ -198,6 +205,7 @@ PASS: GitHub Actions with MATCH_PASSWORD and MATCH_GIT_URL secrets
 - [ ] Release done via CI only (not local machine)
 - [ ] Git tag includes platform prefix: `ios/v1.2.3`
 - [ ] No hardcoded API keys or endpoints in shipped code
+- [ ] MASVS v2.1.0 STORAGE/CRYPTO/NETWORK controls reviewed; Keychain used for secrets; ATS enforced
 
 ## Troubleshooting
 

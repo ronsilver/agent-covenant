@@ -4,7 +4,7 @@ description: "Enterprise development with Java 17+ and Spring Boot 3: REST contr
 license: MIT
 metadata:
   author: Community
-  version: "1.0"
+  version: "1.1"
   category: backend
   status: stable
 ---
@@ -98,12 +98,18 @@ Stop on first failure. Never skip in CI.
 - NEVER business logic in `@RestController`
 - NEVER `@Transactional` on controller methods — service layer only
 - NEVER `double`/`float` for precise decimal values — ALWAYS `BigDecimal`
-- ALWAYS validate inputs with `@Valid` + Bean Validation annotations
+- ALWAYS validate inputs with `@Valid` + Bean Validation annotations (OWASP 2025 A05 Injection)
 - ALWAYS use `Optional<T>` for nullable repository returns
-- ALWAYS add `@ControllerAdvice` — never return raw exceptions
+- ALWAYS add `@ControllerAdvice` — never return raw exceptions (OWASP 2025 A10 Mishandling of Exceptional Conditions)
 - ALWAYS use parameterized JPQL — never string concat in queries
 - NEVER log passwords, tokens, sensitive data
 - NEVER block request threads with sync long-running tasks — use @Async
+
+## Security
+
+- ALWAYS scan dependencies in CI with OWASP dependency-check (OWASP 2025 A03 Supply Chain)
+- ALWAYS validate all inputs at the boundary with `@Valid` + Bean Validation (OWASP 2025 A05 Injection)
+- ALWAYS map exceptions via `@ControllerAdvice` to sanitized responses (OWASP 2025 A10 Mishandling)
 
 ## Overview
 
@@ -176,6 +182,7 @@ PASS: Always use `BigDecimal` for money
 - [ ] `@ControllerAdvice` class handles all exceptions (no raw exceptions returned)
 - [ ] Inputs validated with `@Valid` and Bean Validation annotations
 - [ ] Repository methods return `Optional<T>` for nullable queries
+- [ ] Dependency scan (OWASP dependency-check) clean; `@Valid` and `@ControllerAdvice` labeled with 2025 taxonomy
 
 ## Troubleshooting
 

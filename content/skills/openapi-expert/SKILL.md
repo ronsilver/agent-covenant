@@ -1,6 +1,6 @@
 ---
 name: openapi-expert
-description: "Formal specification of REST APIs with OpenAPI 3.x: endpoint design, request/response schemas, versioning, pagination (cursor/offset), RFC 7807 error handling, stub generation, contract validation, and interactive documentation with Swagger UI/Redoc. Use when designing REST API contracts, writing OpenAPI specs, generating API stubs, configuring spectral linting, or documenting APIs with Swagger UI. Trigger: OpenAPI spec, REST API design, spectral linting, RFC 7807, cursor pagination, Swagger UI. Do NOT trigger for: gRPC/Protobuf API design, internal service-to-service RPC contracts, GraphQL schema design."
+description: "Formal specification of REST APIs with OpenAPI 3.x: endpoint design, request/response schemas, versioning, pagination (cursor/offset), RFC 7807 error handling, stub generation, contract validation, and interactive documentation with Swagger UI/Redoc. Use when designing REST API contracts, writing OpenAPI specs, generating API stubs, configuring spectral linting, or documenting APIs with Swagger UI. Trigger: OpenAPI spec, REST API design, spectral linting, RFC 7807, cursor pagination, Swagger UI, API security, OWASP API. Do NOT trigger for: gRPC/Protobuf API design, internal service-to-service RPC contracts, GraphQL schema design."
 license: MIT
 metadata:
   author: Community
@@ -111,6 +111,38 @@ paths:
 - ALWAYS include `request_id` in error responses for debugging
 - ALWAYS version APIs (never change contract without version bump)
 - NEVER remove or rename fields in active API versions (additive only)
+
+## Security
+
+### OWASP API Security Top 10 (2023)
+
+- API1 Broken Object Level Authorization (BOLA)
+- API2 Broken Authentication
+- API3 Broken Property Level Authorization (BOPLA)
+- API4 Unrestricted Resource Consumption
+- API5 Broken Function Level Authorization (BFLA)
+- API6 Unrestricted Access to Sensitive Business Flows
+- API7 Server Side Request Forgery (SSRF)
+- API8 Security Misconfiguration
+- API9 Improper Inventory Management
+- API10 Unsafe Consumption of APIs
+
+### Contract Security
+
+- ALWAYS define `securitySchemes` (OAuth2 or JWT bearer) and apply to every path
+- ALWAYS return 429 with `Retry-After` header for rate-limited responses (API4)
+- NEVER document or expose endpoints without auth requirements (API5, API9)
+
+```yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+```
 
 ## Overview
 

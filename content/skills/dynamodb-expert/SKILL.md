@@ -100,6 +100,13 @@ func handler(ctx context.Context, event events.DynamoDBEvent) error {
 - ALWAYS set TTL on ephemeral data (sessions, tokens)
 - NEVER store PII in PK/SK (visible in all GSIs)
 
+## Security
+
+- ALWAYS grant IAM least-privilege per table and per action — never `dynamodb:*` on all tables
+- ALWAYS enable KMS encryption (SSE-KMS) on tables with CMK rotation
+- NEVER put PII in PK/SK or GSI keys — store hashed references, PII in encrypted attributes
+- ALWAYS restrict stream consumers via IAM conditions and validate Lambda event sources
+
 ## Overview
 
 DynamoDB is team primary NoSQL database for high-throughput, low-latency workloads. Unlike relational databases, DynamoDB design starts with access patterns, not data normalization. This skill covers single-table design, PK/SK modelling, GSI/LSI indexing, streams-based CDC, capacity planning, and cost optimization using `aws-sdk-go-v2` and `example.org/dynamodb`.
@@ -179,6 +186,7 @@ GOOD: GSI1PK = "STATUS#done#CUST#{tenant_id}" — distributes writes across part
 - [ ] TTL configured on ephemeral data (sessions, tokens)
 - [ ] No `Scan` operations in production code — all access via `Query` with PK
 - [ ] PII not stored in PK/SK (visible in all GSIs)
+- [ ] IAM least-privilege per table; KMS encryption enabled; PII absent from keys
 
 ## Troubleshooting
 

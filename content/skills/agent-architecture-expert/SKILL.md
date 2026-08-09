@@ -1,10 +1,10 @@
 ---
 name: agent-architecture-expert
-description: "Agentic system architecture: Anthropic patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer, autonomous agents), RAG pipelines (chunking, embeddings, hybrid search, reranking, grounding), tool design (ACI principles, poka-yoke), AWS Bedrock Agents (action groups, knowledge bases, guardrails, AgentCore), memory systems (working, short-term, long-term, episodic, semantic), and framework selection (LangGraph, CrewAI, AutoGen). Use when designing agent systems, building RAG pipelines, creating Bedrock Agents, designing tool interfaces, implementing agent memory, or choosing agentic architectures. Trigger: agent systems, RAG pipelines, Bedrock Agents. Do NOT trigger for: simple single-LLM tasks without tool use or memory requirements, multi-agent orchestration, subagent permissions, agent safety (use agent-expert). See also: agent-expert for multi-agent coordination patterns."
+description: "Agentic system architecture: Anthropic patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer, autonomous agents), RAG pipelines (chunking, embeddings, hybrid search, reranking, grounding), tool design (ACI principles, poka-yoke), AWS Bedrock Agents (action groups, knowledge bases, guardrails, AgentCore), memory systems (working, short-term, long-term, episodic, semantic), and framework selection (LangGraph, CrewAI, AutoGen). Use when designing agent systems, building RAG pipelines, creating Bedrock Agents, designing tool interfaces, implementing agent memory, or choosing agentic architectures. Trigger: agent systems, RAG pipelines, Bedrock Agents, agentic security, tool poisoning, prompt injection. Do NOT trigger for: simple single-LLM tasks without tool use or memory requirements, subagent permissions, agent safety (use agent-expert). See also: agent-expert for multi-agent coordination patterns."
 license: MIT
 metadata:
   author: Community
-  version: "1.1"
+  version: "1.2"
   category: ai-agents
   status: stable
 ---

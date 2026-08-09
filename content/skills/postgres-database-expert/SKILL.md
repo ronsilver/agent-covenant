@@ -60,7 +60,8 @@ metadata:
 
 ## Security
 Parameterized queries only | NEVER plaintext passwords | dedicated roles per service
-→ [references/security.md](references/security.md) | [references/code-patterns.md](references/code-patterns.md)
+Parameterized queries prevent SQL injection (OWASP 2025 A05) — see the OWASP SQL Injection Prevention Cheat Sheet
+→ [references/security.md](references/security.md) | [references/code-patterns.md](references/code-patterns.md) | https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
 
 ## Constraints
 - NEVER `FLOAT` for value → `BIGINT` in units
@@ -204,6 +205,7 @@ ON items(tenant_id, created_at DESC);
 - [ ] Pagination uses cursor-based pattern, not `OFFSET`
 - [ ] Queries use parameterized inputs (no string concatenation)
 - [ ] `EXPLAIN ANALYZE` run on new/modified query paths
+- [ ] Parameterized queries verified against SQL Injection Prevention Cheat Sheet (no string concat)
 
 ## Troubleshooting
 

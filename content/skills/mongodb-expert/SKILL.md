@@ -90,6 +90,13 @@ for stream.Next(ctx) {
 - ALWAYS monitor slow queries via Atlas profiler
 - NEVER store unencrypted PII/CHD in MongoDB documents
 
+## Security
+
+- NEVER concatenate user input into `$where`, `$expr`, or `$regex` — NoSQL operator injection
+- ALWAYS enable authentication and TLS for every MongoDB/DocumentDB connection
+- ALWAYS use parameterized driver APIs (filter documents) — never raw JSON strings
+- ALWAYS encrypt at rest (Atlas encryption or KMS) and rotate credentials
+
 ## Overview
 
 MongoDB Atlas is team document database for semi-structured data, flexible schemas, and high-write workloads (analytics database). This skill covers document schema design (embed vs reference), aggregation pipelines for analytics, compound and multikey index strategies, multi-document ACID transactions via sessions, change streams for CDC, and AWS DocumentDB compatibility for migration scenarios.
@@ -180,6 +187,7 @@ cursor, _ := collection.Find(ctx, bson.D{})
 - [ ] No unbounded arrays in documents (16MB doc size limit)
 - [ ] `$lookup` foreign fields indexed to prevent full collection scans
 - [ ] Change streams idempotent with `resumeAfter` token for at-least-once delivery
+- [ ] No user input in `$where`/`$expr`/`$regex`; auth + TLS enabled on all connections
 
 ## Troubleshooting
 

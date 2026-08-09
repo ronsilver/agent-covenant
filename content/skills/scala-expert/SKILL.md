@@ -127,6 +127,13 @@ class ReconciliationSpec extends AnyFlatSpec {
 - NEVER use `var` in Spark closures — serialization issues
 - ALWAYS enable AQE (`spark.sql.adaptive.enabled=true`)
 
+## Security
+
+- ALWAYS run `find-sec-bugs` (SpotBugs plugin) and `sbt-dependency-check` in CI — never scala-security
+- NEVER deserialize untrusted bytes in Spark UDFs (CWE-502) — validate before serialization
+- ALWAYS restrict Spark credentials and S3/Glue access to least privilege
+- ALWAYS scan JARs and dependency trees for CVEs before deploying jobs
+
 ## Overview
 
 Apache Spark and Scala ecosystem for distributed ETL processing: DataFrame/Dataset API, Delta Lake for ACID on S3, sbt for builds, ScalaTest for testing, and PySpark interoperability for mixed-language pipelines.
@@ -235,6 +242,7 @@ val count2 = filtered.groupBy("customer_id").count()
 - [ ] `spark.sql.adaptive.enabled` set to `true`
 - [ ] Reused DataFrames cached via `.cache()` or `.persist()`
 - [ ] `var` not used inside Spark closures (serialization-safe)
+- [ ] `find-sec-bugs` + `sbt-dependency-check` clean; UDF deserialization restricted to trusted bytes
 
 ## Troubleshooting
 

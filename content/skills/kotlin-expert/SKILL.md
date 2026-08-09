@@ -152,6 +152,13 @@ class ExampleModule(reactContext: ReactApplicationContext) :
 - NEVER store signing keys in Git — use GitHub Actions secrets
 - NEVER run instrumented tests without emulator setup step
 
+## Security
+
+- ALWAYS follow OWASP MASVS v2.1.0 STORAGE, CRYPTO, and NETWORK controls on Android
+- ALWAYS use EncryptedSharedPreferences (Keystore-backed) for sensitive data
+- ALWAYS enforce TLS with certificate pinning on network clients
+- ALWAYS minify with ProGuard/R8 and strip debug symbols from release AARs
+
 ## Overview
 
 Kotlin with Jetpack Compose for native Android client SDK development. This skill covers SDK packaging as AAR, React Native bridge modules, coroutine-based async patterns, Fastlane CI/CD, and ProGuard minification.
@@ -238,6 +245,7 @@ PASS: GitHub Actions with secrets.SIGNING_KEY_ID, secrets.SIGNING_KEY_PASSWORD
 - [ ] Release tagged with platform prefix: `android/v<major>.<minor>.<patch>`
 - [ ] Breaking API changes gated behind MAJOR version bump with migration guide
 - [ ] Instrumented tests pass on target API levels via emulator CI matrix
+- [ ] MASVS v2.1.0 STORAGE/CRYPTO/NETWORK controls reviewed; EncryptedSharedPreferences used for sensitive data
 
 ## Troubleshooting
 
