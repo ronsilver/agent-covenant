@@ -18,9 +18,19 @@ trufflehog filesystem .
 - Rotate all exposed secrets immediately
 - Add pre-commit hook to block future leaks
 
-## OWASP Top 10 Automation
+## OWASP Top 10 (2025) Automation
 | Check | Tool |
 |---|---|
-| A03 Injection | SQLMap (DAST), CodeQL (SAST) |
-| A06 Vuln Components | trivy, npm audit, OWASP Dependency Check |
-| A01 Access Control | Manual review + authorization tests |
+| A03 Software Supply Chain Failures | trivy, syft, OWASP Dependency Check |
+| A05 Injection | SQLMap (DAST), CodeQL (SAST) |
+| A01 Broken Access Control | Manual review + authorization tests |
+| A10 Mishandling of Exceptional Conditions | Error-pathing review + fail-secure tests |
+
+## Supply Chain and SBOM Tooling
+| Tool | Purpose | Command |
+|---|---|---|
+| CVE Lite CLI | Lightweight CVE lookup for the local SBOM | `cve-lite-cli --sbom sbom.json --format table` |
+| Syft | SBOM generation | `syft orders:latest -o spdx-json > sbom.json` |
+| cosign | Artifact signing and verification | `cosign sign --key cosign.key orders:latest` |
+| OWASP Dependency-Check | Dependency vulnerability analysis | `dependency-check --scan . --format JSON` |
+| CycloneDX (ECMA-424) | SBOM interchange standard consumed by Dependency-Track | `https://cyclonedx.org` |

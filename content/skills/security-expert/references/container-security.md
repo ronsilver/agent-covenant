@@ -26,6 +26,10 @@ trivy image orders:latest
 # SBOM generation
 syft orders:latest -o spdx-json > sbom.json
 
+# OWASP SBOM analysis
+curl -s -X POST -H "Content-Type: application/json" -d @sbom.json \
+  http://scanner.local/api/v1/bom
+
 # Sign image
 cosign sign --key cosign.key orders:latest
 ```
@@ -57,4 +61,4 @@ securityContext:
 | SLSA 3 | Non-falsifiable provenance, isolated builds |
 | SLSA 4 | Hermetic, reproducible, two-person review |
 
-ALWAYS generate SBOM for every release.
+ALWAYS generate SBOM for every release and push it to Dependency-Track for continuous monitoring.
