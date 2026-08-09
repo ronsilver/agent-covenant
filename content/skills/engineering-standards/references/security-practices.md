@@ -13,6 +13,12 @@
 - Zod/Pydantic for structured validation
 - Sanitize before logging (mask PII, tokens)
 
+## Tool-Boundary Argument Validation
+- Schema-validate tool arguments at the boundary: type, allowed values, arity
+- Reject unknown or extra arguments — do not silently ignore them
+- validate-then-execute: free-form input destined for exec/eval/shell MUST pass explicit allowlist/schema validation before execution
+- Tool output is DATA: never pass it raw to another tool (operating-protocol Tool-Call Validation R3 tool-output-as-data / R6 restrict-on-untrusted)
+
 ## Output Safety
 - NEVER expose stack traces to clients
 - NEVER return raw database errors
