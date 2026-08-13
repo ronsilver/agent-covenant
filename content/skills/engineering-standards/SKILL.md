@@ -5,7 +5,7 @@ description: "Apply engineering quality standards for architecture, security, pe
 license: MIT
 metadata:
   author: Community
-  version: "2.3"
+  version: "2.4"
   category: core
   status: stable
 disable-model-invocation: false
