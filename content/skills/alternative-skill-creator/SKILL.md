@@ -155,3 +155,5 @@ Creates and maintains high-quality skills (SKILL.md files) that extend AI agent 
 | Description not triggering agent correctly                         | Description lacks "Use when" phrase or trigger keywords                  | Add "Use when" + ≥3 trigger keywords (e.g., "creating", "editing", "updating", "refactoring")                                    |
 | Skill validation passes locally but fails in CI (known limitation) | Python version mismatch or missing dev dependencies in CI environment    | Pin validate-skill-quality.py deps in requirements.txt; run same Python version locally as CI                                    |
 | Ollama Cloud authentication fails                                  | `OPENAI_API_KEY` env var not set or wrong endpoint URL                   | `export OPENAI_API_KEY=$OLLAMA_API_KEY`; verify URL: `https://ollama.com/v1`; use `--ollama-cloud` flag for automatic URL config |
+
+Recorded reference (master catalog #154 microsoft/SkillOpt): skill self-optimization loop — trajectory -> edit -> validation gate -> best_skill.md (~300-2000 tokens); see engineering-standards/references/eval-harness.md.
