@@ -4,7 +4,7 @@ description: "Agentic system architecture: Anthropic patterns (prompt chaining, 
 license: MIT
 metadata:
   author: Community
-  version: "1.2"
+  version: "1.3"
   category: ai-agents
   status: stable
 ---
@@ -38,6 +38,17 @@ Create agents with FM + instructions + action groups + knowledge bases.
 
 AgentCore services: Gateway (MCP), Runtime (sandbox), Memory, Identity, Observability.
 Guardrails: content filters, PII regex, topic denial, word filters.
+
+AgentCore code interpreter (master catalog #23): enable for sandboxed code execution inside the Runtime; scope compute limits and file access per agent.
+AgentCore browser (master catalog #23): enable for sandboxed web navigation; restrict to allowlisted domains and read-only interactions unless the task requires more.
+AgentCore gateway (master catalog #23): expose a REST endpoint over the agent's MCP tools (REST to MCP bridging); put auth, rate limits, and request validation in front of the gateway.
+
+## Agentic Security
+
+Apply defense-in-depth to the architecture (master catalog #42, #39, #97):
+- RAG poisoning: validate the corpus source, sanitize ingested documents, and ground answers back to retrieval.
+- MCP abuse: treat tool definitions and responses as untrusted; allowlist tools and validate every tool argument at the boundary.
+- Excessive agency: scope tools and permissions per task; require human approval for destructive actions; add iteration and cost ceilings.
 
 ## RAG Pipeline
 

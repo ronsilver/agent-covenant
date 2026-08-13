@@ -4,7 +4,7 @@ description: "Design and implement secure, cost-optimized AWS infrastructure fol
 license: MIT
 metadata:
   author: Community
-  version: "1.0"
+  version: "1.1"
   category: cloud
   status: stable
 ---
@@ -16,7 +16,7 @@ Secure, cost-optimized AWS infrastructure: least privilege + encryption + IaC + 
 ## Core Principles
 
 1. Least Privilege: NEVER `Action: "*"` → [references/iam.md](references/iam.md)
-2. IaC only: Terraform
+2. IaC only: Terraform with modules (no CDK — AWS or CDKTF; pure HCL with reusable modules is the single IaC stance)
 3. Encryption everywhere: TLS + KMS
 4. Cost awareness: estimate first, tag all
 5. Observable by default: logs, metrics, alarms

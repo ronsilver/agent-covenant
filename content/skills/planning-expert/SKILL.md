@@ -4,7 +4,7 @@ description: "Development planning based on technical documentation: RFCs for ar
 license: MIT
 metadata:
   author: Community
-  version: "1.1"
+  version: "1.3"
   category: process
   status: stable
 ---
@@ -70,8 +70,56 @@ Decision: <what we're doing>
 Alternatives: <what we considered + why rejected>
 Consequences: <what becomes easier/harder>
 ```
+## Spec and PRD Structure
+
+When planning a spec or PRD, cover seven dimensions (master catalog #17):
+1. Objectives: the measurable outcome, not the feature list
+2. Commands: how to run, test, and deploy the thing being specified
+3. Structure: the component layout and data flow
+4. Code style: linting, formatting, and naming conventions
+5. Testing: the test strategy and acceptance criteria
+6. Boundaries: what is explicitly out of scope
+7. Verification: how the plan proves it is done
+
+## Brainstorming and Idea Refinement
+
+Divergent then convergent (master catalog #17, #20):
+1. Diverge: generate options without judging; capture every idea
+2. Converge: filter against the stated objectives and constraints
+3. Design in chunks: split the solution into reviewable chunks and refine each before assembling
+
+## Three Amigos and Shadow Areas
+
+Run the Three Amigos session (business, developer, tester) on each ambiguous requirement (master catalog #148):
+- Business: what problem is solved and for whom
+- Developer: how it is built and what it touches
+- Tester: how success is verified and what can break
+- Shadow areas: call out the parts nobody owns explicitly; assign an owner before planning proceeds
+- Challenge: every participant must challenge at least one assumption
+
+## Junior-Readable Plans
+
+A plan is junior-readable when (master catalog #20):
+- Tasks take 2-5 minutes, not half days
+- Every task names the exact file or command it touches
+- Every task has an explicit verification step
+- No implicit knowledge is required beyond the task text
+
+## Pre-change grilling protocol (mattpocock /grill-me)
+
+Mandatory pre-change interrogation (master catalog #18): grill until the human confirms intent; do not rubber-stamp.
+
+When to grill: ambiguity in the request, unclear scope, high stakes, or an unfamiliar domain. Otherwise use plain clarify: one batched question, then proceed.
+
+Question budget: 2-3 rounds maximum; after the cap, state the residual gap and stop.
+9 intent dimensions: goal, success criteria, constraints, boundaries (in/out), assumptions, risks, stakeholders, effort and impact, verification.
+
+Alignment exit criteria: the human confirms intent; the plan matches all 9 dimensions; no open question changes the approach.
+
+Anti-patterns: leading questions that steer the answer, rubber-stamp confirmation, over-grilling a trivial change past 3 rounds.
 
 ## Constraints
+
 - NEVER start coding without defined scope and success criteria
 - NEVER plan without identifying external dependencies first
 - ALWAYS document trade-offs for non-obvious decisions
