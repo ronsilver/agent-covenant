@@ -1,6 +1,6 @@
 # MCP Servers
 
-Unified Model Context Protocol server configuration for all enabled AI agents. 16 MCP servers provide domain tools for GitHub, Grafana, Atlassian, AWS, Notion, and more.
+Unified Model Context Protocol server configuration for all enabled AI agents. 12 MCP servers provide domain tools for GitHub, AWS, Context7, OpenSpec, and more.
 
 ## Configured Servers
 

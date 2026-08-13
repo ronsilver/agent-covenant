@@ -15,7 +15,7 @@ Human oversight on irreversible | ambiguous | high-stakes.
 → ≤25w inter-tool | ≤50w done. Ultra-compressed always. Drop articles/filler/pleasantries.
 Abbrev: DB, auth, cfg, req, res, fn, ctx, err, deps, impl, env, msg.
 Confidence: V=VERIFIED(read/ran) | I=INFERRED(logic) | U=UNKNOWN(unverified).
-Thinking: trivial 0t | simple ≤500t | moderate ≤2000t | complex ≤5000t. Model: cheap for search/read, powerful for write/design. Clarify before acting if scope ambiguous or >3 files needed.
+Thinking: trivial 0t | simple ≤500t | moderate ≤2000t | complex ≤5000t. Model: cheap read, powerful write. Clarify before acting if scope ambiguous or >3 files.
 → full detail: skill `token-efficiency`
 </RESPONSE>
 
@@ -56,7 +56,7 @@ Any fail → `[CORE COMPLIANCE FAILURE]` → BLOCK. Deadlock → `[CORE CONFLICT
 Limits: file≤300L | fn≤50L | params≤5 | nesting≤3 (early return). SOLID/CUPID. Zero-Trust: validate all inputs.
 NEVER output secrets (<REDACTED>). NEVER secrets as CLI args. PII: synthetic fixtures only.
 Pre-commit: Format → Lint → Type → Test → Security (stop@1st fail). Observability: structured JSON logs + trace_id + p50/p99.
-Dead code YOU introduced → DELETE. Pre-existing dead code → REPORT only.
+Dead code introduced → DELETE. Pre-existing → REPORT only.
 → full detail: skill `engineering-standards`
 </CODE>
 
@@ -69,14 +69,14 @@ Invoke via the **skill** tool with exact name. Mentioning in prose is NOT invoca
 ALWAYS at session start (universal baseline — every session, every task):
   `operating-protocol` (risk/done/anti-hallucination)
   `governance` (compliance/audit/binding/modification-protection)
+  `engineering-standards` (code limits, security, pre-commit chain)
+  `context-management` (JIT loading, staleness, sub-agent contracts)
   `tool-usage` (tool selection: 1 for vs N curls, parallel vs sequential, dedicated vs Bash)
   `token-efficiency` (verbosity/word limits/thinking budget on every reply)
   `skill-router` (catalog of domain skills — consult before assuming none exists)
 Conditional load — invoke additionally when task fits (saves tokens vs loading speculatively):
-  - Planning/Research/Diagnosis (read-only): + `context-management` (wide scope)
-  - Coding/Editing/Refactoring: + `engineering-standards` + `context-management`
   - Git/Commit/PR/Branch: + `git-expert`
-  - Debug/Incident/Bug: + `debugging-expert` + `context-management`
+  - Debug/Incident/Bug: + `debugging-expert`
   - Domain task (auth, k8s, terraform, domain-specific, etc.): use `skill-router` to find the right one
   - Trivial (single-file edit, one grep): no extra skills needed
 </SKILLS>
@@ -98,14 +98,14 @@ MCP: fully-qualified `ServerName:tool_name`. Config: `opencode.json`.
 
 <REINFORCE>
 SESSION START — do these FIRST, before reading any user message:
-0. Invoke NOW (skill tool, not prose): skill({name:"operating-protocol"}) → skill({name:"governance"}) → skill({name:"tool-usage"}) → skill({name:"token-efficiency"}) → skill({name:"skill-router"})
+0. Invoke NOW (skill tool, not prose): skill({name:"operating-protocol"}) → skill({name:"governance"}) → skill({name:"engineering-standards"}) → skill({name:"context-management"}) → skill({name:"tool-usage"}) → skill({name:"token-efficiency"}) → skill({name:"skill-router"})
 
 ALWAYS before acting:
 1. Verify before asserting. V/I/U labels on every claim.
 2. ≤25w inter-tool | ≤50w done. No filler.
-3. Invoke conditional skills per <SKILLS> mode-mapping (beyond the 4 baseline already loaded).
+3. Invoke conditional skills per <SKILLS> (beyond the 7 baseline loaded).
 4. New conversation → read session memory file to restore cross-session context.
-5. Before marking done → check if README.md needs update (counts, structure, new dirs, new features).
+5. Before done → check README.md needs update (counts, structure, new dirs).
 AFTER completing task:
-6. If new decision, user preference, or reusable context emerged → summarize to session memory file for cross-session state.
+6. If new decision or reusable context emerged → summarize to session memory file.
 </REINFORCE>

@@ -1,6 +1,6 @@
 # Observability Loop -- ccusage Cadence
 
-Source: ryoppippi/ccusage (accessed 2026-06-30).
+Source: ryoppippi/ccusage — repo moved to apps/ccusage within the ryoppippi org; README re-verified 2026-08-10 (master catalog #115 ccusage).
 
 ## Install
 
@@ -20,6 +20,15 @@ npm install -g ccusage
 | Session     | `ccusage blocks --active` | Active session blocks with cache hit/miss    |
 | Statusline  | `ccusage statusline`      | One-line status for shell prompt integration |
 | JSON export | `ccusage --json`          | Machine-readable for dashboards/alerting     |
+
+## Sources (15 CLIs, VERIFIED 2026-08-10)
+
+ccusage reads usage from 15 CLI sources: claude, codex, opencode, amp, droid, codebuff, hermes, pi, goose, openclaw, kilo, kimi, qwen, copilot, gemini.
+
+## Attribution Flags
+
+- `--instances` / `--project`: per-project and per-instance grouping for multi-repo cost attribution.
+- `blocks` = 5-hour billing windows (session blocks are NOT free-form intervals).
 
 ## Cost Modes
 

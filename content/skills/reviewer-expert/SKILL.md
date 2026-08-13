@@ -4,7 +4,7 @@ description: "Systematic code review execution: latent defect detection, test co
 license: MIT
 metadata:
   author: Community
-  version: "1.0"
+  version: "1.1"
   category: quality
   status: stable
 ---
@@ -134,6 +134,33 @@ FAIL: **Approving without checking security for new endpoints**
 "New route looks clean, approved."  # BAD: skipped input validation, auth check
 ```
 PASS: Security checklist: "Is this new route authenticated? Are inputs validated? Any SQL injection risk?"
+
+## Adversarial Verification Pass
+
+Before trusting your own review verdict, run an adversarial pass (fable-judge, master catalog #152):
+1. Re-run every claimed check yourself; do not accept the diff at face value
+2. Diff the claimed change against the actual file state
+3. Hunt for weakened tests: skipped assertions, loosened bounds, removed coverage
+4. Issue a verdict per claim: VERIFIED, CAVEATS, or REFUTED
+A REFUTED claim invalidates the review verdict; stop and re-review.
+
+## Receiving-Review Discipline
+
+When your own work is reviewed (master catalog #20):
+- Treat every comment as a question about the change, not an attack on the author
+- Separate the person from the code; engage the substance, not the tone
+- Ask for the reproduction or the failing case before pushing back
+- Adopt the fix or explain why it does not apply, in writing
+
+## Doubt-Driven Development
+
+Apply the doubt loop to every non-trivial change (master catalog #17):
+CLAIM -> EXTRACT -> DOUBT -> RECONCILE -> STOP
+1. CLAIM: state the change's guarantees explicitly
+2. EXTRACT: pull the evidence (tests, diffs, logs) that supports each claim
+3. DOUBT: try to refute the claim with counter-examples and edge cases
+4. RECONCILE: fix or weaken the claim until it survives the doubt
+5. STOP: end when the claim cannot be refuted within scope
 
 ## References
 

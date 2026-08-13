@@ -4,7 +4,7 @@ description: "LLM operationalization in production: pre-deploy cost estimation (
 license: MIT
 metadata:
   author: Community
-  version: "1.1"
+  version: "1.2"
   category: ai-agents
   status: stable
 ---
@@ -54,6 +54,18 @@ LLMs in production require rigorous operational discipline beyond prompt enginee
 | PII filtering | Pre-LLM scrubber + post-LLM scan | regulatory compliance |
 | Drift detection | Embedding sim. + alert threshold | Catch prompt regressions |
 | Max tokens cap | Per-task limits | 20-40% cost reduction |
+
+## Prompt Token Audit (9 dimensions)
+
+Before shipping a prompt, extract and verify 9 intent dimensions: task, input, output, constraints, context, audience, memory, success-criteria, examples. Strip every word that does not change the output. Cap clarifying questions at 3 per round. For thinking models (o3/o4 class): short clean instructions, NEVER add chain-of-thought scaffolding.
+
+## Humanized-Output Quality Gate
+
+Voice calibration: collect a 2-3 paragraph writing sample from the target author and match its rhythm and word choice. Final "obviously AI generated" audit pass, then a second rewrite if flagged. No-fabrication rule: never add facts, dates, or citations absent from the source material.
+
+## Multi-Source Usage Monitoring
+
+Track usage across the 15 CLI sources (claude, codex, opencode, amp, droid, codebuff, hermes, pi, goose, openclaw, kilo, kimi, qwen, copilot, gemini) with ccusage cadences: daily, weekly, monthly, session, blocks. Use `--instances` and `--project` for attribution; remember `blocks` = 5-hour billing windows.
 
 ## Workflow
 

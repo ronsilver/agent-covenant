@@ -4,7 +4,7 @@ description: "Complete security audit: SAST source code analysis, OWASP Top 10 r
 license: MIT
 metadata:
   author: Community
-  version: "1.1"
+  version: "1.2"
   category: security
   status: stable
 ---
@@ -45,6 +45,16 @@ SAST -> Dependency CVE scan -> Secret scan -> IAM review -> Threat hunting
 | LLM Top 10 | references/owasp-llm-top10.md LLM01-LLM10 | Apply 2025 LLM Top 10 defenses per category |
 
 Audit checklist and defense guidance: references/owasp-agent-attacks.md.
+
+## Agent Skill Ingestion and LLM Red-Team
+
+Skill ingestion: apply the condensed attack-pattern catalog (references/agent-attack-patterns.md, master catalog #97) to any new skill; assign a risk score (0-100) and a SAFE / CAUTION / DO_NOT_INSTALL verdict; vet MCP servers with the 5-step process (provenance, code review, permissions, Docker sandbox, monitoring).
+
+LLM red-team tooling: `garak` for automated LLM vulnerability scanning (master catalog #42) and Microsoft PyRIT for agentic red-team workflows (master catalog #39). Run each test inside the written scope of an authorized engagement; use the 7-Question Gate before every attack step.
+
+7-Question Gate (per attack step): who authorized the target? is it in the written inventory? is the action inside the time window? are excluded hosts avoided? is the impact reversible? is evidence capture in place? is a rollback defined? Any NO stops the step.
+
+Evidence hygiene: capture timestamps, tool output, and hashes as the run progresses; keep findings in a password-protected vault; purge test artifacts at closeout.
 
 ## Secret Scanning
 ```bash
@@ -160,6 +170,7 @@ One extra permission can chain into privilege escalation → review all IAM chan
 - [references/sigma-rules.md](references/sigma-rules.md)
 - [references/zero-trust.md](references/zero-trust.md)
 - [references/owasp-agent-attacks.md](references/owasp-agent-attacks.md)
+- [references/agent-attack-patterns.md](references/agent-attack-patterns.md)
 - [references/owasp-llm-top10.md](references/owasp-llm-top10.md)
 
 ## Verification Checklist

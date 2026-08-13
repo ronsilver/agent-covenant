@@ -159,3 +159,20 @@ duplicate runtime or prompt-design controls.
 - Deep SAST / OWASP Top 10 (web) / CVE / MITRE ATT&CK: see security-expert
 - PCI DSS / CDE / PAN tokenization: see security-expert
 - This file = INGESTION-TIME ONLY. Does not own runtime or prompt design.
+
+## Skillspector Ingestion Patterns (master catalog #97)
+
+Map the condensed agent-attack-pattern catalog (security-expert/references/agent-attack-patterns.md) to ingestion-time checks:
+
+| Pattern family | Ingestion check |
+|---|---|
+| Unicode and homoglyph (TP2) | Scan skill text for zero-width characters and lookalike identifiers |
+| Trigger abuse (TR1-TR3) | Audit trigger keywords; reject broad `trigger: always` for untrusted skills |
+| Anti-refusal (AR1-AR3) | Reject text that pressures refusal bypass or instruction override |
+| Taint-to-execution (TT5) | Reject tool arguments that carry untrusted content into exec/eval/shell |
+| MCP least-privilege (LP1) | Require scoped credentials and a narrow tool surface for bundled MCP servers |
+
+Optional gate exit codes (when a CI gate wraps skill ingestion):
+- 0: skill passes ingestion checks
+- 1: skill fails a mandatory check (blocking)
+- 2: skill passes mandatory checks but has CAUTION findings (non-blocking warn)

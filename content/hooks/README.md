@@ -7,12 +7,7 @@ Deterministic shell hooks triggered by agent lifecycle events (SessionStart, Pre
 | Agent dir | Hooks |
 |---|---|
 | `claude-code/` | 7 hooks: baseline-skills, require-read, word-budget, injection-scan, done-gate, memory-persist, git-guardrails |
-| `copilot-vscode/` | baseline-skills |
-| `cursor/` | baseline-skills |
-| `gemini/` | baseline-skills |
 | `opencode/` | baseline-skills (shell + ESM plugin) |
-| `windsurf/` | baseline-skills |
-| `windsurf-jetbrains/` | baseline-skills |
 
 > **Note:** All `baseline-skills` hooks now target 7 boot skills with `trigger: always` frontmatter (was 4 prior to v2.6.0). See `content/rules/core/boot-manifest.yaml` for the full specification. For Claude Code, primary enforcement is `@import` in CLAUDE.md; for OpenCode, `instructions[]` in `opencode-mcp.json`. Hooks are secondary (redundant) enforcement for all agents.
 

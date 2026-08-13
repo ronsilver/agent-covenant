@@ -42,3 +42,21 @@ Retrieval reduces tokens WITHOUT losing quality only when:
 2. Entity-level diffs show inline changes (G12 clause)
 3. Progressive disclosure escalates correctly (signal-based, not arbitrary)
 4. Retrieved content preserves errors, signatures, and types
+
+## codegraph Benchmark (master catalog #29 codegraph -- README, re-measured 2026-08-05, Opus 4.8)
+
+| Metric | Result |
+|--------|--------|
+| Fewer tool calls | 88% |
+| Faster task completion | 53% |
+| Fewer tokens | 62% |
+| Cheaper | 44% |
+| File reads | 0 |
+| VS Code arm: tool calls | 2 vs 28 |
+| VS Code arm: file reads | 0 vs 12 |
+| VS Code arm: tokens | 77% fewer |
+| VS Code arm: cost | 71% cheaper |
+
+Residual-context caveat (both statements are true): retrieval leaves ~80% MORE context resident at session end (67k vs 18k tokens). Fewer tokens PROCESSED per turn plus a LARGER persistent footprint are not contradictory: retrieval rewrites the working set instead of reading files each turn.
+
+Prior task-stated benchmark figures (~25% cheaper / ~62% fewer tool calls) were not found in this file on 2026-08-10; the README figures above are the verified replacement.

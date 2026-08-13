@@ -63,3 +63,4 @@ Reference: https://github.com/darkrishabh/agent-skills-eval (last_verified: 2026
 
 - Evaluation rubric design, LLM-as-judge, pairwise comparison: -> `evaluation-expert` skill
 - This file documents the harness USAGE and schema, not rubric design.
+- SkillOpt (microsoft/SkillOpt, master catalog #154): skill self-optimization loop — trajectory -> edit -> validation gate -> best_skill.md (~300-2000 tokens); evaluation twin of agent-skills-eval (#36), recorded reference only.

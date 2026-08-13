@@ -4,7 +4,7 @@ description: "Transformation of requirements into technical documents: TRDs from
 license: MIT
 metadata:
   author: Community
-  version: "1.0"
+  version: "1.1"
   category: process
   status: stable
 ---
@@ -63,6 +63,20 @@ Runbook URL: <link>
 - Diagrams as Mermaid (not images — diffable)
 - README per repo (template: Overview, Setup, Architecture, API, Deploy)
 - CHANGELOG follows Keep a Changelog format
+
+## Shared-language CONTEXT.md pattern
+
+Decode project jargon into one concise shared-language document before writing other docs (master catalog #18):
+
+| Column | Content |
+|---|---|
+| Term | the jargon word or acronym |
+| Meaning | one-line plain-language definition |
+| Example | a concrete use in context |
+
+Include naming conventions and anti-verbose examples (what to write instead of a wordy phrase). Capture hard-to-explain decisions as inline ADRs during grilling so the context doc and the decision record agree.
+
+Rationale: shared terms shorten requests and reduce repeated explanation, which lowers agent thinking tokens (cross-reference token-efficiency).
 
 ## Constraints
 - NEVER document code that doesn't exist yet (docs follow implementation)

@@ -330,10 +330,9 @@ validate_skills() {
             continue
         fi
 
-        # NOTE: 'metadata:' (author, version, category, etc.) is an optional field per the official
-        # skill spec and MUST NOT be validated or warned about here. Version is also tracked in
-        # manifest.yaml but that does not make it invalid inside SKILL.md frontmatter.
-        # DO NOT add a check for metadata: presence or any of its subfields.
+        # NOTE: 'metadata:' presence remains optional per the official skill spec and is NOT
+        # validated here. However, when present, metadata.category and metadata.status ARE
+        # enforced by validate_skill_frontmatter (AGENTS.md category whitelist + status enum).
 
         for field in name description license; do
             local val
@@ -375,6 +374,69 @@ validate_skills() {
 
     if [[ ${skill_errors} -eq 0 && ${skill_warnings} -eq 0 ]]; then
         log_success "All skills are valid"
+    fi
+
+    return 0
+}
+
+# Enforce the metadata.category whitelist (AGENTS.md: 11 categories) and the
+# metadata.status enum {stable,beta,deprecated} for every content/skills/*/SKILL.md.
+validate_skill_frontmatter() {
+    log_section "Validating skill metadata frontmatter"
+
+    local skills_base="${CONTENT_DIR}/skills"
+    if [[ ! -d "${skills_base}" ]]; then
+        return 0
+    fi
+
+    local meta_errors=0
+    local categories=("ai-agents" "backend" "cloud" "core" "data" "frontend" "infrastructure" "meta" "process" "quality" "security")
+    local statuses=("stable" "beta" "deprecated")
+
+    while IFS= read -r skill_md; do
+        [[ -z "${skill_md}" ]] && continue
+        local rel_path="${skill_md#"${CONTENT_DIR}"/}"
+
+        if ! has_frontmatter "${skill_md}"; then
+            continue
+        fi
+
+        local fm_tmpfile
+        fm_tmpfile=$(mktemp)
+        awk '/^---$/{if(n++)exit}n' "${skill_md}" >"${fm_tmpfile}"
+
+        if ! yq '.' "${fm_tmpfile}" >/dev/null 2>&1; then
+            rm -f "${fm_tmpfile}"
+            continue
+        fi
+
+        local category status
+        category=$(yq '.metadata.category // ""' "${fm_tmpfile}" 2>/dev/null)
+        status=$(yq '.metadata.status // ""' "${fm_tmpfile}" 2>/dev/null)
+        rm -f "${fm_tmpfile}"
+
+        if [[ -z "${category}" || "${category}" == "null" ]]; then
+            log_error "  Missing metadata.category in: ${rel_path}"
+            meta_errors=$((meta_errors + 1))
+        elif ! printf '%s\n' "${categories[@]}" | grep -qx "${category}"; then
+            log_error "  Invalid metadata.category '${category}' in: ${rel_path} (allowed: ${categories[*]})"
+            meta_errors=$((meta_errors + 1))
+        fi
+
+        if [[ -z "${status}" || "${status}" == "null" ]]; then
+            log_error "  Missing metadata.status in: ${rel_path}"
+            meta_errors=$((meta_errors + 1))
+        elif ! printf '%s\n' "${statuses[@]}" | grep -qx "${status}"; then
+            log_error "  Invalid metadata.status '${status}' in: ${rel_path} (allowed: stable, beta, deprecated)"
+            meta_errors=$((meta_errors + 1))
+        fi
+    done < <(find "${skills_base}" -mindepth 2 -maxdepth 2 -name "SKILL.md" -type f 2>/dev/null)
+
+    if [[ ${meta_errors} -gt 0 ]]; then
+        log_error "Found ${meta_errors} skill metadata frontmatter issues"
+        ERRORS=$((ERRORS + meta_errors))
+    else
+        log_success "All skill metadata frontmatter is valid"
     fi
 
     return 0
@@ -583,6 +645,7 @@ main() {
         validate_frontmatter || true
         validate_subagent_descriptions || true
         validate_skills || true
+        validate_skill_frontmatter || true
         validate_skill_coherence || true
         validate_agents || true
 

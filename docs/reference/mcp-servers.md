@@ -1,6 +1,6 @@
 # MCP Servers Reference
 
-16 MCP servers configured in `content/mcp/mcp.json`.
+12 MCP servers configured in `content/mcp/mcp.json`.
 
 ## Server Catalog
 

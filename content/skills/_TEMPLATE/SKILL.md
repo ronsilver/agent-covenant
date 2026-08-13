@@ -5,8 +5,8 @@ license: MIT
 metadata:
   author: Community
   version: "1.0"
-  category: domain
-  status: draft
+  category: core
+  status: beta
   trigger: on-demand
 compatibility:
   - claude-code

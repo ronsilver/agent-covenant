@@ -4,7 +4,7 @@ description: "Exploratory analysis of repositories and technical sources: depend
 license: MIT
 metadata:
   author: Community
-  version: "1.0"
+  version: "1.1"
   category: process
   status: stable
 ---
@@ -115,6 +115,20 @@ FAIL: Relying on intuition instead of statistical data
 # GOOD: measure it
 # gocyclo ./services/ && git log --numstat -- services/
 ```
+
+## Claim Verification and Fact-Check
+
+Applies when a research question demands factual verification, not codebase exploration (closes the "no general web research" gap, master catalog #102):
+
+1. Extract claims: split the question into individual checkable claims
+2. Gather evidence: collect at least two independent sources per claim
+3. Structured verdicts: mark each claim VERIFIED, PARTIALLY VERIFIED, or UNVERIFIED
+4. Transparent report: list every source with its access date and any conflict between sources
+
+Rules:
+- A claim stays UNVERIFIED when sources conflict or a source cannot be located
+- Rank sources: primary documentation and vendor docs above aggregators
+- Never fabricate a citation; an unverifiable claim is reported as UNVERIFIED, not silently dropped
 
 ## References
 

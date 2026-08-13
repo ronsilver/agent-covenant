@@ -4,7 +4,7 @@ description: "Multi-agent system orchestration based on Anthropic patterns (prom
 license: MIT
 metadata:
   author: Community
-  version: "1.1"
+  version: "1.2"
   category: ai-agents
   status: stable
 ---
@@ -123,6 +123,29 @@ PASS: Always define tool allowlist per subagent role
 ```
 Code-review agent: {read, grep, glob} only — no write, no network
 ```
+
+## Subagent-Driven Development
+
+Split implementation into subagent tasks (master catalog #20) and review in two stages:
+1. Spec-compliance review: does the subagent deliver exactly the agreed scope?
+2. Code-quality review: is the code correct, tested, and idiomatic?
+Stage 1 before stage 2; a spec miss invalidates the quality pass.
+
+## Think / Act / Prove
+
+For any non-trivial subagent action, require the trio (master catalog #152):
+- Think: state the intended action and its expected effect
+- Act: perform the action
+- Prove: show the observable evidence it worked
+An intent gate forces an artifact: the subagent must produce the proof (a file, log line, or result) before the orchestrator accepts the step.
+
+## Frozen Checks and Typed-Evidence Watchdog
+
+Freeze the checks a task must pass before it can finish (master catalog #4). A typed-evidence watchdog verifies each completion claim against its evidence type:
+- Claim type: file written -> evidence: file exists with expected content
+- Claim type: command ran -> evidence: captured exit code and output
+- Claim type: state changed -> evidence: observable before/after diff
+A completion claim without matching typed evidence is treated as not done.
 
 ## References
 

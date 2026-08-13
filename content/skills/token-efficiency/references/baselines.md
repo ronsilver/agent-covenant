@@ -24,7 +24,25 @@ Discipline pays off when: tokens_saved > tokens_overhead_discipline.
 
 ## Cross-Cutting: Tool Count Costs Tokens
 
-Token Savior v3.0 cut 94 -> 61 tools. Vercel -80% tools -> +37% tokens freed. Fewer tool definitions in context = more budget for actual task. Cross-reference: tool-usage skill.
+Token Savior v3.0 (master catalog #113 token-savior) profiles — the 94 -> 61 figure is STALE; use these:
+| Profile | Exposed tools | Approx manifest tokens |
+|---|---|---|
+| optimized | 15 | ~1.5KT |
+| tiny | 6 | ~0.6KT |
+| lean | 51 | ~4KT |
+| compact-only | 1 | ~0.3KT |
+| full | 68 | ~6KT |
+
+Thin `inputSchema` reduces manifest tokens a further 44%. Vercel -80% tools -> +37% tokens freed. Fewer tool definitions in context = more budget for actual task. Cross-reference: tool-usage skill.
+
+drona23 6-rule minimal set (master catalog #30 claude-token-efficient): word limits, abbreviation list, no filler, batch clarifications, compressed output pattern, model routing by task tier. Rules placed in a CLAUDE.md file cost ~41% LESS than the same rules injected into chat context; keep discipline rules in files, not per-turn instructions.
+
+## Caveman Honest Baselines (master catalog #84 caveman — quote as DIRECTIONAL only)
+
+- Prose output: 65% output-token reduction (range 22-87%).
+- Agentic coding: 8.5% reduction (JetBrains plugin, 86 tasks).
+- Input: +1-1.5k input tokens per turn; input stream untouched.
+- Directional only: single-project measurements; do not quote as universal.
 
 ## Quality Mandate
 

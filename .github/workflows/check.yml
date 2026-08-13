@@ -46,7 +46,6 @@ jobs:
   lint-markdown:
     name: "Lint: Markdown"
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
 
@@ -88,7 +87,7 @@ jobs:
   # ── 4. Security scan (gitleaks) ──────────────────────────────────────────
   security:
     name: "Security: Secret scan (gitleaks)"
-    if: ${{ false }}  # disabled: no gitleaks license
+    if: ${{ false }}  # Disabled: gitleaks license not available (documented exception, see AGENTS.md)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -116,6 +115,15 @@ jobs:
 
       - name: Validate manifest and skills
         run: make validate
+
+      - name: Validate no-fintech
+        run: make validate-no-fintech
+
+      - name: Validate skill quality
+        run: make validate-quality
+
+      - name: Validate shell safety
+        run: make validate-shell-safety
 
       - name: Skill reference integrity (informational)
         run: make validate-skill-refs

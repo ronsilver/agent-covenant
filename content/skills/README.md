@@ -1,6 +1,6 @@
 # Agent Skills
 
-60 active skills following the [Agent Skills](https://agentskills.io) open standard (schema v2). Skills are loaded on-demand via progressive disclosure when the agent detects relevance.
+63 active skills following the [Agent Skills](https://agentskills.io) open standard (schema v2). Skills are loaded on-demand via progressive disclosure when the agent detects relevance.
 
 No deprecated skills in active rotation. All retired skills are documented in `manifest.yaml` under `retired:`.
 
@@ -40,13 +40,13 @@ metadata:
 ---
 ```
 
-**Categories:** `ai-agents` · `backend` · `cloud` · `core` · `data` · `frontend` · `infrastructure` · `meta` · `payments` · `process` · `quality` · `security`
+**Categories:** `ai-agents` · `backend` · `cloud` · `core` · `data` · `frontend` · `infrastructure` · `meta` · `process` · `quality` · `security`
 
 **Statuses:** `stable` · `beta` · `deprecated`
 
 ## Core Rule Skills (6) + skill-router = 7 Boot Skills
 
-**Main sessions** load 5 skills always-on (`governance`, `operating-protocol`, `token-efficiency`, `tool-usage`, `skill-router`) plus 2 conditionally per task mode (`context-management`, `engineering-standards`) — see `content/rules/core/boot-manifest.yaml`.
+**Main sessions** load all 7 skills always-on (`governance`, `operating-protocol`, `engineering-standards`, `context-management`, `token-efficiency`, `tool-usage`, `skill-router`) — see `content/rules/core/boot-manifest.yaml`.
 
 **Subagents** (content/subagents/) load ALL 7 unconditionally at their Step 0, before any task (AGENTS.md Architectural Invariant #4).
 

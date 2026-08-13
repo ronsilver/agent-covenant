@@ -4,7 +4,7 @@ description: "Analyze and optimize AWS costs for cloud-native infrastructure. Us
 license: MIT
 metadata:
   author: Community
-  version: "1.0"
+  version: "1.1"
   category: infrastructure
   status: stable
 ---
@@ -101,6 +101,13 @@ resource "aws_ce_anomaly_monitor" "example" {
 ```
 
 → [references/overview.md](references/overview.md) | [references/cost-analysis.md](references/cost-analysis.md) | [references/aws-cost-operations.md](references/aws-cost-operations.md) — advanced patterns: pre-deployment estimation, Application Signals, Tag Everything strategy, anomaly detection + forecasting
+
+## Cost Operations (pre-deploy and anomaly cadence)
+
+- Pre-deploy estimation: query the aws-pricing MCP before any infrastructure change; record the estimate in the change request (master catalog #57).
+- Cost Explorer workflow: run a monthly Cost Explorer review per service; investigate any >10% month-over-month growth before it compounds.
+- CloudWatch alarms: alarm on cost anomalies and on spike-prone metrics (data transfer, NAT gateway traffic, Lambda invocations).
+- Anomaly cadence: daily anomaly-monitor review, weekly Cost Explorer review, monthly budget re-forecast (master catalog #23).
 
 ## Constraints
 
