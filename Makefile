@@ -8,7 +8,7 @@ SHELL := /usr/bin/env bash
 SCRIPTS_DIR := scripts
 TESTS_DIR := tests
 
-SHELL_SCRIPTS := $(SCRIPTS_DIR)/sync.sh $(SCRIPTS_DIR)/validate.sh $(SCRIPTS_DIR)/validate-subagent-mode.sh $(SCRIPTS_DIR)/mcp-github.sh
+SHELL_SCRIPTS := $(SCRIPTS_DIR)/sync.sh $(SCRIPTS_DIR)/validate.sh $(SCRIPTS_DIR)/validate-subagent-mode.sh $(SCRIPTS_DIR)/validate-kernel-budget.sh $(SCRIPTS_DIR)/mcp-github.sh
 SHELL_LIBS    := $(SCRIPTS_DIR)/lib/common.sh $(SCRIPTS_DIR)/lib/sync.sh
 SHELL_ALL     := $(SHELL_SCRIPTS) $(SHELL_LIBS)
 
@@ -75,7 +75,7 @@ test: ## Run bats tests
 	@echo "✓ tests passed"
 
 .PHONY: validate
-validate: validate-subagent-mode validate-mcp-config ## Run manifest + subagent + MCP config validation
+validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons ## Run manifest + subagent + MCP + kernel budget + icon validation
 	@echo "Running manifest validation..."
 	$(SCRIPTS_DIR)/validate.sh
 	@echo "✓ validation passed"
@@ -92,6 +92,17 @@ validate-subagent-mode: ## Check all subagents use mode: subagent
 	@$(SCRIPTS_DIR)/validate-subagent-mode.sh
 	@echo "✓ subagent mode validation passed"
 
+.PHONY: validate-kernel-budget
+validate-kernel-budget: ## Check kernel files stay within the 6000-byte budget
+	@echo "Running kernel budget validation..."
+	@$(SCRIPTS_DIR)/validate-kernel-budget.sh
+	@echo ""
+
+.PHONY: validate-icons
+validate-icons: ## Check content/ for banned emoji/dingbat icons (gate: exits 1 on violation)
+	@echo "Running content icon check..."
+	@python3 $(SCRIPTS_DIR)/sweep-content-icons.py --check
+	@echo ""
 
 .PHONY: validate-skill-refs
 validate-skill-refs: ## Check skill references and orphaned files (informational — non-blocking)
