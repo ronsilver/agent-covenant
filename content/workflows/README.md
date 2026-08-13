@@ -1,6 +1,6 @@
 # Workflows
 
-11 slash-command workflows invoked via `/<name>` in agent chat. Organized in 5 categories.
+10 slash-command workflows invoked via `/<name>` in agent chat. Organized in 4 categories.
 
 ## Available Workflows
 

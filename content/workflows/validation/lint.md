@@ -172,7 +172,7 @@ Scan for marker files:
 ### 4. Report Results
 - PASS: **Passed**: All checks passed
 - FAIL: **Failed**: Show first failure with line numbers
-- ⏭️ **Skipped**: No files of this type found
+- [SKIPPED] **Skipped**: No files of this type found
 
 ## CI/CD Integration
 
@@ -214,7 +214,7 @@ jobs:
 
 Recommended: Use pre-commit hooks to catch issues **before** commit.
 
-See `.pre-commit-config.yaml` for configuration.
+See the `engineering-standards` skill for the pre-commit chain (Format, Lint, Type, Test, Security).
 
 ## Performance Tips
 

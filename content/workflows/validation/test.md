@@ -20,7 +20,7 @@ Executes tests with coverage tracking for all supported project types.
 
 ### Minimum Thresholds
 
-> Thresholds (90%/80%/70%) defined in the **test-driven-development** skill § Coverage Requirements.
+> Thresholds (90%/80%/70%) follow the coverage guidance in the `testing-expert` skill.
 
 **STOP if coverage drops below overall target (70%).**
 
@@ -46,7 +46,7 @@ Execute appropriate commands based on project type.
 ### 4. Report Results
 - PASS: **Passed**: All tests passed, coverage met
 - FAIL: **Failed**: Tests failed or coverage below threshold
-- ⏭️ **Skipped**: No tests found
+- [SKIPPED] **Skipped**: No tests found
 
 ## By Project Type (Detailed)
 
@@ -176,7 +176,7 @@ terraform validate
 
 ## Test Types & Parallel Testing
 
-> For test pyramid (unit/integration/E2E), naming conventions, and parallel testing patterns, see the **test-driven-development** skill.
+> For test pyramid (unit/integration/E2E), naming conventions, and parallel testing patterns, see the `testing-expert` skill.
 
 ## CI/CD Integration
 
