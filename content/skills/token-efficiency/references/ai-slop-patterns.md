@@ -1,6 +1,6 @@
 # AI Slop Patterns -- 33-Pattern Catalog
 
-Source: blader/humanizer v2.8.0+ (33 patterns). Enriched with stop-slop 5-dimension rubric and aislop 6-engine deterministic scoring.
+Source: blader/humanizer v2.8.0+ (33 patterns). Enriched with stop-slop 5-dimension rubric, aislop deterministic scoring (5 categories), and the stop-slop banned-phrase list (appended below).
 
 ## Safety Carve-Out (MANDATORY -- inherits caveman Auto-Clarity override)
 
@@ -22,9 +22,11 @@ Score each dimension 1-10. Total < 35/50 -> revise.
 | Authenticity | No performative empathy, no "great question" |
 | Density | High signal-per-token, no padding |
 
-### aislop 6-engine deterministic scoring (source: aislop)
-6 engines score 0-100 each: format, lint, quality, AI-slop, security, architecture.
-CI gate: failBelow: 70. Inline suppression: `// aislop-ignore-next-line`.
+### aislop deterministic scoring (source: aislop README -- VERIFIED 2026-08-10; master catalog #116 aislop)
+Deterministic (no-LLM) score 0-100. Categories (5): formatting, lint, complexity, AI-slop, security.
+CI gate: failBelow (example 80; `--strict` 85) + quality-gate hook mode.
+Inline suppression: `// aislop-ignore-next-line`, `-ignore-line`, `-ignore-file`.
+The prior 6-engine / failBelow-70 claim is UNVERIFIED and replaced by the README numbers above.
 
 ## 33 Patterns (5 categories)
 
@@ -169,3 +171,37 @@ After: "Cache stores tokens."
 33. Replace "essentially" with nothing. Delete filler adverbs.
 Before: "Essentially, it is a queue with retries."
 After: "Queue with retries."
+
+## Stop-Slop Banned-Phrase List (source: stop-slop; master catalog #32 stop-slop)
+
+### Throat-clearing openers
+Delete: "Let's be honest", "In today's fast-paced world", "It's no secret that", "If I'm being completely honest".
+
+### Emphasis crutches
+Delete: "Full stop.", "Let that sink in.", "Mark my words.", "Read that again."
+
+### Jargon mapping
+| Instead of | Use |
+|---|---|
+| Navigate | Handle |
+| Unpack | Explain |
+| Landscape | Situation |
+| Game-changer | Significant |
+| Deep dive | Analysis |
+| Circle back | Return to |
+
+### Kill-all adverbs
+Delete: really, just, literally, genuinely, simply, actually, deeply, truly, fundamentally, inherently, inevitably, interestingly, importantly, crucially.
+
+### Filler phrases
+Delete: "At its core", "It's worth noting", "At the end of the day", "When it comes to", "In a world where".
+
+### Meta-commentary
+Delete: "Hint:", "Plot twist:", "But that's another post", "Spoiler:".
+
+### Sentence rules
+- No Wh- starters (What/Why/How framing questions as hooks)
+- No em dashes (rewrite into two sentences)
+- No staccato fragmentation (single-word or 2-word sentences)
+- No lazy extremes (best ever, worst case, literally nothing, completely unique)
+- Active voice (subject acts, object receives)

@@ -45,6 +45,12 @@ Rules:
 - Static docs must come BEFORE conversation history in the context order
 - Cache breakpoints: max 4 per request, placed at end of tools / system / ref_docs
 
+## Prompt-Cache Keep-Warm (long-idle sessions)
+
+On sessions with long idle gaps, ping the ~1h prompt-cache checkpoint just BEFORE expiry with a minimal 0.1x-prefix request (cache read only, no generation) to avoid up to 2x input re-write on resume. Use at most 2 pings per pause. Auto-tripwire: if pings stop paying (cache hit ratio does not recover), STOP pinging and accept the re-write.
+
+Source: ooples/token-optimizer (master catalog #114 token-optimizer).
+
 ## Observation Masking (largest capacity gains — apply SECOND)
 
 Tool outputs routinely reach 80%+ of total trajectory tokens. Mask aggressively.
@@ -77,6 +83,12 @@ Quality check: after masking, verify the retrieval handle resolves to the origin
 - Duplicate outputs (same tool, same params)
 - Boilerplate headers / pagination metadata
 - Already-summarized outputs
+
+## PreToolUse vs PostToolUse Output Reduction
+
+PostToolUse compactors (34 Bash compactors) run AFTER output returns: they can only ADD context (their value is persistence across compaction, never current-turn shrink). Real current-turn reduction requires a PreToolUse rewrite — edit the command BEFORE it runs so the captured output is already small.
+
+Manifest minimization: fewer exposed tools = fewer manifest tokens (15 tools ~1.5KT vs 68 ~6KT; thin inputSchema -44%). Trim the tool surface before tuning output hooks.
 
 ## Pre-Entry Filtering (G11) -- intercept BEFORE context entry
 

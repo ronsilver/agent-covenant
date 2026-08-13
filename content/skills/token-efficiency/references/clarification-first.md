@@ -42,3 +42,7 @@ Task received
 
 Max 25k tokens/call. Always implement: pagination(`?page=1&limit=100`) + filtering + range(`start_line`,`end_line`).
 File reads: `offset`+`limit` — read only needed range. Default window: 50-100L max unless full file required.
+
+## Shared-Language Cross-Reference
+
+Agree shared project terminology up front (jargon table / CONTEXT.md pattern, see documentation-expert, master catalog #18); shared language shortens requests and cuts clarification rounds, so the agent spends fewer thinking tokens.

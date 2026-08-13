@@ -5,7 +5,7 @@ description: "Enforce token-efficient output, compression, caching, and model ro
 license: MIT
 metadata:
   author: Community
-  version: "2.1"
+  version: "2.2"
   category: core
   status: stable
 disable-model-invocation: false
@@ -104,10 +104,11 @@ NEVER ask about: formatting preferences, obvious defaults, info already in conte
 → KV-cache ordering, observation masking, partitioning: [references/optimization.md](references/optimization.md)
 → Measured savings baselines (directional vs minimal): [references/baselines.md](references/baselines.md)
 → AI slop patterns (33-pattern catalog + scoring rubrics): [references/ai-slop-patterns.md](references/ai-slop-patterns.md)
-→ Compression algorithms (7-compressor taxonomy + grep/code rule): [references/compression-algorithms.md](references/compression-algorithms.md)
+→ Compression algorithms (10-compressor taxonomy + grep/code rule): [references/compression-algorithms.md](references/compression-algorithms.md)
 → Retrieval economics (file-level graph + observation-timeline + entity-level context): [references/retrieval-economics.md](references/retrieval-economics.md)
 → Observability loop (ccusage cadence + metrics): [references/observability-loop.md](references/observability-loop.md)
 → Full clarification protocol + examples: [references/clarification-first.md](references/clarification-first.md)
+→ Action-first output structure (10 rules): [references/action-first-output.md](references/action-first-output.md)
 
 ## Precedence
 
