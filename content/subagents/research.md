@@ -79,6 +79,7 @@ permission:
     "*": allow
     ultracode: deny
     test-writer: deny
+    docs-writer: deny
     git-requests: deny
   webfetch: allow
   websearch: allow

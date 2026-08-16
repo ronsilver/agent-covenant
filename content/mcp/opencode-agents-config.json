@@ -392,6 +392,44 @@
         }
       }
     },
+    "docs-writer": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "allow"
+        },
+        "write": {
+          "*": "allow"
+        },
+        "bash": {
+          "git status": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git branch*": "allow",
+          "rm -rf*": "deny",
+          "git push --force*": "deny",
+          "git push -f*": "deny",
+          "git reset --hard*": "deny",
+          "git rebase*": "deny",
+          "kubectl apply*": "ask",
+          "terraform apply*": "ask",
+          "git push*": "ask",
+          "git commit*": "ask",
+          "git add*": "ask",
+          "*": "ask"
+        }
+      }
+    },
     "git-requests": {
       "mode": "subagent",
       "tools": {
