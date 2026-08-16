@@ -1,14 +1,14 @@
 # Sub-agents Catalog
 
-15 active sub-agents organized into read-only analysis, read-only review specialists, and write agents.
+17 active sub-agents organized into read-only analysis, read-only review specialists, and write agents.
 
 ## Taxonomy
 
 | Group | Count | Agents |
 |---|---|---|
-| Meta / analysis (read-only) | 6 | `ultraplan`, `ultrareview`, `ultradebugger`, `ultrathinking`, `ultraresearch`, `research` |
+| Meta / analysis (read-only) | 7 | `ultraplan`, `ultrareview`, `ultradebugger`, `ultrathinking`, `ultraresearch`, `research`, `ultraorchestrator` |
 | Review specialists (read-only) | 6 | `code-review`, `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor` |
-| Write agents | 3 | `ultracode`, `git-requests`, `test-writer` |
+| Write agents | 4 | `ultracode`, `git-requests`, `test-writer`, `docs-writer` |
 
 ## Orchestration flow
 
@@ -20,17 +20,18 @@ research -> findings document -> ultraplan / ultracode
 ultracode -> git-requests (branch, commit, push, PR)
 ```
 
-Only `ultracode` mutates project source code. Only `git-requests` mutates git history. `test-writer` is the explicit exception for writing tests.
+Only `ultracode` mutates project source code. Only `git-requests` mutates git history. `test-writer` is the explicit exception for writing tests. `docs-writer` is the explicit exception for documentation.
 
 ### Restricted delegation graph (permission.task)
 
 | Agent | `permission.task` |
 |---|---|
-| Orchestrators (`ultrareview`, `code-review`) | allow only the 5 review specialists; deny `ultracode`/`test-writer`/`git-requests` |
-| `ultradebugger`, `research`, `ultraplan`, `ultrathinking`, `ultraresearch` | specialists/research allowed or `ask`; deny write agents (`ultracode`, `test-writer`, `git-requests`) |
-| `ultracode` | allow only `git-requests`, `test-writer`; ask rest |
-| Specialists (`dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor`) + `test-writer` | `"*": deny` (leaves) |
-| `git-requests` | deny `ultracode`/`test-writer`; others allowed |
+| Orchestrators (`ultrareview`, `code-review`) | allow only the 5 review specialists; deny `ultracode`/`test-writer`/`git-requests`/`docs-writer` |
+| `ultraorchestrator` | `"*"`: ask; allow 7 read-only agents (`ultraplan`, `ultrathinking`, `ultrareview`, `ultradebugger`, `ultraresearch`, `research`, `code-review`) + `test-writer` + `docs-writer`; ask `ultracode`/`git-requests` |
+| `ultradebugger`, `research`, `ultraplan`, `ultrathinking`, `ultraresearch` | specialists/research allowed or `ask`; deny write agents (`ultracode`, `test-writer`, `git-requests`, `docs-writer`) |
+| `ultracode` | allow only `git-requests`, `test-writer`, `docs-writer`; ask rest |
+| Specialists (`dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor`) + `test-writer`, `docs-writer` | `"*": deny` (leaves) |
+| `git-requests` | deny `ultracode`/`test-writer`/`docs-writer`; others allowed |
 
 ### Mandatory body sections
 
@@ -38,15 +39,15 @@ Every subagent must include the following sections in its body (after `## Anti-p
 
 | Section | Applies to | Purpose |
 |---|---|---|
-| `Session start — load boot skills` | All 15 | Mandatory load of all 7 boot skills (6 core + `skill-router`) at Step 0, before any task; `git-requests` additionally loads `git-expert` at init |
+| `Session start — load boot skills` | All 17 | Mandatory load of all 7 boot skills (6 core + `skill-router`) at Step 0, before any task; `git-requests` additionally loads `git-expert` at init |
 | `Execution red line` | `ultraplan` | Forbids any mutation or write delegation |
 | `Phase autonomy` + `Mandatory validation` | `ultracode` | Enables continuous execution + mandatory test output |
-| `Scope restriction (read-only -- ABSOLUTE)` | 10 read-only agents | Forbids fixing or delegating writes |
-| `Skill-router fallback` | All 15 | Dynamic skill discovery instead of blocking |
-| `Clarify-first` | All 15 | Ask before assuming when info is missing |
+| `Scope restriction (read-only -- ABSOLUTE)` | 12 read-only agents | Forbids fixing or delegating writes |
+| `Skill-router fallback` | All 17 | Dynamic skill discovery instead of blocking |
+| `Clarify-first` | All 17 | Ask before assuming when info is missing |
 | `Be critical` | `ultraplan`, `ultracode`, `research`, `ultrathinking` | Challenge the premise; counteract agreeableness |
-| `Known blind spots` | All 15 | Per-agent documented weaknesses |
-| `Delegation discipline` | All 15 | No `task` for trivial operations |
+| `Known blind spots` | All 17 | Per-agent documented weaknesses |
+| `Delegation discipline` | All 17 | No `task` for trivial operations |
 
 ---
 
@@ -60,6 +61,7 @@ Every subagent must include the following sections in its body (after `## Anti-p
 | **`ultradebugger`** | Root-cause debugger using the scientific method; delivers cause, minimum fix proposal, and regression test spec. |
 | **`ultraresearch`** | External-facts specialist; surveys and cross-verifies vendors, libraries, APIs, and standards into a Research Dossier. |
 | **`research`** | Investigates codebases and web sources; produces a findings document with citations and trade-offs. |
+| **`ultraorchestrator`** | Read-only routing meta-agent; classifies incoming requests, applies the litmus table, and emits an ADVISORY routing verdict (route + executor) to the host. |
 
 ## 2. Review Specialists (read-only)
 
@@ -78,6 +80,7 @@ Every subagent must include the following sections in its body (after `## Anti-p
 |---|---|---|
 | **`ultracode`** | The Implementer. Executes plans and to-dos task by task; only agent that mutates project source code. | -- |
 | **`test-writer`** | Writes unit, integration, and E2E tests. | Explicit write exception. |
+| **`docs-writer`** | Keeps README.md, CHANGELOG.md, docs/, and content catalog READMEs accurate. | Explicit write exception for documentation only. |
 | **`git-requests`** | End-to-end git workflow: branch, >=2 conventional commits, push, PR. | Writes only to git, never app logic. |
 
 ---

@@ -604,7 +604,7 @@ YAML
 
 # =============================================================================
 # opencode-agents-config.json coverage tests (ADR-0020)
-# Verifies that all 15 subagent .md files have a corresponding entry in the
+# Verifies that all 17 subagent .md files have a corresponding entry in the
 # opencode config source file, so `make sync` registers them as invocable
 # via the runtime task tool. These tests resolve the real repo root from
 # BATS_TEST_DIRNAME rather than ${REPO_ROOT}, because setup() in other tests
@@ -613,7 +613,7 @@ YAML
 
 REAL_REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
 
-@test "opencode-agents-config.json contains all 15 subagents" {
+@test "opencode-agents-config.json contains all 17 subagents" {
     local config_file="${REAL_REPO_ROOT}/content/mcp/opencode-agents-config.json"
     local subagents_dir="${REAL_REPO_ROOT}/content/subagents"
 
@@ -643,13 +643,13 @@ REAL_REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
     done
 }
 
-@test "opencode-agents-config.json contains all 15 agents registered" {
+@test "opencode-agents-config.json contains all 17 agents registered" {
     local config_file="${REAL_REPO_ROOT}/content/mcp/opencode-agents-config.json"
 
     local subagent_count
     subagent_count=$(jq -r '.agent | keys | length' "${config_file}")
 
-    [[ "${subagent_count}" -eq 15 ]]
+    [[ "${subagent_count}" -eq 17 ]]
 }
 
 @test "no subagent uses hidden: true (ADR-0021 discoverability invariant)" {
@@ -711,7 +711,7 @@ REAL_REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
 }
 
 # ADR-0024: tool-block omission regression
-@test "tools.task: true present in all 15 agents (ADR-0024 tools layer)" {
+@test "tools.task: true present in all 17 agents (ADR-0024 tools layer)" {
     local config_file="${REAL_REPO_ROOT}/content/mcp/opencode-agents-config.json"
 
     # Count agents with tools.task: true
