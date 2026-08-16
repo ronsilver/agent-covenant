@@ -109,6 +109,7 @@ permission:
   task:
     git-requests: allow
     test-writer: allow
+    docs-writer: allow
     "*": ask
   webfetch: allow
   websearch: allow

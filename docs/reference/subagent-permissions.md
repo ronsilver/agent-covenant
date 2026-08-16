@@ -44,7 +44,7 @@ Central reference for tool permissions, permission modes, and agent modes used b
 | `subagent` | Secondary specialized executor, subordinate to a `primary` agent. Permissions are restricted by default to protect the system. Does not interact directly with the user unless requesting permission via `ask` mode. Reports results back to the invoking primary agent. |
 | `all` | Universal mode. Applies configuration, rules, or permissions to any agent type running in the environment. Used in global configuration files or meta-rules as a baseline security or behavior layer. Affects both `primary` and all `subagent` instances. Also enables direct GUI invocation in addition to `task`-based invocation. |
 
-**Current usage:** All 15 subagents use `mode: subagent`. They are invoked via `task` by the primary agent or by other subagents. The main build agent operates in `primary` mode.
+**Current usage:** All 17 subagents use `mode: subagent`. They are invoked via `task` by the primary agent or by other subagents. The main build agent operates in `primary` mode.
 
 ## Role Profiles
 
@@ -56,7 +56,7 @@ Central reference for tool permissions, permission modes, and agent modes used b
 - `question: allow`
 - `mode: subagent`
 
-### Builder (`ultracode`, `test-writer`)
+### Builder (`ultracode`, `test-writer`, `docs-writer`)
 - `edit: allow`
 - `bash: ask` + build/test/lint commands
 - `apply_patch: deny` (use `edit` instead)
@@ -64,7 +64,7 @@ Central reference for tool permissions, permission modes, and agent modes used b
 - `question: allow`
 - `mode: subagent`
 
-### Reviewer (`ultrareview`, `code-review`)
+### Reviewer (`ultrareview`, `code-review`, `ultraorchestrator`)
 - `edit: deny`
 - `bash: ask` + safe read-only commands
 - `apply_patch: deny`
@@ -117,16 +117,18 @@ Central reference for tool permissions, permission modes, and agent modes used b
 | idempotency-agent | domain | allow | deny | allow | allow | allow | safe | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
 | linting-agent | specialist | allow | deny | allow | allow | allow | lint | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
 | performance-profiler | specialist | allow | deny | allow | allow | allow | perf | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
-| research | investigation | allow | deny | allow | allow | allow | research | `"*": allow`; deny ultracode/test-writer/git-requests | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
+| research | investigation | allow | deny | allow | allow | allow | research | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
 | security-auditor | audit | allow | deny | allow | allow | allow | audit | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
-| ultradebugger | debug | allow | deny | allow | allow | allow | debug | `"*": allow`; deny ultracode/test-writer/git-requests | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | allow | allow | subagent | false |
-| ultraplan | plan | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
-| ultraresearch | investigation | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
-| ultrareview | review | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | allow | allow | subagent | false |
-| ultrathinking | decision | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
+| ultradebugger | debug | allow | deny | allow | allow | allow | debug | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | allow | allow | subagent | false |
+| ultraplan | plan | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
+| ultraresearch | investigation | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
+| ultrareview | review | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | allow | allow | subagent | false |
+| ultrathinking | decision | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
+| ultraorchestrator | routing | allow | deny | allow | allow | allow | read-only git/jq/yq | `"*": allow`; allow ultraplan/ultrathinking/ultrareview/ultradebugger/ultraresearch/research/code-review/test-writer/docs-writer; ask ultracode/git-requests | allow | allow | allow | deny | allow | ask | allow | allow | allow | allow | allow | allow | allow | subagent | false |
 | git-requests | git | allow | deny | allow | allow | allow | git | `"*": deny` | allow | allow | deny | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
 | test-writer | build | allow | allow | allow | allow | allow | build | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
-| ultracode | build | allow | allow | allow | allow | allow | build | allow only git-requests/test-writer; deny rest | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
+| docs-writer | build | allow | allow | allow | allow | allow | read-only git (no build cmds) | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
+| ultracode | build | allow | allow | allow | allow | allow | build | allow only git-requests/test-writer/docs-writer; deny rest | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
 
 ### Bash Allow-Lists
 
@@ -150,8 +152,15 @@ Denied for all agents:
 - `git reset --hard*`
 - `git rebase*` (except `git-requests`: ask)
 - `kubectl delete*`
-- `kubectl apply*` (ask for `ultracode`, `test-writer`)
-- `terraform apply*` (ask for `ultracode`, `test-writer`)
+- `kubectl apply*` (ask for `ultracode`, `test-writer`, `docs-writer`)
+- `terraform apply*` (ask for `ultracode`, `test-writer`, `docs-writer`)
+
+## Known divergences (JSON mirror vs frontmatter)
+
+The OpenCode JSON mirror (`content/mcp/opencode-agents-config.json`) is a partial, hand-maintained subset and intentionally diverges from the authoritative YAML frontmatter in `content/subagents/*.md`. Known gaps:
+
+- **Bash `*` default differs for `ultraorchestrator`:** the JSON `agent.ultraorchestrator.permission.bash` uses `"*": "deny"`, while `content/subagents/ultraorchestrator.md` frontmatter uses `"*": "ask"`. This is a pre-existing systemic divergence — the same pattern appears for `ultrareview`, `ultradebugger`, `code-review`, `security-auditor`, `performance-profiler`, `research`, `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `ultraresearch`, `ultrathinking` (JSON uses `"*": "deny"` where the frontmatter uses `"*": "ask"`). The YAML frontmatter is authoritative; do not "fix" the JSON to match.
+- **C2 ask-gate is prose-only, not runtime-enforced:** the rule that `ultraorchestrator` may not dispatch `ultracode`/`git-requests` without host approval exists only in the `.md` frontmatter `permission.task` (`ultracode: ask`, `git-requests: ask`) and body prose. The JSON mirror has no `permission.task` block for `ultraorchestrator` (consistent with ADR-0024), so this gate is NOT enforced by tooling. It is a prompt/convention-level control only.
 
 ## Migration Notes
 

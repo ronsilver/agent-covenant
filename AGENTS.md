@@ -192,7 +192,7 @@ Do not duplicate catalog content in AGENTS.md. Use these canonical references:
 5. **Pre-flight Gate (T2+)**: Before any mutation, verify: `operating-protocol` \| `governance` \| `engineering-standards` \| `context-management` \| `token-efficiency`. Failure → `[CORE CONFLICT]`.
 6. **Language Policy**: All content under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) and all documentation under `docs/` (ADRs, references, reports, guides) must be written in English. Violation → `[LANGUAGE POLICY VIOLATION]`.
 7. **CI Gate**: All CI checks must pass before merge. `make check` (lint → fmt-check → validate → test) is the mandatory pre-merge gate. No PR may be merged with failing CI jobs. Violation → `[CI GATE VIOLATION]`.
-8. **Subagent Discoverability**: No subagent in `content/subagents/` may set `hidden: true`. All 15 subagents must be visible in every agent's TUI/CLI picker. Specialist subagents are invokable both via `task` (by orchestrators) and directly (by users). Hiding creates an asymmetry: orchestrators know the agent exists, users do not. The `hidden` field is reserved for system-internal agents only. Violation → `[DISCOVERABILITY VIOLATION]`.
+8. **Subagent Discoverability**: No subagent in `content/subagents/` may set `hidden: true`. All 17 subagents must be visible in every agent's TUI/CLI picker. Specialist subagents are invokable both via `task` (by orchestrators) and directly (by users). Hiding creates an asymmetry: orchestrators know the agent exists, users do not. The `hidden` field is reserved for system-internal agents only. Violation → `[DISCOVERABILITY VIOLATION]`.
 9. **No Icons in content/**: All files under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) MUST NOT contain emoji icons or status dingbats (❌ ✅ 🔴 🟢 🟡 🟠 ⚪ ⚠️ ⚡ 🔒 ✏️ ⭐ ✨ 💡 🔥 📌 🔍 🚨 🔐 ✔ ✖ ✓ ✗ ▶ and similar visual markers). Replace with text labels: `Correct:` / `Incorrect:` / `[BLOCKER]` / `[WARN]` / `[PASS]` / `[FAIL]`. Arrows (`→ ←`), bullets (`•`), and em-dashes are permitted (prose typography, not status markers). Rationale: icons are non-diffable noise, inconsistent across editors, and break grep-based validation. Violation → `[CONTENT ICON VIOLATION]`.
 10. **English-Only content/**: All prose in files under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) MUST be written in English. This strengthens invariant #6 (Language Policy) by making it explicit that skill `description:` frontmatter clauses and subagent "Known blind spots" sections are prose, not identifiers — they must be English. Proper nouns (team member names like "José", "Lisbaldy de Jesús Ojeda", place names like "Nuevo León") and data examples (`José → Jose` in normalization engine docs) are permitted as they are data, not prose. Violation → `[LANGUAGE POLICY VIOLATION]`.
 
@@ -209,6 +209,7 @@ ultracode → git-requests (branch, commit, push, PR)
 - Only `ultracode` mutates project source code.
 - Only `git-requests` mutates git history.
 - `test-writer` is the explicit exception for writing tests.
+- `docs-writer` is the explicit exception for documentation.
 
 ## Template Location Fix / Migration Note
 

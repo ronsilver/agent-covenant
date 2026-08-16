@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `spec-driven-development` — new skill for OpenSpec and spec-kit artifact-guided development (category: process, status: stable)
 - `docs/adr/0034-skill-library-enrichment.md` — ADR recording the skill-library enrichment (D9-D13) and the engineering-standards Core edit (Status: Accepted)
 - `content/skills/security-expert/references/agent-attack-patterns.md` — new condensed agent-attack-pattern catalog (49 pattern families, risk 0-100, SAFE/CAUTION/DO_NOT_INSTALL)
+- `ultraorchestrator` — new read-only routing meta-agent (permissionMode: read, category: ai-agents)
+- `docs-writer` — new documentation write-exception agent (permissionMode: build, category: ai-agents)
 
 ### Changed
 
@@ -85,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `token-efficiency` — added the shared-language cross-reference in references/clarification-first.md (master catalog #18)
 - `engineering-standards` — recorded the SkillOpt self-optimization reference in references/eval-harness.md (master catalog #154; Core edit, covered by ADR-0034)
 - `docs/reference/master-catalog-mapping.md` — appended the closed 1-190 disposition table (coverage-completion audit trail, T15o)
+- `docs/reference/subagent-strategy-mapping.md` — subagent count updated from 15 to 17 in the mapping intro
 
 ### Fixed
 

@@ -60,7 +60,7 @@ agent-covenant/
 │   ├── skills/                # 63 active skills (on-demand, progressive disclosure, schema v2) → README
 │   ├── workflows/             # 10 slash-command workflows → README
 │   ├── prompts/               # 1 reusable prompt → README
-│   ├── subagents/             # 15 active sub-agents + README → README
+│   ├── subagents/             # 17 active sub-agents + README → README
 │   ├── hooks/                 # Deterministic lifecycle hooks (2 agent dirs) → README
 │   └── mcp/                   # MCP server configuration (12 servers) + agent config → README
 ├── docs/                      # Architecture documentation → below
@@ -137,7 +137,7 @@ Deterministic shell hooks triggered by agent lifecycle events (SessionStart, Pre
 
 ## Subagents
 
-15 active AI sub-agents — organized as read-only analysis (6), review specialists (6), and write agents (3).
+17 active AI sub-agents — organized as read-only analysis + routing (7), review specialists (6), and write agents (4).
 
 → Full catalog: [`content/subagents/README.md`](content/subagents/README.md) · [`docs/reference/subagent-schema.md`](docs/reference/subagent-schema.md)
 

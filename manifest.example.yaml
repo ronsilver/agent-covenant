@@ -227,7 +227,7 @@ skills:
 subagents:
   source_dir: "subagents"
   # Subagents are specialized agents for specific tasks.
-  # 15 active sub-agents + 1 catalog README — see content/subagents/README.md.
+  # 17 active sub-agents + 1 catalog README — see content/subagents/README.md.
   # 41 deprecated subagents consolidated into skills (documented in README).
   files:
     # Meta (read-only analysis + orchestration)
@@ -235,10 +235,12 @@ subagents:
     - ultrareview.md
     - ultradebugger.md
     - ultrathinking.md
+    - ultraorchestrator.md
     # Write agents (single mutation point)
     - ultracode.md
     - git-requests.md
     - test-writer.md
+    - docs-writer.md
     # Review specialists (read-only)
     - code-review.md
     - dependency-audit-agent.md
