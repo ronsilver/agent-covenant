@@ -1,4 +1,4 @@
-# Subagents Catalog (15)
+# Subagents Catalog (17)
 
 Active subagents for discrete workflows. Each subagent is a focused AI persona with specialized system prompt, deployed across OpenCode, Claude Code, Cursor, Codex, and Gemini.
 
@@ -29,6 +29,7 @@ For operational details, permission policies, workflow steps, and orchestration 
 | **`ultradebugger`** | Root-cause debugger (scientific method). Reproduces failure, isolates, hypothesizes, tests with evidence. Delivers: cause, minimum fix proposal, regression test spec. | read-only | Debug Report + to-do → `ultracode` |
 | **`ultraresearch`** | External-facts specialist. Surveys and cross-verifies vendor/library/API/standard before integration decision. Emits Research Dossier (facts, no winner declared). | read-only | Research Dossier → `ultrathinking` (decide) or `ultraplan` (fact-grounding) |
 | **`research`** | Investigates codebase and technical topics. Produces findings document with citations and trade-offs. Read-only. | read-only | Findings (with options) → host or `ultraplan` |
+| **`ultraorchestrator`** | Read-only routing meta-agent. Classifies incoming requests, applies the litmus table, emits ADVISORY routing verdict (route + executor) to the host. Never executes or writes. | read-only | ADVISORY verdict → host |
 
 ### Review Specialists (read-only)
 
@@ -51,6 +52,7 @@ Only these agents mutate files. Single mutation point per type.
 |----------|---------|------|------------|
 | **`ultracode`** | Implementation agent. Takes plan from `ultraplan`, to-do from `ultrareview`, or debug report from `ultradebugger`. Executes task by task, runs tests, delegates git to `git-requests`. Only agent that mutates project source code. | build | Cannot call `ultracode` or `git-requests` via `task`; must call `git-requests` directly for staging/commit/push |
 | **`test-writer`** | Writes unit, integration, and E2E tests. Explicit write exception for test files ONLY; does not modify production source code. | build | Cannot mutate non-test files; cannot call `ultracode` or `git-requests` via `task` |
+| **`docs-writer`** | Keeps README.md, CHANGELOG.md, docs/, and content catalog READMEs accurate. Explicit write exception for documentation only; never modifies app source, scripts, tests, or manifests. | build | Cannot mutate app source/scripts/tests/manifests; leaf (`task: "*": deny`) |
 | **`git-requests`** | Git workflow: create branch, stage changes, split logical commits (conventional format), push, open PR. Only agent that mutates git history. | full | Cannot force-push or hard-reset without confirmation; cannot call `ultracode` or `test-writer` via `task` |
 
 ---

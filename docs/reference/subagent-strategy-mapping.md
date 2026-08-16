@@ -1,6 +1,6 @@
 # Subagent Strategy Mapping (Non-normative research reference)
 
-> STATUS: NON-NORMATIVE research documentation. This file maps each of the 15
+> STATUS: NON-NORMATIVE research documentation. This file maps each of the 17
 > active subagents in `content/subagents/` to state-of-the-art reasoning
 > architectures (CoT, ToT, ReAct, Reflexion, CoVe, etc.) with technical
 > justification. It is NOT a contract: actionable adoptions are governed by

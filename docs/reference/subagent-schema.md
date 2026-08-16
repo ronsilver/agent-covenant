@@ -36,14 +36,14 @@ tools:
 
 | Value | Meaning | File mutation | Git mutation | Use for |
 |---|---|---|---|---|
-| `read` | Read-only analysis/review. | No | No | `ultraplan`, `ultrareview`, `ultradebugger`, `ultrathinking`, `ultraresearch`, `research`, `code-review`, `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor` |
+| `read` | Read-only analysis/review. | No | No | `ultraplan`, `ultrareview`, `ultradebugger`, `ultrathinking`, `ultraresearch`, `research`, `code-review`, `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor`, `ultraorchestrator` |
 
 ## mode (all subagents)
 
 | Value | Meaning |
 |---|---|
-| `subagent` | Invoked via `task` by primary agent or other subagents. All 15 subagents use this value. |
-| `build` | Can write code/tests inside the project workspace. | Yes | No | `ultracode`, `test-writer` |
+| `subagent` | Invoked via `task` by primary agent or other subagents. All 17 subagents use this value. |
+| `build` | Can write code/tests inside the project workspace. | Yes | No | `ultracode`, `test-writer`, `docs-writer` |
 | `full` | Can write to git (branch, commit, push, PR). | No (only git) | Yes | `git-requests` |
 
 ## tools block
@@ -100,6 +100,7 @@ Active sync targets from `manifest.yaml`:
 - All other read-only agents produce deliverables that `ultracode` implements.
 - `ultracode` is the only agent that mutates source code of the project.
 - `git-requests` is the only agent that mutates git history.
+- `ultraorchestrator` is the routing meta-agent; it classifies requests and emits an ADVISORY verdict (route + executor) to the host. It may dispatch bounded write-exception agents (`test-writer`, `docs-writer`) directly; `ultracode`/`git-requests` require host approval.
 
 ## Skill references must be valid
 

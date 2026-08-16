@@ -536,6 +536,40 @@
           "*": "deny"
         }
       }
+    },
+    "ultraorchestrator": {
+      "mode": "subagent",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "task": true
+      },
+      "permission": {
+        "edit": {
+          "*": "deny"
+        },
+        "write": {
+          "*": "deny"
+        },
+        "bash": {
+          "git status": "allow",
+          "git log *": "allow",
+          "git diff *": "allow",
+          "git branch *": "allow",
+          "git show *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "cat *": "allow",
+          "jq *": "allow",
+          "yq *": "allow",
+          "*": "deny"
+        }
+      }
     }
   }
 }
