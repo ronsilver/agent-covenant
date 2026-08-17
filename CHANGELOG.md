@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `scripts/validate-evals.py` — new eval presence/schema/quality validator (Schema A + Schema B, graphify exempt), wired into `make validate-evals` and `make validate`
+- `content/skills/spec-driven-development/evals/evals.json` — new evals (canonical Schema B, 3 cases)
+- `content/skills/penetration-testing-expert/evals/evals.json` — new evals (canonical Schema B, 3 cases)
+- `content/skills/web-browsing-agent-expert/evals/evals.json` — new evals (canonical Schema B, 3 cases)
+- `content/skills/token-efficiency/evals/evals.json` — added eval 9 (safety: compression yields to correctness) and eval 10 (measurement loop), removed unverified KV-cache numbers from eval 4, added reference-dependency note
+
+### Changed
+
+- `Makefile` — added `validate-evals` target and wired it into `validate` (inherited by `check` via the `validate` dependency)
+- `governance` (Core) — synced precedence to `... > tool-usage > token-efficiency` (ADR-0035): fixed troubleshooting-row hierarchy, updated eval 3 expected output, documented tool-usage/token-efficiency as complementary (tool-usage = instrument of token-efficiency, applies first; token-efficiency compresses the remainder, applies last), version 2.2 -> 2.3
+
+### Removed
+
+- `content/skills/.claude/` — removed stale orphan deploy artifact (already gitignored, untracked); dropped the now-dead `lint-md` exclusion from `Makefile`
+- `content/skills/alternative-skill-creator/scripts/evaluate_skill.py` — added Schema B (`test_cases`) dual-support with native carry of `expected_behaviors`/`flags_to_avoid`/`expected_tier`/`pass_threshold` onto the case struct
+- `content/skills/alternative-skill-creator/scripts/init_skill.py` — `EVALS_TEMPLATE` now defaults to Schema B (canonical) and documents Schema A as legacy
+- `content/skills/_TEMPLATE/SKILL.md` — documented evals schema (Schema B canonical, Schema A legacy, graphify exempt)
+- `content/skills/engineering-standards/references/eval-harness.md` — added dual-schema note + negative-case (`flags_to_avoid`) guidance
+
 ## [0.0.2] - 2026-08-16
 
 ### Added
