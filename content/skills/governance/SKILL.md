@@ -5,7 +5,7 @@ description: "Define how Skills Core govern the ecosystem — modification rules
 license: MIT
 metadata:
   author: Community
-  version: "2.2"
+  version: "2.3"
   category: core
   status: stable
 disable-model-invocation: false
@@ -110,6 +110,8 @@ When this Skill Core conflicts with another Skill Core:
 5. `governance` > `token-efficiency`
 
 **Deadlock**: If cross-core conflict cannot be resolved through this hierarchy, escalate to human with `[CORE CONFLICT]`.
+
+**Note (tool-usage and token-efficiency are complementary, not competing)**: `tool-usage` is the instrument of `token-efficiency`. Its purpose is to tell the LLM how to use tools optimally — correct tool, minimal iterations — which reduces iterations and thereby reduces tokens and cost. In the pipeline, `tool-usage` applies first (correct, minimal tool execution) and `token-efficiency` applies last (compresses whatever remains after correct execution, always yielding to correctness and safety). The fixed hierarchy `... > tool-usage > token-efficiency` encodes this pipeline order, not a conflict between the two.
 
 ## Cross-skill References
 
@@ -268,4 +270,4 @@ GOOD: archive old ADR to docs/adr/archived/ + write new ADR with "Supersedes ADR
 | MCP tool exposes unsafe operation | Tool definition not reviewed against T0-T4 risk framework | Remove tool from config; add validation middleware before re-enabling |
 | Known issue: subagent context too large to load all 6 Core skills | Combined Core skill content exceeds subagent context window | Split task into sub-tasks; load only the 2-3 most relevant Cores per sub-task; document which were skipped |
 | Version mismatch between manifest.yaml and actual skill schema (known bug) | Skill updated in content/skills/ but manifest.yaml version not bumped — sync deploys stale metadata | Run `make validate` after every skill change to catch version drift; enforce manifest version == frontmatter version in CI |
-| Circular dependency between Skills Core on conflict resolution (edge case) | governance references operating-protocol for escalation, which references governance for compliance — infinite loop on cross-core conflict | Use fixed precedence hierarchy (operating-protocol > governance > eng-standards > ctx-mgmt > token-efficiency > tool-usage); any cycle outside this hierarchy escalates to human with `[CORE CONFLICT]` |
+| Circular dependency between Skills Core on conflict resolution (edge case) | governance references operating-protocol for escalation, which references governance for compliance — infinite loop on cross-core conflict | Use fixed precedence hierarchy (operating-protocol > governance > eng-standards > ctx-mgmt > tool-usage > token-efficiency); any cycle outside this hierarchy escalates to human with `[CORE CONFLICT]` |

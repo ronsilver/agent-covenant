@@ -14,7 +14,7 @@
     {
       "id": 3,
       "prompt": "governance and operating-protocol conflict on a safety decision. How is the deadlock resolved?",
-      "expected_output": "operating-protocol always prevails on safety. Fixed precedence: operating-protocol > governance > engineering-standards > context-management > token-efficiency > tool-usage. If irresoluble: escalate with [CORE CONFLICT] to human. Reference: SKILL.md Conflict Resolution."
+      "expected_output": "operating-protocol always prevails on safety. Fixed precedence: operating-protocol > governance > engineering-standards > context-management > tool-usage > token-efficiency. tool-usage and token-efficiency are complementary: tool-usage applies first (correct tool, minimal iterations) as the instrument of token-efficiency; token-efficiency applies last (compresses the remainder, yields to correctness). If irresoluble: escalate with [CORE CONFLICT] to human. Reference: SKILL.md Conflict Resolution."
     },
     {
       "id": 4,
