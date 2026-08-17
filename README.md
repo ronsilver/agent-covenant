@@ -162,6 +162,7 @@ Deterministic shell hooks triggered by agent lifecycle events (SessionStart, Pre
 | `validate-canonical-paths.sh` | Canonical path audit (non-blocking) |
 | `validate-skill-quality.py` | Score all skills against 7-pillar standard (CI-blocking) |
 | `quarterly_review.py` | Staleness, schema v2 scan, category distribution |
+| `validate-router-delegation.sh` | Router dispatch gate: REFUSAL PROTOCOL + Dispatch mandate + MCP write-root check |
 | `setup-lsp.sh` | Bootstrap LSP plugins + binary verification |
 | `seed-memory.sh` | Pre-seed MCP memory with core directives |
 
