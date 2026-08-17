@@ -823,3 +823,32 @@ MD
     [[ "$status" -eq 0 ]]
     [[ "$ERRORS" -eq 0 ]]
 }
+
+# =============================================================================
+# ultraorchestrator dispatch regression (router DISPATCHES, never self-executes)
+# =============================================================================
+
+@test "ultraorchestrator.md has REFUSAL PROTOCOL" {
+    local file="${REAL_REPO_ROOT}/content/subagents/ultraorchestrator.md"
+    run grep '^## REFUSAL PROTOCOL' "${file}"
+    [ "$status" -eq 0 ]
+}
+
+@test "ultraorchestrator.md workflow mandates task dispatch" {
+    local file="${REAL_REPO_ROOT}/content/subagents/ultraorchestrator.md"
+    run grep 'DISPATCH: call' "${file}"
+    [ "$status" -eq 0 ]
+}
+
+@test "ultraorchestrator.md forbids self-execution" {
+    local file="${REAL_REPO_ROOT}/content/subagents/ultraorchestrator.md"
+    run grep 'MUST NOT self-execute' "${file}"
+    [ "$status" -eq 0 ]
+}
+
+@test "ultraorchestrator.md litmus 'via host' reduced to ask-gated rows only" {
+    local file="${REAL_REPO_ROOT}/content/subagents/ultraorchestrator.md"
+    local count
+    count=$(awk '/^## Litmus table/,/^## Escalation contract/' "${file}" | grep -c 'via host' || true)
+    [[ "${count}" -eq 3 ]]
+}

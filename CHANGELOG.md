@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `scripts/validate-evals.py` — new eval presence/schema/quality validator (Schema A + Schema B, graphify exempt), wired into `make validate-evals` and `make validate`
+- `scripts/validate-router-delegation.sh` — router delegation gate (REFUSAL PROTOCOL + Dispatch mandate + MCP write-root check), wired into `make validate`
 - `content/skills/spec-driven-development/evals/evals.json` — new evals (canonical Schema B, 3 cases)
 - `content/skills/penetration-testing-expert/evals/evals.json` — new evals (canonical Schema B, 3 cases)
 - `content/skills/web-browsing-agent-expert/evals/evals.json` — new evals (canonical Schema B, 3 cases)
@@ -19,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Makefile` — added `validate-evals` target and wired it into `validate` (inherited by `check` via the `validate` dependency)
 - `governance` (Core) — synced precedence to `... > tool-usage > token-efficiency` (ADR-0035): fixed troubleshooting-row hierarchy, updated eval 3 expected output, documented tool-usage/token-efficiency as complementary (tool-usage = instrument of token-efficiency, applies first; token-efficiency compresses the remainder, applies last), version 2.2 -> 2.3
+- `content/subagents/ultraorchestrator.md` — router now DISPATCHES routed subagents via `task`: added `## Dispatch` section (dispatch table + rules), DISPATCH workflow step, `## REFUSAL PROTOCOL`; litmus executors updated to "router dispatches via task" (ask-gated rows: `ultracode`/`git-requests`/rollback); scope + negative constraints forbid self-execution
+- `content/subagents/README.md` — orchestration flow + restricted delegation graph updated for router direct-dispatch of 9 agents; specialist fan-out documented inside `code-review`/`ultrareview`
+- `content/mcp/opencode-mcp.json` — filesystem MCP server root narrowed from `/` to `.` (relative) — closes MCP write gap for read-only agents
+- `content/mcp/mcp.json` — filesystem MCP server root narrowed from `/` to `.` (relative) — same MCP write-gap closure for the Claude Code-format config
+- `scripts/validate-mcp-config.py` — added dangerous filesystem mount (root `/`) check
+- `Makefile` — wired `validate-router-delegation` into `validate`
+- `tests/test_validate.bats` — added 4 router-dispatch regression tests
+- `.gitignore` — removed `docs/plans` ignore so router-persisted plans become git-visible
 
 ### Removed
 

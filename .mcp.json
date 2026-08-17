@@ -15,7 +15,7 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/"
+        "."
       ],
       "description": "File system access for reading and writing files"
     },

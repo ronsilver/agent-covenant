@@ -13,21 +13,22 @@
 ## Orchestration flow
 
 ```
-ultraplan -> plan (stdout) -> host persists -> ultracode
-ultrareview / code-review -> task(s) to specialists -> to-do -> ultracode
-ultradebugger -> root-cause report + fix proposal + test spec -> ultracode
-research -> findings document -> ultraplan / ultracode
+ultraorchestrator -> task(ultraplan) -> plan (stdout) -> host persists -> ultracode
+ultraorchestrator -> task(ultrareview | code-review) -> verdict (specialists fan out INSIDE the reviewer) -> to-do -> ultracode
+ultraorchestrator -> task(ultradebugger) -> root-cause report + fix proposal + test spec -> ultracode
+ultraorchestrator -> task(research) -> findings document -> ultraplan / ultracode
+ultraorchestrator -> task(ultrathinking) -> Reasoning Dossier -> task(ultraplan) -> plan -> host -> ultracode
 ultracode -> git-requests (branch, commit, push, PR)
 ```
 
-Only `ultracode` mutates project source code. Only `git-requests` mutates git history. `test-writer` is the explicit exception for writing tests. `docs-writer` is the explicit exception for documentation.
+Only `ultracode` mutates project source code. Only `git-requests` mutates git history. `test-writer` is the explicit exception for writing tests. `docs-writer` is the explicit exception for documentation. `ultraorchestrator` DISPATCHES the 9 allowed agents directly via `task`; it cannot task the 6 review specialists directly — that fan-out happens inside `code-review` / `ultrareview`.
 
 ### Restricted delegation graph (permission.task)
 
 | Agent | `permission.task` |
 |---|---|
 | Orchestrators (`ultrareview`, `code-review`) | allow only the 5 review specialists; deny `ultracode`/`test-writer`/`git-requests`/`docs-writer` |
-| `ultraorchestrator` | `"*"`: ask; allow 7 read-only agents (`ultraplan`, `ultrathinking`, `ultrareview`, `ultradebugger`, `ultraresearch`, `research`, `code-review`) + `test-writer` + `docs-writer`; ask `ultracode`/`git-requests` |
+| `ultraorchestrator` | `"*"`: ask; DISPATCHES 9 directly via `task` (7 read-only: `ultraplan`, `ultrathinking`, `ultrareview`, `ultradebugger`, `ultraresearch`, `research`, `code-review` + `test-writer` + `docs-writer`); ask `ultracode`/`git-requests` (host-gated); cannot task the 6 review specialists directly (fan-out inside `code-review`/`ultrareview`) |
 | `ultradebugger`, `research`, `ultraplan`, `ultrathinking`, `ultraresearch` | specialists/research allowed or `ask`; deny write agents (`ultracode`, `test-writer`, `git-requests`, `docs-writer`) |
 | `ultracode` | allow only `git-requests`, `test-writer`, `docs-writer`; ask rest |
 | Specialists (`dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor`) + `test-writer`, `docs-writer` | `"*": deny` (leaves) |

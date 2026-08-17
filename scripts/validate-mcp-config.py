@@ -13,6 +13,8 @@ Checks (applied to canonical content/mcp/*.json and the deployed
    ENOENT: posix_spawn treats the whole string as one executable).
 5. openspec server must run via `npx -y openspec-mcp` (the PyPI `uvx`
    distribution is broken).
+6. No filesystem MCP server mounted at root '/' (whole-disk MCP write
+   access for every agent; root must be a project directory).
 
 Usage:
   python3 scripts/validate-mcp-config.py            # report only
@@ -102,6 +104,29 @@ def check_secrets(raw_text, findings):
         findings.append(f"secret-looking token pattern found: {m.group(0)[:12]}...")
 
 
+def check_mount(container, name, server, findings):
+    """Flag filesystem MCP servers mounted at filesystem root ('/').
+
+    A '/' mount exposes whole-disk read/write to every agent that can call
+    MCP tools (MCP tools are not gated by agent permission/tools blocks).
+    Root must be narrowed to a project directory.
+    """
+    if name != "filesystem":
+        return
+    argv = []
+    cmd = server.get("command")
+    if isinstance(cmd, list):
+        argv = list(cmd)
+    args = server.get("args") or []
+    argv += args if isinstance(args, list) else [str(args)]
+    if "/" in argv:
+        findings.append(
+            f"[{container}/{name}] filesystem server mounted at '/' — grants "
+            f"whole-disk MCP write access to every agent; narrow the root to "
+            f"a project directory."
+        )
+
+
 def validate_file(path, findings):
     if not Path(path).exists():
         return
@@ -115,6 +140,7 @@ def validate_file(path, findings):
     for container, name, server in _iter_servers(cfg):
         check_command(container, name, server, findings)
         check_env(container, name, server, findings)
+        check_mount(container, name, server, findings)
     check_secrets(raw, findings)
 
 

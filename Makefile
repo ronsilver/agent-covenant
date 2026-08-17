@@ -8,7 +8,7 @@ SHELL := /usr/bin/env bash
 SCRIPTS_DIR := scripts
 TESTS_DIR := tests
 
-SHELL_SCRIPTS := $(SCRIPTS_DIR)/sync.sh $(SCRIPTS_DIR)/validate.sh $(SCRIPTS_DIR)/validate-subagent-mode.sh $(SCRIPTS_DIR)/validate-kernel-budget.sh $(SCRIPTS_DIR)/mcp-github.sh
+SHELL_SCRIPTS := $(SCRIPTS_DIR)/sync.sh $(SCRIPTS_DIR)/validate.sh $(SCRIPTS_DIR)/validate-subagent-mode.sh $(SCRIPTS_DIR)/validate-kernel-budget.sh $(SCRIPTS_DIR)/validate-router-delegation.sh $(SCRIPTS_DIR)/mcp-github.sh
 SHELL_LIBS    := $(SCRIPTS_DIR)/lib/common.sh $(SCRIPTS_DIR)/lib/sync.sh
 SHELL_ALL     := $(SHELL_SCRIPTS) $(SHELL_LIBS)
 
@@ -74,7 +74,7 @@ test: ## Run bats tests
 	@echo "✓ tests passed"
 
 .PHONY: validate
-validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons validate-evals ## Run manifest + subagent + MCP + kernel budget + icon + eval validation
+validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons validate-evals validate-router-delegation ## Run manifest + subagent + MCP + kernel budget + icon + eval + router delegation validation
 	@echo "Running manifest validation..."
 	$(SCRIPTS_DIR)/validate.sh
 	@echo "✓ validation passed"
@@ -90,6 +90,12 @@ validate-subagent-mode: ## Check all subagents use mode: subagent
 	@echo "Running subagent mode validation..."
 	@$(SCRIPTS_DIR)/validate-subagent-mode.sh
 	@echo "✓ subagent mode validation passed"
+
+.PHONY: validate-router-delegation
+validate-router-delegation: ## Check router dispatch mandate (REFUSAL PROTOCOL, Dispatch, MCP write root)
+	@echo "Running router delegation validation..."
+	@$(SCRIPTS_DIR)/validate-router-delegation.sh
+	@echo "✓ router delegation validation passed"
 
 .PHONY: validate-kernel-budget
 validate-kernel-budget: ## Check kernel files stay within the 6000-byte budget
