@@ -28,8 +28,7 @@ lint-md: ## Run markdownlint on all markdown files
 			-not -path "./node_modules/*" \
 			-not -path "./.opencode/node_modules/*" \
 			-not -path "./docs/plans/*" \
-			-not -path "./graphify-out/*" \
-			-not -path "./content/skills/.claude/*"); \
+			-not -path "./graphify-out/*"); \
 	else \
 		echo "  markdownlint not installed, skipping (npm install -g markdownlint-cli)"; \
 	fi
@@ -75,7 +74,7 @@ test: ## Run bats tests
 	@echo "✓ tests passed"
 
 .PHONY: validate
-validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons ## Run manifest + subagent + MCP + kernel budget + icon validation
+validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons validate-evals ## Run manifest + subagent + MCP + kernel budget + icon + eval validation
 	@echo "Running manifest validation..."
 	$(SCRIPTS_DIR)/validate.sh
 	@echo "✓ validation passed"
@@ -134,6 +133,13 @@ validate-shell-safety: ## Scan content/ for ! characters that trigger Zsh histor
 validate-no-fintech: ## Check content/ is free of fintech-domain coupling
 	@echo "Running fintech domain validation..."
 	@bash $(SCRIPTS_DIR)/validate-no-fintech.sh
+	@echo ""
+
+.PHONY: validate-evals
+validate-evals: ## Validate skill evals presence, schema, and minimal quality (graphify exempt)
+	@echo "Running eval validation..."
+	@python3 $(SCRIPTS_DIR)/validate-evals.py --ci || (echo "[ERROR] Eval validation failed"; exit 1)
+	@echo "[PASS] Eval validation passed"
 	@echo ""
 
 .PHONY: check

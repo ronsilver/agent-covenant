@@ -115,14 +115,23 @@ Files not intended to be loaded into context, but rather used within the output 
 **Any unneeded directories can be deleted.** Not every skill requires all three types of resources.
 """
 
+# Canonical evals schema is Schema B (test_cases). Schema A (evals) remains
+# accepted for existing skills. New skills SHOULD use Schema B below.
 EVALS_TEMPLATE = """{
-  "skill_name": "{skill_name}",
-  "evals": [
+  "skill": "{skill_name}",
+  "version": "1.0",
+  "description": "[TODO: what this skill is evaluated on]",
+  "rubric": {
+    "score_range": [0, 5],
+    "criteria": ["[TODO: observable success criteria]"]
+  },
+  "test_cases": [
     {
       "id": 1,
-      "prompt": "[TODO: Realistic user prompt that triggers this skill]",
-      "expected_output": "[TODO: What the correct output looks like]",
-      "assertions": ["[TODO: Verifiable assertion about the output]"]
+      "stratum": "simple",
+      "input": "[TODO: realistic user prompt that triggers this skill]",
+      "expected_behaviors": ["[TODO: observable behavior the output must have]"],
+      "flags_to_avoid": ["[TODO: failure modes the output must not have]"]
     }
   ]
 }"""

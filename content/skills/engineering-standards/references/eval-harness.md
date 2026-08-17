@@ -42,6 +42,20 @@ This repo's evals.json uses:
 - `stratum`: simple | medium | complex (difficulty tier)
 - `test_cases[]`: id, stratum, input, expected_behaviors, flags_to_avoid
 
+Dual-schema note (2026-08, iteration 1): the 5 Core skills
+(context-management, engineering-standards, operating-protocol, skill-router,
+tool-usage) use the Schema B LEGACY VARIANT — real-world routing/behavior fields
+(`expected_skill`, `expected_tools`, `expected_tier`, `routing`, etc.) and are
+validated LENIENTLY by `scripts/validate-evals.py` (allowlisted, NOT
+retrofitted — governance gate). 54 other skills use the legacy Schema A shape
+(`evals[]` with `prompt` / `expected_output`). Both are accepted and both are
+executable by `alternative-skill-creator/scripts/evaluate_skill.py`
+(dual-support; Schema B fields are carried natively on the case struct). NEW
+skills MUST use canonical Schema B (non-empty `expected_behaviors` AND non-empty
+`flags_to_avoid` per case, numeric `rubric.pass_threshold`) — positive-only
+cases are incomplete. graphify is exempt. Presence + schema + minimal quality
+are enforced by `make validate-evals`.
+
 NOTE: `scripts/validate-skill-quality.py` scores SKILL.md against the 7-pillar
 standard (Autosuficiencia, Arbol de decisiones, etc.) - it does NOT consume
 evals.json. The two are complementary:

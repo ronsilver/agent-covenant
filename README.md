@@ -57,7 +57,7 @@ agent-covenant/
 ├── manifest.example.yaml      # Source of truth template (copy to manifest.yaml for local config)
 ├── content/
 │   ├── rules/                 # Agent behavior rules (kernel + core) → README
-│   ├── skills/                # 63 active skills (on-demand, progressive disclosure, schema v2) → README
+│   ├── skills/                # 63 active skills (on-demand, progressive disclosure, schema v2; evals CI-validated via `make validate-evals`, graphify exempt) → README
 │   ├── workflows/             # 10 slash-command workflows → README
 │   ├── prompts/               # 1 reusable prompt → README
 │   ├── subagents/             # 17 active sub-agents + README → README

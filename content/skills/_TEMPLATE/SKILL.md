@@ -198,3 +198,29 @@ python3 scripts/validate-shell-safety.py --ci
 ```
 
 This gate is integrated into `make check`.
+
+## Evals schema (evals/evals.json)
+
+Each skill SHOULD carry an `evals/evals.json`. Two schemas are accepted:
+
+- **Schema B (canonical, preferred for new skills):**
+  ```json
+  {
+    "skill": "<skill-name>",
+    "version": "1.0",
+    "description": "<what this skill is evaluated on>",
+    "rubric": { "score_range": [0, 5], "criteria": ["<observable criteria>"] },
+    "test_cases": [
+      {
+        "id": 1,
+        "stratum": "simple | medium | complex",
+        "input": "<realistic user prompt that triggers this skill>",
+        "expected_behaviors": ["<observable behavior the output must have>"],
+        "flags_to_avoid": ["<failure modes the output must not have>"]
+      }
+    ]
+  }
+  ```
+- **Schema A (legacy, accepted):** top-level `evals` list; each case has `prompt` (str) and `expected_output` (str, >=60 chars).
+
+Validation is enforced by `make validate-evals` (`scripts/validate-evals.py`). graphify is exempt. New skills MUST use Schema B; existing Schema A skills are not required to migrate.

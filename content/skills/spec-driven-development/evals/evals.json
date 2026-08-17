@@ -1,0 +1,67 @@
+{
+  "skill": "spec-driven-development",
+  "version": "1.0",
+  "description": "Validates spec-driven development: OpenSpec change artifacts (proposal, REQUIREMENTS with WHEN/THEN, tasks), validation gate, constitution-to-converge on brownfield.",
+  "rubric": {
+    "score_range": [
+      0,
+      5
+    ],
+    "criteria": [
+      "Artifacts precede code",
+      "WHEN/THEN clauses present and traceable",
+      "Validation gate executed, not assumed",
+      "Brownfield as-is/to-be derived from existing behavior"
+    ],
+    "pass_threshold": 0.7
+  },
+  "test_cases": [
+    {
+      "id": "sdd-001",
+      "stratum": "simple",
+      "input": "I have a new feature to build. Produce the OpenSpec change artifacts (proposal, spec REQUIREMENTS with WHEN/THEN, tasks) before any code.",
+      "expected_behaviors": [
+        "produces proposal.md, spec files with REQUIREMENTS sections using WHEN/THEN clauses, and tasks.md with ordered, dependency-aware steps",
+        "separates requirements (WHAT) from design (HOW)",
+        "does NOT jump to implementation code before the spec artifacts exist"
+      ],
+      "flags_to_avoid": [
+        "implements_before_spec",
+        "missing_when_then",
+        "merges_requirements_with_design"
+      ]
+    },
+    {
+      "id": "sdd-002",
+      "stratum": "medium",
+      "input": "Validate an existing OpenSpec change proposal that has a spec REQUIREMENTS section with WHEN/THEN statements. Run the validation gate and report.",
+      "expected_behaviors": [
+        "runs the openspec validate gate (or its equivalent)",
+        "reports PASS/FAIL per artifact",
+        "lists any missing or malformed WHEN/THEN clauses",
+        "identifies tasks not traceable to a REQUIREMENTS entry"
+      ],
+      "flags_to_avoid": [
+        "claims_success_without_validating",
+        "vague_failure_report",
+        "untraceable_tasks"
+      ]
+    },
+    {
+      "id": "sdd-003",
+      "stratum": "complex",
+      "input": "Apply the constitution-to-converge pipeline to a brownfield feature: derive spec artifacts from existing code before refactoring.",
+      "expected_behaviors": [
+        "analyzes existing code to extract current behavior into REQUIREMENTS/WHEN-THEN",
+        "proposes the target spec delta",
+        "maps tasks to the delta",
+        "treats existing behavior as source of truth for the as-is spec"
+      ],
+      "flags_to_avoid": [
+        "invents_requirements",
+        "missing_as_is_spec",
+        "as_is_differs_beyond_intended_change"
+      ]
+    }
+  ]
+}

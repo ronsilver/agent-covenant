@@ -1,5 +1,6 @@
 {
   "skill_name": "token-efficiency",
+  "notes": "Evals 4, 6, 7, 8 assume the agent has access to this skill's references/ (optimization.md, retrieval-economics.md, ai-slop-patterns.md, observability-loop.md, baselines.md) for concepts like KV-cache, retrieval economics, AI-slop scoring, and the ccusage measurement loop. No external file fixtures are required (no evals/files dir).",
   "evals": [
     {
       "id": 1,
@@ -19,7 +20,7 @@
     {
       "id": 4,
       "prompt": "You have a system prompt with a timestamp embedded: 'Current time: 2026-06-30T14:32:00Z'. The user makes 5 follow-up queries over 10 minutes. What KV-cache problem exists and how to fix it?",
-      "expected_output": "Must identify: timestamp in system prompt invalidates cache prefix on every request -> 0% cache hit. Fix: remove timestamp/Date.now()/dynamic values from system prompt. Place static content (system prompt, tool defs) first, dynamic content (current query) last. For Claude 4.5 models: ensure >=4096 tokens per cache checkpoint. For Claude 3.7 Sonnet: >=1024 tokens. Must cite model-specific minimums. Quality check: fix preserves all system prompt content -- only the dynamic timestamp is relocated, nothing deleted."
+      "expected_output": "Must identify: timestamp in system prompt invalidates cache prefix on every request -> 0% cache hit. Fix: remove timestamp/Date.now()/dynamic values from system prompt. Place static content (system prompt, tool defs) first, dynamic content (current query) last. The static cache prefix should be long enough to be cacheable (larger static prefixes cache more reliably; exact per-model minimum checkpoint token counts vary by model and must be verified against current vendor docs before citing). Quality check: fix preserves all system prompt content -- only the dynamic timestamp is relocated, nothing deleted."
     },
     {
       "id": 5,
@@ -40,6 +41,16 @@
       "id": 8,
       "prompt": "Design an evaluation for a compression technique that claims 60% token savings. What 4 probes and what savings tiers?",
       "expected_output": "4 probes: recall (can agent retrieve key info from compressed context?), artifact (does compressed context produce correct code/output?), continuation (can agent continue task from compressed state?), decision (does agent make same decisions from compressed context?). 6 dimensions per probe: accuracy, context, artifact, completeness, continuity, instruction. LLM judge 0-5 scale. Per-session token decomposition: cache_write, cache_read, fresh_input, output. 3-tier savings classification: Measured (directly observed delta), Estimated (inferred from token counts), Opportunity (potential if technique applied). Use winsorized mean to reduce outlier influence. Quality check: recall and artifact probes MUST pass -- if compressed context drops key info or produces wrong output, the 60% saving is a FAILURE not a win."
+    },
+    {
+      "id": 9,
+      "prompt": "An active incident is in progress. The user just sent a critical error stack trace and asks you to diagnose it. You are low on context. What is the correct compression behavior, and what must never be compressed?",
+      "expected_output": "Must identify that error and diagnostic context is the LAST thing to compress: safety and correctness override token savings. Correct behavior is to keep the error message and root-cause cues fully intact (unmasked, uncompressed), and only compress or mask large successful/verbose tool outputs, never the active error context. Must state that the invariant 'compression always yields to correctness and safety' takes precedence over any token budget. Quality check: the answer explicitly refuses to compress the critical error and names what is safe to compress instead. Reference: SKILL.md Precedence and anti-patterns."
+    },
+    {
+      "id": 10,
+      "prompt": "Design a measurement loop to verify a proposed output-compression technique actually saves tokens, instead of assuming it does. Include the tool, the cadence, the metric, and what you compare against.",
+      "expected_output": "Must prescribe a measure-never-assume loop: use a token-counting tool (e.g. ccusage or equivalent), establish a baseline of un-compressed token usage, apply the technique, then measure the delta over a defined cadence (e.g. per-session or per-week). Must report the measured delta, classify it as Measured / Estimated / Opportunity per the 3-tier scheme, and must not claim savings without an observed delta. Quality check: the answer explicitly contrasts measuring against assuming and requires a baseline. Reference: SKILL.md 'Measure -- NEVER assume' and references/observability-loop.md."
     }
   ]
 }
