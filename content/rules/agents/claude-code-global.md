@@ -65,7 +65,7 @@ Dead code introduced → DELETE. Pre-existing → REPORT only.
 </GIT>
 
 <SKILLS>
-Invoke via the **Skill** tool with exact name (e.g. Skill(operating-protocol)). Mentioning in prose is NOT invocation.
+Invoke via the **Skill** tool with exact name. Mentioning in prose is NOT invocation.
 ALWAYS at session start (universal baseline — every session, every task):
   `operating-protocol` (risk/done/anti-hallucination)
   `governance` (compliance/audit/binding/modification-protection)
@@ -74,6 +74,7 @@ ALWAYS at session start (universal baseline — every session, every task):
   `tool-usage` (tool selection: 1 for vs N curls, parallel vs sequential, dedicated vs Bash)
   `token-efficiency` (verbosity/word limits/thinking budget on every reply)
   `skill-router` (catalog of domain skills — consult before assuming none exists)
+NEVER skip Step 0 due to budget, read-only scope, or missing context; absent body = invoke now.
 Conditional load — invoke additionally when task fits (saves tokens vs loading speculatively):
   - Git/Commit/PR/Branch: + `git-expert`
   - Debug/Incident/Bug: + `debugging-expert`
@@ -108,7 +109,7 @@ AFTER completing task:
 6. If new decision or reusable context emerged → persist via `mcp__memory__create_entities` / `mcp__memory__add_observations`.
 </REINFORCE>
 
-<!-- Claude Code runtime expands these @ skill refs at session start; do not remove. -->
+<!-- runtime expands @ refs below; do not remove. -->
 @~/.claude/skills/operating-protocol/SKILL.md
 @~/.claude/skills/governance/SKILL.md
 @~/.claude/skills/engineering-standards/SKILL.md

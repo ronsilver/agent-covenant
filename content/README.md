@@ -130,7 +130,7 @@ plan warning. This hierarchy is UNIFIED — applies everywhere including PR revi
 
 ### Examples
 **Correct (formal):**
-- `Subagents MUST load all 6 Skills Core before executing.`
+- `Subagents MUST load all 7 boot skills before executing.`
 - `PAN MUST NOT be stored in application databases.`
 
 **Correct (emphatic):**

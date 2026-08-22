@@ -1,10 +1,10 @@
 // OpenCode plugin — logs reminder at session start.
-// Primary enforcement: instructions[] in opencode-mcp.json injects boot SKILL.md content.
-// This plugin is a fallback for sessions where opencode-mcp.json is not synced.
+// No OpenCode mechanism injects boot SKILL.md bodies: the model invokes all 7 via skill().
+// This plugin logs an advisory reminder; enforcement lives in opencode-global.md <REINFORCE>.
 export const BaselineSkills = async ({ client }) => {
   const reminder = `SESSION START — MANDATORY BOOT SKILLS
 
-Boot skills are auto-loaded via instructions[] in opencode-mcp.json.
+OpenCode does NOT auto-inject skill bodies. Check each body is verbatim in context.
 If you do NOT see their content in context, invoke these 7 skills NOW:
 
   skill({name:"operating-protocol"})     → risk tiers, anti-hallucination

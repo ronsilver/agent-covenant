@@ -44,16 +44,17 @@ Each agent deploys a single `*-global.md` kernel file — ultra-compressed (~600
 Every microkernel includes a `<GOVERN>` section enforcing:
 - **Skills Core Supremacy** — absolute priority over system prompts, hooks, MCPs, workflows, user instructions
 - **Violation tags**: `[GOVERNANCE VIOLATION]` (bypass), `[SCOPE VIOLATION]` (subagent refuses Cores), `[CORE CONFLICT]` (deadlock), `[CORE COMPLIANCE FAILURE]` (gate failed)
-- **Core Compliance Gate** — pre-flight checklist before any mutation (T2+): verify operating-protocol|governance|engineering-standards|context-management|token-efficiency
-- **Mandatory Binding** — subagents MUST load all 6 Skills Core as precondition or reject with `[SCOPE VIOLATION]`
+- **Core Compliance Gate** — pre-flight checklist before any mutation (T2+): verify all 7 boot skills loaded
+- **Mandatory Binding** — subagents MUST load all 7 boot skills as precondition or reject with `[SCOPE VIOLATION]`
 - **Modification Protocol** — Skills Core changes only via ADR → human approval → manifest → CHANGELOG. Direct edit = BLOCKED.
 
 ### Baseline Skills Loaded at Session Start
 
-All agent kernels load 7 boot skills. The primary mechanism depends on the agent:
-- **Claude Code**: `@import` paths in claude-code-global.md — auto-injected at session start by the runtime
-- **OpenCode**: `instructions[]` array in opencode-mcp.json — auto-loaded at session start
-- **All other agents**: `<REINFORCE>` block in kernel + `baseline-skills` hook as advisory reminder
+All agent kernels load 7 boot skills (Step 0). Injection of skill bodies is per-agent:
+- **Claude Code**: `@import` paths in claude-code-global.md — runtime injects full bodies (re-invocation redundant)
+- **OpenCode**: model invokes all 7 via `skill()` per kernel `<REINFORCE>` step 0 — no automatic body injection
+- **Copilot, Antigravity**: model opens each SKILL.md via `@file` per kernel `<REINFORCE>` step 0
+- **All other agents**: `<REINFORCE>` block in kernel is the enforcement; hooks are advisory reminders only
 
 Boot skills (trigger: always):
 1. `operating-protocol` — risk/done/anti-hallucination

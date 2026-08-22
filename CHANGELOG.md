@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/skills/web-browsing-agent-expert/evals/evals.json` — new evals (canonical Schema B, 3 cases)
 - `content/skills/token-efficiency/evals/evals.json` — added eval 9 (safety: compression yields to correctness) and eval 10 (measurement loop), removed unverified KV-cache numbers from eval 4, added reference-dependency note
 - `tests/benchmark/` — deterministic stdlib-only benchmark harness for `opencode run` with 12 raw + 5 derived metrics, 5 static prompts, context and baseline modes (paired selection runs both), HOME-override baseline isolation with a fail-closed `--smoke` gate, and 13 Bats tests at `tests/test_benchmark.bats`
+- `docs/adr/0036-boot-skill-step-zero-enforcement.md` — zero-reasoning execution plan (T1-T6, ADR-0036 draft) for fixing the boot-skill partial-load defect: Step-Zero invocation mandate, per-agent injection truth table, count-drift unification to 7, transitive binding across skill/subagent/rule/hook load paths, CI regression gates
 
 ### Changed
 
@@ -37,6 +38,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/skills/alternative-skill-creator/scripts/init_skill.py` — `EVALS_TEMPLATE` now defaults to Schema B (canonical) and documents Schema A as legacy
 - `content/skills/_TEMPLATE/SKILL.md` — documented evals schema (Schema B canonical, Schema A legacy, graphify exempt)
 - `content/skills/engineering-standards/references/eval-harness.md` — added dual-schema note + negative-case (`flags_to_avoid`) guidance
+
+### Fixed
+
+- `content/skills/skill-router/SKILL.md` — removed "NEVER invoke via skill()" boot-skills prohibition; trigger:always clarified as catalog membership; Step 0 now mandates invoking all 7 boot skills (ADR-0036)
+- `content/rules/agents/opencode-global.md` — GOVERN pre-flight corrected to "verify all 7 boot skills loaded"; anti-waiver clause added to <SKILLS> (ADR-0036)
+- `content/rules/agents/claude-code-global.md` — anti-waiver clause added to <SKILLS>; compensating trims preserve the 6000-byte kernel budget (ADR-0036)
+- False blanket auto-injection claims replaced with per-agent truth: boot-manifest.yaml, docs/reference/skills-catalog.md, content/rules/README.md, baseline-skills-plugin.js, AGENTS.md heading (ADR-0036)
+- `content/hooks/opencode/baseline-skills.sh` — boot list corrected 4 -> 7; `content/hooks/claude-code/baseline-skills.sh` — verify-first ordering, leading auto-load assertion dropped
+- Stale boot-count literals unified to 7: governance SKILL.md (+references, +evals), tool-usage SKILL.md compliance gate, content/rules/core/governance.md, AGENTS.md invariants 1/5 (ADR-0036)
+
+### Changed (Core Governance)
+
+- `skill-router` (Core) — boot-skills section rewritten: Step-Zero invocation mandate + verbatim-body exception; version 3.0 -> 3.1 (ADR-0036)
+- `governance` (Core) — subagent binding unified to 7 boot skills; overflow exception scoped to subagents only; version 2.3 -> 2.4 (ADR-0036)
+- `tool-usage` (Core) — Core Compliance Gate extended 5 -> 7 skills; version 2.1 -> 2.2 (ADR-0036)
 
 ## [0.0.2] - 2026-08-16
 
