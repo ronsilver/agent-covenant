@@ -1,5 +1,8 @@
 # Boot Manifest — Skills Runtime MUST Load Before Any Tool Use
-# trigger: always skills are auto-injected by agent harness.
+# trigger: always marks BOOT CATALOG MEMBERSHIP, not automatic injection.
+# Injection is per-agent: Claude Code YES (@import lines in claude-code-global.md
+# expand full SKILL.md bodies); OpenCode and all other agents NO — the model
+# itself MUST invoke every boot skill via skill() as Step 0 (kernel <REINFORCE> step 0).
 # trigger: on-demand skills are loaded via skill() tool.
 # Subagents (content/subagents/): the conditional split below does NOT apply —
 # every subagent loads all 7 boot skills unconditionally at its Step 0
