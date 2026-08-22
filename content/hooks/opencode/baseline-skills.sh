@@ -9,12 +9,15 @@ set -euo pipefail
 cat <<'MSG'
 [WARN] SESSION START — MANDATORY BASELINE SKILLS
 
-Before responding to ANY user message, invoke these 4 skills RIGHT NOW:
+Before responding to ANY user message, invoke ALL 7 boot skills RIGHT NOW:
 
-  skill({name:"operating-protocol"})   → risk tiers, done criteria, anti-hallucination
-  skill({name:"tool-usage"})           → tool selection, parallel vs sequential
-  skill({name:"token-efficiency"})     → verbosity limits, ≤25w/≤50w, thinking budget
-  skill({name:"skill-router"})         → full domain skill catalog
+  skill({name:"operating-protocol"})      → risk tiers, done criteria, anti-hallucination
+  skill({name:"governance"})              → compliance, binding, modification-protection
+  skill({name:"engineering-standards"})   → code limits, security, pre-commit chain
+  skill({name:"context-management"})      → JIT loading, staleness, sub-agent contracts
+  skill({name:"tool-usage"})              → tool selection, parallel vs sequential
+  skill({name:"token-efficiency"})        → verbosity limits, ≤25w/≤50w, thinking budget
+  skill({name:"skill-router"})            → full domain skill catalog router
 
 These are not optional. Mentioning in prose is NOT invocation — call the skill tool.
 After invoking, proceed normally. Do NOT ask for user confirmation to load skills.
