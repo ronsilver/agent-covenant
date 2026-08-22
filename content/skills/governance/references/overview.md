@@ -14,7 +14,7 @@ Meta-governance: guards the other 5 Skills Core. Defines modification rules, man
 ## Glossary
 
 - GOVERNANCE VIOLATION: any entity bypasses a Skills Core rule
-- SCOPE VIOLATION: subagent executes without loading all 6 Core skills
+- SCOPE VIOLATION: subagent executes without loading all 7 boot skills
 - CORE CONFLICT: deadlock between Skills Core not resolved by precedence hierarchy
 - DISCOVERABILITY VIOLATION: subagent sets hidden: true (invariant #8)
 - HITL: human-in-the-loop approval required for irreversible changes

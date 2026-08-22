@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "A subagent started executing a hook deployment without loading engineering-standards skill. Classify severity and prescribe action.",
-      "expected_output": "Moderate violation. Terminate subagent. Log [GOVERNANCE VIOLATION]. Escalate to human. Subagent must load all 6 Core skills before executing or reject with [SCOPE VIOLATION]. Reference: violation-escalation.md severity catalog."
+      "expected_output": "Moderate violation. Terminate subagent. Log [GOVERNANCE VIOLATION]. Escalate to human. Subagent must load all 7 boot skills before executing or reject with [SCOPE VIOLATION]. Reference: violation-escalation.md severity catalog."
     },
     {
       "id": 2,

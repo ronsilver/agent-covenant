@@ -5,7 +5,7 @@ description: "Select the right skill for a task when the best match is unclear. 
 license: MIT
 metadata:
   author: Community
-  version: "3.0"
+  version: "3.1"
   category: ai-agents
   status: stable
 disable-model-invocation: false
@@ -37,11 +37,11 @@ System prompt already lists all available skills with `name`, `description`, `lo
 | `evaluation-expert` vs `reasoning-expert` | Quality measurement → `evaluation`. Fallacy detection → `reasoning` |
 | `prompt-expert` vs `llm-expert` | Prompt design/injection → `prompt`. LLM ops/cost → `llm` |
 
-## Boot Skills (NEVER invoke via `skill()`)
+## Boot Skills (MUST invoke ALL 7 via `skill()` at session start)
 
 `operating-protocol` `governance` `engineering-standards` `context-management` `tool-usage` `token-efficiency` `skill-router`
 
-Declared in `content/rules/core/boot-manifest.yaml` with `trigger: always`. Auto-loaded at session start.
+Declared in `content/rules/core/boot-manifest.yaml`. There, `trigger: always` marks BOOT CATALOG MEMBERSHIP, not automatic injection: most harnesses do NOT inject skill bodies at session start. Therefore, as Step 0 of every session, invoke ALL 7 via `skill()` BEFORE any other tool call. Read-only tasks, small budgets, and "trivial" work NEVER waive Step 0. Skip an individual invocation ONLY if that skill's full SKILL.md body is already verbatim in context (e.g., Claude Code @import expansion).
 
 ## Anti-patterns
 
@@ -96,7 +96,7 @@ system prompt categories → data → scala-expert
 - [ ] >=2 trigger keywords matched before invoking skill
 - [ ] Most specific skill selected when multiple candidates match
 - [ ] No skill invoked for trivial edits (grep, rename, single-line fix)
-- [ ] Boot skills (7) never invoked via `skill()` — always available
+- [ ] All 7 boot skills invoked via `skill()` at session start, OR each body verified verbatim in context
 
 ## Known Limitations
 
