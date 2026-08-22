@@ -10,8 +10,11 @@ AGENTS_DIR="${REPO_ROOT}/content/rules/agents"
 
 ERRORS=0
 
-error() { echo "ERROR: $*" >&2; ERRORS=$((ERRORS + 1)); }
-ok()    { echo "OK:    $*" >&2; }
+error() {
+    echo "ERROR: $*" >&2
+    ERRORS=$((ERRORS + 1))
+}
+ok() { echo "OK:    $*" >&2; }
 
 # Kernels that support a skill tool (must name it explicitly)
 TOOL_AGENTS=(claude-code windsurf opencode)
@@ -62,7 +65,7 @@ check_invocation_clause() {
 
 check_baseline_skills() {
     local file="$1" agent="$2"
-    for skill in operating-protocol tool-usage token-efficiency skill-router; do
+    for skill in operating-protocol governance engineering-standards context-management tool-usage token-efficiency skill-router; do
         if ! grep -q "\`${skill}\`" "$file"; then
             error "${agent}: baseline skill '\`${skill}\`' missing from <SKILLS>"
         fi
@@ -109,11 +112,11 @@ for kernel_file in "${AGENTS_DIR}"/*-global.md; do
     basename_file=$(basename "$kernel_file")
     agent="${basename_file%-global.md}"
 
-    check_no_windsurf_leak  "$kernel_file" "$agent"
+    check_no_windsurf_leak "$kernel_file" "$agent"
     check_invocation_clause "$kernel_file" "$agent"
-    check_baseline_skills   "$kernel_file" "$agent"
-    check_memory_block      "$kernel_file" "$agent"
-    check_reinforce_step3   "$kernel_file" "$agent"
+    check_baseline_skills "$kernel_file" "$agent"
+    check_memory_block "$kernel_file" "$agent"
+    check_reinforce_step3 "$kernel_file" "$agent"
 
     if [[ "$agent" == "claude-code" ]]; then
         check_claude_code_mcp "$kernel_file"
