@@ -13,7 +13,7 @@ Skills Core changes require: ADR proposal → human approval → manifest update
 Direct modification without ADR is BLOCKED.
 
 ## Mandatory Binding
-- Subagents: MUST load 6 Core skills as precondition (note: plus skill-router as mandatory domain = 7 boot skills) or reject task with `[SCOPE VIOLATION]`
+- Subagents: MUST load all 7 boot skills (6 core + mandatory-domain skill-router) as precondition or reject task with `[SCOPE VIOLATION]`
 - Hooks: validate against engineering-standards + operating-protocol before deploy
 - MCP servers: tools MUST NOT violate T0-T4 framework
 - Workflows: every step auditable against 8 engineering evaluation domains

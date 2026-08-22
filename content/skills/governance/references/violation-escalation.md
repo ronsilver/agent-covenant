@@ -13,7 +13,7 @@ Source: https://github.com/affaan-m/ECC (accessed 2026-07-02, [unverified] adopt
 | Severity | Condition | Detection trigger | Action | Audit log |
 |----------|-----------|-------------------|--------|-----------|
 | Minor | Skill Core reference outdated in manifest | make validate warning | Auto-fix + report | CHANGELOG ### Fixed |
-| Moderate | Subagent/hook bypasses Core without justification | subagent executes without loading 6 Core skills; hook deploys without safety validation | Terminate + log [GOVERNANCE VIOLATION] | Incident report |
+| Moderate | Subagent/hook bypasses Core without justification | subagent executes without loading all 7 boot skills; hook deploys without safety validation | Terminate + log [GOVERNANCE VIOLATION] | Incident report |
 | Critical | Attempt to modify a Skill Core without ADR | direct edit to Core SKILL.md; version bump without CHANGELOG; no human approval | BLOCK + escalate to human | ADR required to proceed |
 | Catastrophic | MCP server exposes unsafe operations (T3+) | MCP tool exposes delete/secret-rotation; hidden subagent; supremacy override | Remove from config + report + [BLOCKER] | Security incident + root-cause |
 
@@ -22,7 +22,7 @@ Source: https://github.com/affaan-m/ECC (accessed 2026-07-02, [unverified] adopt
 | Tag | Meaning | Severity |
 |-----|---------|----------|
 | [GOVERNANCE VIOLATION] | Any entity bypasses a Skills Core rule | Moderate+ |
-| [SCOPE VIOLATION] | Subagent executes without loading all 6 Core skills | Moderate |
+| [SCOPE VIOLATION] | Subagent executes without loading all 7 boot skills | Moderate |
 | [CORE CONFLICT] | Cross-core deadlock not resolved by precedence hierarchy | Critical |
 | [DISCOVERABILITY VIOLATION] | Subagent sets hidden: true (invariant #8) | Catastrophic |
 | [CORE COMPLIANCE FAILURE] | Pre-flight gate (T2+ mutation) fails | Critical |

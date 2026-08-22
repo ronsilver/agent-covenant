@@ -6,10 +6,11 @@
 set -euo pipefail
 
 cat <<'MSG'
-[WARN] SESSION START — MANDATORY BOOT SKILLS
+[CHECK] SESSION START — VERIFY THE 7 BOOT SKILLS
 
-Boot skills are auto-loaded via @~/.claude/skills/*/SKILL.md in CLAUDE.md.
-If you do NOT see their content in context, invoke them NOW:
+Do you see ALL 7 boot-skill bodies VERBATIM in context?
+(Claude Code expands the @~/.claude/skills/*/SKILL.md imports in CLAUDE.md.)
+Missing ANY of them → invoke them NOW:
 
   Skill(operating-protocol)     → risk tiers, anti-hallucination, evidence labels
   Skill(governance)             → compliance, binding, modification-protection
@@ -19,7 +20,7 @@ If you do NOT see their content in context, invoke them NOW:
   Skill(tool-usage)              → dedicated > Bash, parallel vs sequential
   Skill(skill-router)            → full domain skill catalog
 
-These are not optional — they govern every action. Proceed only after ALL 7 are loaded.
+All 7 present → proceed. These are not optional — they govern every action.
 MSG
 
 exit 0

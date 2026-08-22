@@ -5,7 +5,7 @@ description: "Guide correct tool selection, design, and orchestration for AI age
 license: MIT
 metadata:
   author: Community
-  version: "2.1"
+  version: "2.2"
   category: core
   status: stable
 disable-model-invocation: false
@@ -52,7 +52,9 @@ Before executing any mutation operation (T2+), execute this internal checklist:
 - `governance`: Is the operation within allowed scope?
 - `engineering-standards`: Does it comply with the 8 evaluation domains?
 - `context-management`: Is context within the safe threshold?
+- `tool-usage`: Are tool calls minimal, dedicated-first, and correctly batched?
 - `token-efficiency`: Was the correct model selected for this task?
+- `skill-router`: Was routing consulted before assuming no domain skill applies?
 
 If any check fails → BLOCK execution and report `[CORE COMPLIANCE FAILURE]` with the failing gate.
 

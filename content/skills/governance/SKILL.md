@@ -5,7 +5,7 @@ description: "Define how Skills Core govern the ecosystem — modification rules
 license: MIT
 metadata:
   author: Community
-  version: "2.3"
+  version: "2.4"
   category: core
   status: stable
 disable-model-invocation: false
@@ -60,8 +60,15 @@ Skills Core can only be modified through a formal process:
 Every component in the ecosystem MUST be bound by all Skills Core:
 
 ### Subagents
-Before executing, subagents MUST load all 6 Skills Core as preconditions.
+Before executing, subagents MUST load all 7 boot skills as preconditions.
 If context limits prevent this, they MUST reject the task with `[SCOPE VIOLATION]`.
+
+### Transitive Binding
+Core-skill loading is TRANSITIVE across every load path: skills invoking skills,
+agents spawning subagents, global rules referencing skills or subagents, and hooks
+triggering skills or subagents MUST ensure the target context holds all 7 boot skills
+(loaded via `skill()` or verbatim bodies present) before dependent work begins.
+Orchestrators MUST carry this binding into every `task` dispatch prompt.
 
 ### Hooks
 Must be validated against `engineering-standards` and `operating-protocol` before deployment.
@@ -135,7 +142,7 @@ Governance is the meta-skill that guards the Skills Core ecosystem. It defines m
 | Action | Rule | Escalation |
 |---|---|---|
 | Modify Skills Core | ADR proposal + human approval + CHANGELOG | Catastrophic if bypassed |
-| Subagent execution | Must load all 6 Core skills or reject | Moderate violation |
+| Subagent execution | Must load all 7 boot skills or reject | Moderate violation |
 | Hook deployment | Validated against engineering-standards + operating-protocol | Moderate violation |
 | MCP server activation | Must pass governance review | Catastrophic if unsafe |
 | Workflow step | Auditable against 8 engineering domains | Minor violation |
@@ -178,7 +185,7 @@ BAD: Subagent starts working without loading operating-protocol, governance, or 
 → Terminate with [SCOPE VIOLATION].
 ```
 ```
-GOOD: Subagent loads all 6 Core skills before acting, or rejects task with scope violation notice.
+GOOD: Subagent loads all 7 boot skills before acting, or rejects task with scope violation notice.
 ```
 
 FAIL: Creating/referencing content in `content/skills/` without registering in `manifest.yaml`
@@ -251,7 +258,7 @@ GOOD: archive old ADR to docs/adr/archived/ + write new ADR with "Supersedes ADR
 ## Verification Checklist
 
 - [ ] Skills Core modification followed ADR process with human approval before merge
-- [ ] All subagents load all 6 Skills Core before executing or reject with [SCOPE VIOLATION]
+- [ ] All subagents load all 7 boot skills before executing or reject with [SCOPE VIOLATION]
 - [ ] MCP server configurations passed governance review before activation
 - [ ] Workflow steps are auditable against all 8 engineering-standards domains
 - [ ] CHANGELOG.md updated with governance-related changes under proper header
@@ -268,6 +275,6 @@ GOOD: archive old ADR to docs/adr/archived/ + write new ADR with "Supersedes ADR
 | Subagent bypasses Core rules | Subagent context too large; skipped loading governance skill | Increase context window or split task; enforce governance pre-flight check |
 | ADR merge bypass detected | Direct edit to Core skill file without proposal | Rollback change; create ADR; obtain human approval before reapplying |
 | MCP tool exposes unsafe operation | Tool definition not reviewed against T0-T4 risk framework | Remove tool from config; add validation middleware before re-enabling |
-| Known issue: subagent context too large to load all 6 Core skills | Combined Core skill content exceeds subagent context window | Split task into sub-tasks; load only the 2-3 most relevant Cores per sub-task; document which were skipped |
+| Known issue: subagent context too large to load all 7 boot skills | Combined boot-skill content exceeds subagent context window | CONTEXT-OVERFLOW EXCEPTION, SUBAGENTS ONLY: split task into sub-tasks; load only the 2-3 most relevant Cores per sub-task; document which were skipped. NEVER applies to primary-agent session-start loading |
 | Version mismatch between manifest.yaml and actual skill schema (known bug) | Skill updated in content/skills/ but manifest.yaml version not bumped — sync deploys stale metadata | Run `make validate` after every skill change to catch version drift; enforce manifest version == frontmatter version in CI |
 | Circular dependency between Skills Core on conflict resolution (edge case) | governance references operating-protocol for escalation, which references governance for compliance — infinite loop on cross-core conflict | Use fixed precedence hierarchy (operating-protocol > governance > eng-standards > ctx-mgmt > tool-usage > token-efficiency); any cycle outside this hierarchy escalates to human with `[CORE CONFLICT]` |

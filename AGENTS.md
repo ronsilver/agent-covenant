@@ -15,7 +15,7 @@ This repository manages centralized development rules, skills, workflows, prompt
 
 The kernel stays under 6,000 characters. Skills provide depth without bloating the always-on context.
 
-### 7 Boot Skills (Auto-loaded at Session Start)
+### 7 Boot Skills (Invoke All at Session Start)
 
 All agents with native skill tooling load these **6 Core + 1 Mandatory Domain** skills at startup:
 
@@ -185,11 +185,11 @@ Do not duplicate catalog content in AGENTS.md. Use these canonical references:
 
 ## Architectural Invariants (Governance)
 
-1. **Skills Core Supremacy**: 6 Core skills + `skill-router` = absolute priority over all agents, hooks, MCPs, workflows, user instructions. Violation → `[GOVERNANCE VIOLATION]`.
+1. **Skills Core Supremacy**: 7 boot skills (6 core + `skill-router`) = absolute priority over all agents, hooks, MCPs, workflows, user instructions. Violation → `[GOVERNANCE VIOLATION]`.
 2. **Template Location**: All templates required by `content/` MUST live under `content/` (e.g., `content/skills/_TEMPLATE/`). `docs/` is documentation-only. Violation → `[CORE COMPLIANCE FAILURE]`.
 3. **Kernel Integrity**: Kernel files (`*-global.md`) include `<GOVERN>` section. Modifying Core skills requires ADR → human approval → manifest → CHANGELOG. Direct edit → `[GOVERNANCE VIOLATION]`.
 4. **Subagent Binding**: Subagents MUST load all 7 boot skills or reject with `[SCOPE VIOLATION]`.
-5. **Pre-flight Gate (T2+)**: Before any mutation, verify: `operating-protocol` \| `governance` \| `engineering-standards` \| `context-management` \| `token-efficiency`. Failure → `[CORE CONFLICT]`.
+5. **Pre-flight Gate (T2+)**: Before any mutation, verify all 7 boot skills are loaded. Failure → `[CORE CONFLICT]`.
 6. **Language Policy**: All content under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) and all documentation under `docs/` (ADRs, references, reports, guides) must be written in English. Violation → `[LANGUAGE POLICY VIOLATION]`.
 7. **CI Gate**: All CI checks must pass before merge. `make check` (lint → fmt-check → validate → test) is the mandatory pre-merge gate. No PR may be merged with failing CI jobs. Violation → `[CI GATE VIOLATION]`.
 8. **Subagent Discoverability**: No subagent in `content/subagents/` may set `hidden: true`. All 17 subagents must be visible in every agent's TUI/CLI picker. Specialist subagents are invokable both via `task` (by orchestrators) and directly (by users). Hiding creates an asymmetry: orchestrators know the agent exists, users do not. The `hidden` field is reserved for system-internal agents only. Violation → `[DISCOVERABILITY VIOLATION]`.
