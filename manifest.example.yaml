@@ -95,6 +95,7 @@ skills:
     - openapi-expert
     - operating-protocol
     - operational-excellence
+    - penetration-testing-expert
     - performance-expert
     - planning-expert
     - playwright-expert
@@ -112,6 +113,7 @@ skills:
     - scripting-expert
     - security-expert
     - skill-router
+    - spec-driven-development
     - swift-expert
     - terraform-expert
     - testing-expert
@@ -120,6 +122,7 @@ skills:
     - tool-usage
     - typescript-expert
     - vector-databases
+    - web-browsing-agent-expert
   retired:
     - name: bash-expert
       retired_at: "2026-04-28"
