@@ -2,7 +2,7 @@
 
 Full list of agent skills. Each skill lives in `content/skills/<name>/SKILL.md`.
 
-> **Boot skills:** 7 skills declare `trigger: always` in their frontmatter and are auto-loaded at session start: 6 core (context-management, engineering-standards, governance, operating-protocol, token-efficiency, tool-usage) + 1 mandatory domain (skill-router). All others use `trigger: on-demand` (default). See `content/rules/core/boot-manifest.yaml`.
+> **Boot skills:** 7 skills declare `trigger: always` (boot catalog membership, NOT automatic injection): 6 core (context-management, engineering-standards, governance, operating-protocol, token-efficiency, tool-usage) + 1 mandatory domain (skill-router). Body injection is per-agent: Claude Code injects via `@import` in `claude-code-global.md`; OpenCode, Copilot, Antigravity, and all others require the model to invoke all 7 at Step 0 (`skill()` / `Skill()` / `@file` per kernel `<REINFORCE>`). See `content/rules/core/boot-manifest.yaml`.
 
 ## Core Protocol
 
