@@ -66,6 +66,7 @@ agent-covenant/
 ├── docs/                      # Architecture documentation → below
 ├── scripts/                   # Sync, validate, quarterly review
 ├── tests/                     # Bats test suite
+├── tests/benchmark/           # Benchmark harness (context vs baseline)
 ├── Makefile                   # lint, fmt, test, validate, sync targets
 └── mcps/                      # Custom MCP server source
 ```
@@ -165,6 +166,7 @@ Deterministic shell hooks triggered by agent lifecycle events (SessionStart, Pre
 | `validate-router-delegation.sh` | Router dispatch gate: REFUSAL PROTOCOL + Dispatch mandate + MCP write-root check |
 | `setup-lsp.sh` | Bootstrap LSP plugins + binary verification |
 | `seed-memory.sh` | Pre-seed MCP memory with core directives |
+| `tests/benchmark/benchmark.py` | Deterministic context-vs-baseline harness for `opencode run` (probe, dry-run, HOME-isolation smoke, reports) |
 
 ## Development
 
