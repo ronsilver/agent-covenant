@@ -179,7 +179,7 @@ from manifest import parse_manifest_skills
 names = parse_manifest_skills(sys.argv[2])
 assert len(names) == 63, len(names)
 assert len(set(names)) == 63
-' "$PY_DIR" "$REPO_ROOT/manifest.yaml"
+' "$PY_DIR" "$REPO_ROOT/manifest.example.yaml"
     [ "$status" -eq 0 ]
 
     MALFORMED="$BATS_TEST_TMPDIR/malformed.yaml"
