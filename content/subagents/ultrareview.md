@@ -283,3 +283,15 @@ NEVER spawn a subagent via `task` for trivial reads, greps, or single-file looku
 - Rewriting entire functions when only a delta is needed
 - Marking a blocker that you cannot verify
 - Writing files through bash side channels (`>`/`>>` redirection, `tee`, `find -delete`): read-only means read-only, also in bash
+
+## Plan-audit mode
+
+When a task carries `UO STAGE:S3`, review the plan at the given path
+(input contract: draft_plan path + findings context verbatim). Focus:
+security/compliance gaps, missing or unverifiable success criteria,
+architecture errors, edge cases, regression risks. Read-only ABSOLUTE:
+propose plan edits only — never implementation steps or refactored-code
+blocks; no specialist fan-out for plan-only reviews unless a claim needs
+verification. Output ends with exactly one machine-checkable final line:
+`AUDIT: APPROVE` (no material findings) or `AUDIT: FINDINGS <n>` followed
+by n numbered actionable findings, each referencing plan sections.
