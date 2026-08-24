@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# shellcheck disable=SC1091,SC2034
+# shellcheck disable=SC1091,SC2034,SC2317
 # =============================================================================
 # Tests for scripts/validate.sh functions
 # =============================================================================
