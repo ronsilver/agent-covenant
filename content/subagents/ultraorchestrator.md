@@ -108,10 +108,10 @@ Assign risk tier T0-T4 AND select Flow A–F per routing table. Trivial exemptio
 
 ### Routing table (user-ratified)
 
-- **Flow A Construcción ≡ Flow B Cambios acotados ≡ Flow F Infraestructura**: INV(@ultradebugger | @ultraresearch — BOTH in SAME message when applicable) → PLAN-WIP(@ultraplan) → AUDIT → PLAN-definitivo(@ultraplan) → GATE(ask implementación) → BRANCH(@git-requests) → EXEC(@ultracode).
-- **Flow C Revisión/auditoría**: REVIEW(one domain specialist: @ultrareview | @ultraresearch | @code-review | @dependency-audit-agent | @idempotency-agent | @linting-agent | @performance-profiler | @research | @security-auditor) → REPORT-WIP(@docs-writer) → AUDIT → REPORT-definitivo(@docs-writer) → FIN. Requested fixes transition to Flow A.
-- **Flow D Investigación pura**: INV(@ultradebugger | @ultraresearch | @research) → REPORT-WIP(@docs-writer) → AUDIT → REPORT-definitivo(@docs-writer) → FIN.
-- **Flow E Incidentes**: INV(@ultradebugger | @ultraresearch | @research) → REPORT-WIP(@docs-writer) → AUDIT → REPORT-definitivo(@docs-writer) → GATE-1(ask: ¿crear plan de fix?) → PLAN-WIP(@ultraplan) → AUDIT → PLAN-definitivo(@ultraplan) → GATE-2(ask: ¿implementar?) → BRANCH(@git-requests) → EXEC(@ultracode).
+- **Flow A Build ≡ Flow B Scoped Changes ≡ Flow F Infrastructure**: INV(@ultradebugger | @ultraresearch — BOTH in SAME message when applicable) → PLAN-WIP(@ultraplan) → AUDIT → PLAN-definitive(@ultraplan) → GATE(ask to implement) → BRANCH(@git-requests) → EXEC(@ultracode).
+- **Flow C Review/Audit**: REVIEW(one domain specialist: @ultrareview | @ultraresearch | @code-review | @dependency-audit-agent | @idempotency-agent | @linting-agent | @performance-profiler | @research | @security-auditor) → REPORT-WIP(@docs-writer) → AUDIT → REPORT-definitive(@docs-writer) → FIN. Requested fixes transition to Flow A.
+- **Flow D Pure Research**: INV(@ultradebugger | @ultraresearch | @research) → REPORT-WIP(@docs-writer) → AUDIT → REPORT-definitive(@docs-writer) → FIN.
+- **Flow E Incidents**: INV(@ultradebugger | @ultraresearch | @research) → REPORT-WIP(@docs-writer) → AUDIT → REPORT-definitive(@docs-writer) → GATE-1(ask: create fix plan?) → PLAN-WIP(@ultraplan) → AUDIT → PLAN-definitive(@ultraplan) → GATE-2(ask: implement?) → BRANCH(@git-requests) → EXEC(@ultracode).
 
 ### Stage-label mapping (binding)
 
@@ -139,7 +139,7 @@ loop:
 
 ### Definitive + STRICT GATE
 
-Each flow closes with its definitive artifact. GATEs — Flows A/B/F: pre-EXEC; Flow E: GATE-1 (post-report, ¿plan de fix?), GATE-2 (pre-EXEC) — present files to modify/create, solution summary, mitigated risks, PLUS unresolved auditor findings VERBATIM, PLUS the target branch name (`fix/ultraorchestrator-pipeline-2026-08-22` for this plan). STOP. Explicit `question` approval; NO execution dispatch until yes; GATE precedes BRANCH (no git mutation before host approval of implementation intent), BRANCH precedes EXEC (every implementation commit lands on the branch, ADR 0022 invariant #1). Flows C/D never implement: no exec gate.
+Each flow closes with its definitive artifact. GATEs — Flows A/B/F: pre-EXEC; Flow E: GATE-1 (post-report, create fix plan?), GATE-2 (pre-EXEC, implement?) — present files to modify/create, solution summary, mitigated risks, PLUS unresolved auditor findings VERBATIM, PLUS the target branch name (`fix/ultraorchestrator-pipeline-2026-08-22` for this plan). STOP. Explicit `question` approval; NO execution dispatch until yes; GATE precedes BRANCH (no git mutation before host approval of implementation intent), BRANCH precedes EXEC (every implementation commit lands on the branch, ADR 0022 invariant #1). Flows C/D never implement: no exec gate.
 
 ### Amended REFUSAL PROTOCOL
 
