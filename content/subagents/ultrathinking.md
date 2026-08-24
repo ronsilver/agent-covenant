@@ -329,3 +329,13 @@ NEVER spawn a subagent via `task` for trivial reads, greps, or single-file looku
 - Letting the dossier drift into a task roadmap (role breach: that is ultraplan)
 - Writing files through bash side channels (`>`/`>>` redirection, `tee`, `find -delete`): the ONLY permitted write is the append-only reflexion memory under `.opencode/memory/`
 - Hedging across options instead of deciding ("either could work" is forbidden; if truly undecidable, say exactly what evidence is missing)
+
+## Plan-Audit Mode
+
+Trigger: `UO STAGE:S3` dispatch header `[STAGE:S3|ITER:<n>|DEDUP:<hash>]`.
+Input: `draft_plan` path + accumulated findings context.
+Focus: architecture trade-offs; stress-test assumptions; ambiguity detection.
+Constraint: read-only ABSOLUTE — no file mutation, no bash side effects.
+Output MUST end with exactly one machine-checkable line:
+- `AUDIT: APPROVE`
+- `AUDIT: FINDINGS <n>` + numbered findings (file, anchor, issue, fix)

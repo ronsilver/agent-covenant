@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# shellcheck disable=SC1091,SC2034
+# shellcheck disable=SC1091,SC2034,SC2317
 # =============================================================================
 # Tests for scripts/validate.sh functions
 # =============================================================================
@@ -728,17 +728,19 @@ REAL_REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
     }
 }
 
-@test "permission.task blocks absent (ADR-0024 cleanup)" {
+@test "permission.task blocks absent except ultraorchestrator (ADR-0024 + ratified router allowlist)" {
     local config_file="${REAL_REPO_ROOT}/content/mcp/opencode-agents-config.json"
 
-    # Count permission.task blocks
-    local permission_task_count
-    permission_task_count=$(jq '[.agent | to_entries[].value.permission // {} | keys[]?] | map(select(. == "task")) | length' "${config_file}")
+    # permission.task is reserved for ultraorchestrator (ratified task allowlist);
+    # all other agents must not carry a permission.task block (ADR-0024 cleanup).
+    local permission_task_agents
+    permission_task_agents=$(jq -r '[.agent | to_entries[] | select((.value.permission // {}) | has("task")) | .key] | join(",")' "${config_file}")
 
-    [[ "${permission_task_count}" -eq 0 ]] || {
-        echo "permission.task blocks present (should be absent per ADR-0024): ${permission_task_count}"
-        return 1
-    }
+    if [[ "${permission_task_agents}" == "ultraorchestrator" ]]; then
+        return 0
+    fi
+    echo "permission.task blocks present outside ultraorchestrator (ADR-0024): ${permission_task_agents}"
+    return 1
 }
 
 # =============================================================================
@@ -834,9 +836,11 @@ MD
     [ "$status" -eq 0 ]
 }
 
-@test "ultraorchestrator.md workflow mandates task dispatch" {
+@test "ultraorchestrator.md pipeline state machine mandates task dispatch" {
     local file="${REAL_REPO_ROOT}/content/subagents/ultraorchestrator.md"
-    run grep 'DISPATCH: call' "${file}"
+    run grep '^## Pipeline state machine' "${file}"
+    [ "$status" -eq 0 ]
+    run grep 'task()' "${file}"
     [ "$status" -eq 0 ]
 }
 
@@ -846,9 +850,12 @@ MD
     [ "$status" -eq 0 ]
 }
 
-@test "ultraorchestrator.md litmus 'via host' reduced to ask-gated rows only" {
+@test "ultraorchestrator.md pipeline routing ask-gates executors" {
     local file="${REAL_REPO_ROOT}/content/subagents/ultraorchestrator.md"
-    local count
-    count=$(awk '/^## Litmus table/,/^## Escalation contract/' "${file}" | grep -c 'via host' || true)
-    [[ "${count}" -eq 3 ]]
+    run grep 'ultracode: ask' "${file}"
+    [ "$status" -eq 0 ]
+    run grep 'git-requests: ask' "${file}"
+    [ "$status" -eq 0 ]
+    run grep 'test-writer: ask' "${file}"
+    [ "$status" -eq 0 ]
 }

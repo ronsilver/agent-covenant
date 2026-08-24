@@ -541,8 +541,8 @@
       "mode": "subagent",
       "tools": {
         "read": true,
-        "write": false,
-        "edit": false,
+        "write": true,
+        "edit": true,
         "bash": true,
         "glob": true,
         "grep": true,
@@ -550,13 +550,21 @@
         "task": true
       },
       "permission": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "skill": "allow",
         "edit": {
-          "*": "deny"
+          "*": "deny",
+          "docs/plans/**": "allow"
         },
         "write": {
-          "*": "deny"
+          "*": "deny",
+          "docs/plans/**": "allow"
         },
         "bash": {
+          "*": "ask",
           "git status": "allow",
           "git log *": "allow",
           "git diff *": "allow",
@@ -567,8 +575,46 @@
           "cat *": "allow",
           "jq *": "allow",
           "yq *": "allow",
-          "*": "deny"
-        }
+          "rm -rf *": "deny",
+          "git push *": "deny",
+          "git commit *": "deny",
+          "git add *": "deny",
+          "git reset *": "deny",
+          "kubectl delete *": "deny",
+          "kubectl apply *": "deny",
+          "terraform apply *": "deny"
+        },
+        "task": {
+          "*": "ask",
+          "ultraplan": "allow",
+          "ultrathinking": "allow",
+          "ultrareview": "allow",
+          "ultraresearch": "allow",
+          "ultradebugger": "allow",
+          "research": "allow",
+          "code-review": "allow",
+          "dependency-audit-agent": "allow",
+          "idempotency-agent": "allow",
+          "linting-agent": "allow",
+          "performance-profiler": "allow",
+          "security-auditor": "allow",
+          "docs-writer": "allow",
+          "ultracode": "ask",
+          "git-requests": "ask",
+          "test-writer": "ask"
+        },
+        "webfetch": "allow",
+        "websearch": "allow",
+        "question": "allow",
+        "codesearch": "allow",
+        "doom_loop": "ask",
+        "external_directory": "allow",
+        "lsp": "allow",
+        "plan_enter": "allow",
+        "plan_exit": "allow",
+        "apply_patch": "deny",
+        "todoread": "allow",
+        "todowrite": "allow"
       }
     }
   }

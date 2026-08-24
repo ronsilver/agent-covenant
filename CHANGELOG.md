@@ -17,19 +17,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/skills/token-efficiency/evals/evals.json` — added eval 9 (safety: compression yields to correctness) and eval 10 (measurement loop), removed unverified KV-cache numbers from eval 4, added reference-dependency note
 - `tests/benchmark/` — deterministic stdlib-only benchmark harness for `opencode run` with 12 raw + 5 derived metrics, 5 static prompts, context and baseline modes (paired selection runs both), HOME-override baseline isolation with a fail-closed `--smoke` gate, and 13 Bats tests at `tests/test_benchmark.bats`
 - `docs/adr/0036-boot-skill-step-zero-enforcement.md` — zero-reasoning execution plan (T1-T6, ADR-0036 draft) for fixing the boot-skill partial-load defect: Step-Zero invocation mandate, per-agent injection truth table, count-drift unification to 7, transitive binding across skill/subagent/rule/hook load paths, CI regression gates
+- `content/subagents/ultrathinking.md` + `content/subagents/ultrareview.md` — Plan-Audit Mode verdict contract (`AUDIT: APPROVE | FINDINGS <n>`) on `[STAGE:S3|…]` dispatch
+- `scripts/validate-router-delegation.sh` — extended with pipeline-contract + config-parity checks (a)-(f): executor ask-gating, stage-label/Flow-A-E headers, real-key guard, inert-key warn, md-vs-mirror deep-equal parity incl. full bash map, inject_keys depth, glob parity
+- `docs/plans/wip/` — scoped WIP plan-artifact convention (definitive plans git-visible, wip ignored)
 
 ### Changed
 
-- `Makefile` — added `validate-evals` target and wired it into `validate` (inherited by `check` via the `validate` dependency)
+- `content/subagents/README.md` — orchestration flow rewritten for ratified 6-flow router (A-F) with shared bounded audit loop (<=2 iterations); ultraorchestrator delegation graph corrected to 13 autonomous dispatch targets (5 ultra* + research + code-review + 7 review specialists + docs-writer) with test-writer/ultracode/git-requests ask-gated; "litmus table" wording replaced; `codesearch`/`todoread` marked inert in file-format example
+- `content/subagents/_TEMPLATE/SUBAGENT.md` — read-only template hardened: `cat`/`jq`/`yq`/`find` demoted allow->ask (bash write-bypass channels via redirect/-exec); `docs-writer: deny` added to task block (read-only agents must not dispatch write agents); `codesearch`/`todoread` marked inert and removed from template
+- `docs/reference/subagent-schema.md` — mode table corrected (`subagent`/`primary`/`all`; `build`/`full` moved to permissionMode table which now lists all three values); `model:` documented FORBIDDEN (ADR-0023) instead of optional; deprecated `tools.allow/deny` replaced by canonical `permission:` block; ultraorchestrator orchestration contract updated to 13-target dispatch + ask-gated executors
+- `docs/reference/subagent-permissions.md` — `task` tool description corrected (invoke subagent by type, patterns match target name, not "sub-task tracking"); `codesearch`/`todoread` marked INERT (verified zero runtime hits in OpenCode 1.18.21); ultraorchestrator moved from Reviewer profile to new Router profile (scoped docs/plans/** write, 13-target task allowlist); specialist `hidden: true` corrected to forbidden (invariant #8, ADR-0021); matrix row for ultraorchestrator updated; Known divergences section rewritten per ratified plan (mirror parity enforced + C2 ask-gate runtime-enforced)
+- `docs/plans/ultraorchestrator-pipeline-fix-2026-08-22.md` — amended with mandatory BRANCH stage (S10): branch `fix/ultraorchestrator-pipeline-2026-08-22` created after GATE, before EXEC; T5 regression test; header v2->v3
+
 - `governance` (Core) — synced precedence to `... > tool-usage > token-efficiency` (ADR-0035): fixed troubleshooting-row hierarchy, updated eval 3 expected output, documented tool-usage/token-efficiency as complementary (tool-usage = instrument of token-efficiency, applies first; token-efficiency compresses the remainder, applies last), version 2.2 -> 2.3
 - `content/subagents/ultraorchestrator.md` — router now DISPATCHES routed subagents via `task`: added `## Dispatch` section (dispatch table + rules), DISPATCH workflow step, `## REFUSAL PROTOCOL`; litmus executors updated to "router dispatches via task" (ask-gated rows: `ultracode`/`git-requests`/rollback); scope + negative constraints forbid self-execution
-- `content/subagents/README.md` — orchestration flow + restricted delegation graph updated for router direct-dispatch of 9 agents; specialist fan-out documented inside `code-review`/`ultrareview`
 - `content/mcp/opencode-mcp.json` — filesystem MCP server root narrowed from `/` to `.` (relative) — closes MCP write gap for read-only agents
 - `content/mcp/mcp.json` — filesystem MCP server root narrowed from `/` to `.` (relative) — same MCP write-gap closure for the Claude Code-format config
 - `scripts/validate-mcp-config.py` — added dangerous filesystem mount (root `/`) check
 - `Makefile` — wired `validate-router-delegation` into `validate`
 - `tests/test_validate.bats` — added 4 router-dispatch regression tests
 - `.gitignore` — removed `docs/plans` ignore so router-persisted plans become git-visible
+- `content/subagents/ultraorchestrator.md` — rewritten as mandatory 6-flow router (A-F) `## Pipeline state machine`: STAGE/ITER/DEDUP labels, fan-out cap 4, S0 classify+route, shared bounded AUDIT loop, Definitive+STRICT GATE, mandatory BRANCH stage (S10); scoped write permission to `docs/plans/**`; 13-target task allowlist with `ultracode`/`git-requests`/`test-writer` ask-gated
+- `content/mcp/opencode-agents-config.json` — mirror lockstep: `tools.edit`/`tools.write` enabled, `permission.edit`/`permission.write` globs `docs/plans/**`, full `permission.task` + bash map + retained keys byte-equivalent to md frontmatter
+- `manifest.example.yaml`/`manifest.yaml` + `scripts/lib/sync.sh` — inject `subagent_depth: 3` via `inject_keys` on the config target
+- `scripts/validate-router-delegation.sh` — `## Dispatch` header check replaced by `## Pipeline state machine`
 
 ### Removed
 
@@ -47,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - False blanket auto-injection claims replaced with per-agent truth: boot-manifest.yaml, docs/reference/skills-catalog.md, content/rules/README.md, baseline-skills-plugin.js, AGENTS.md heading (ADR-0036)
 - `content/hooks/opencode/baseline-skills.sh` — boot list corrected 4 -> 7; `content/hooks/claude-code/baseline-skills.sh` — verify-first ordering, leading auto-load assertion dropped
 - Stale boot-count literals unified to 7: governance SKILL.md (+references, +evals), tool-usage SKILL.md compliance gate, content/rules/core/governance.md, AGENTS.md invariants 1/5 (ADR-0036)
+- `.gitignore` — plans ignore scoped to `docs/plans/wip/` only (removed slashless `plans` and bare `docs/plans` lines so definitive plans become git-visible)
 
 ### Changed (Core Governance)
 
