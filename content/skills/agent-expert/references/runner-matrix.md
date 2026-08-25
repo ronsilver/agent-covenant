@@ -1,13 +1,13 @@
 # Agent Runner Comparison Matrix
 
-| Feature | Claude Code | OpenCode | Cursor | Windsurf | Codex CLI | Gemini CLI | Copilot |
-|---|---|---|---|---|---|---|---|
-| Rules | CLAUDE.md | AGENTS.md | .cursor/rules/ | global_rules.md (6KB) | AGENTS.md | GEMINI.md | instructions.md |
-| MCP stdio | Yes | Yes | Yes | Yes | Yes | Yes | No |
-| MCP HTTP/SSE | HTTP only | Both | JSON | JSON | TOML | No | via VS Code |
-| Skills | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Subagents | Yes | Yes | Yes | No | Yes | No | No |
-| Hooks | Yes | Plugin-based | No | MCP callbacks | No | settings.json | No |
+| Feature | Claude Code | OpenCode | Antigravity | Codex CLI | Codex App | Pi | OMP |
+|---|---|---|---|---|---|---|---|---|
+| Rules | CLAUDE.md | AGENTS.md | GEMINI.md | AGENTS.md | — (shared) | AGENTS.md | AGENTS.md |
+| MCP stdio | Yes | Yes | Yes | Yes (TOML, manual) | shared | No | Yes |
+| MCP HTTP/SSE | Both | Both | — | No | No | No | — |
+| Skills | Yes (tool) | Yes (tool) | Yes (@ file) | Yes (file path) | Yes (file path) | Yes (read) | Yes (skill:// read) |
+| Subagents | Yes | Yes | No | Yes | No | No | No |
+| Hooks | Yes | Plugin-based | No | No | No | No | No |
 
 ## Permission Modes
 | Mode | Autonomy |

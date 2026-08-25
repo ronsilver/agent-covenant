@@ -17,15 +17,14 @@ On-demand   →  core skills  (full rule detail, invoked when relevant)
 
 | Agent | Kernel File | Deployed to |
 |-------|-------------|-------------|
-| **Windsurf / JetBrains** | `rules/agents/windsurf-global.md` | `~/.codeium/windsurf/memories/global_rules.md` (IDE), `~/.codeium/memories/global_rules.md` (JetBrains) |
 | **Claude Code** | `rules/agents/claude-code-global.md` | `~/.claude/CLAUDE.md` |
-| **GitHub Copilot** | `rules/agents/copilot-global.md` | `~/.config/gh-copilot/instructions.md` (CLI), `~/.config/github-copilot/intellij/Default.instructions.md` (IntelliJ) |
-| **Cursor** | `rules/agents/cursor-global.md` | `~/.cursor/rules/global.mdc` (IDE), `~/.cursor/rules/global.md` (CLI) |
-| **Codex CLI** | `rules/agents/codex-global.md` | `~/.codex/AGENTS.md` |
-| **Gemini CLI** | `rules/agents/gemini-global.md` | `~/.gemini/GEMINI.md` (CLI + Antigravity IDE) |
+| **Antigravity** | `rules/agents/antigravity-global.md` | `~/.gemini/GEMINI.md` |
+| **Codex CLI** | `rules/agents/codex-cli-global.md` | `~/.codex/AGENTS.md` |
+| **Pi** | `rules/agents/pi-global.md` | `~/.pi/agent/AGENTS.md` |
+| **OMP** | `rules/agents/omp-global.md` | `~/.omp/agent/AGENTS.md` |
 | **OpenCode** | `rules/agents/opencode-global.md` | `~/.config/opencode/AGENTS.md` |
 
-**Legacy files** (`windsurf.md`, `claude-code.md`, `copilot.md`) are kept as merged-format fallbacks but the `*-global.md` variants are the source of truth.
+All kernels are `*-global.md` files; the full-merge variants were removed in ADR-0038.
 
 ## Core Rule Files (6 pillars)
 
@@ -65,7 +64,7 @@ Beyond the kernel and core rules, each agent can receive rules via the `agents` 
 rules:
   files:
     - path: content/rules/my-rule.md
-      agents: [windsurf, claude-code]   # Only synced to these agents
+      agents: [antigravity, claude-code]   # Only synced to these agents
 ```
 
 ## Adding a New Rule

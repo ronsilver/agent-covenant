@@ -1,20 +1,17 @@
 # =============================================================================
-# Agent Covenant - Manifest de Configuración v2.0
+# Agent Covenant - Configuration Manifest v2.0
 # =============================================================================
-# Este archivo define la configuración central para sincronizar reglas
-# a diferentes agentes de AI (Windsurf, GitHub Copilot, Cursor, Antigravity, etc.)
+# This file defines the central configuration for synchronizing rules
+# to different AI agents (Claude Code, OpenCode, Antigravity, Codex CLI, Codex App, Pi, OMP).
 #
-# Uso: ./scripts/sync.sh [--agent <nombre>] [--dry-run]
+# Usage: ./scripts/sync.sh [--agent <name>] [--dry-run]
 # =============================================================================
 
 version: "2.0"
-
 # =============================================================================
 # Directorio de contenido (nueva estructura organizada)
 # =============================================================================
-
 content_dir: "content"
-
 rules:
   source_dir: "rules"
   # ARCHITECTURE DECISION: All agents use format:merged + strip_frontmatter:true → single file, trigger:always.
@@ -22,14 +19,13 @@ rules:
   # Consequence: rules are always-on. Differentiated activation (e.g. only on .tf files) must live in skills (model_decision via description).
   # MUST NOT change to format:individual without verifying all agent destinations support multi-file rule loading.
   files:
-    # Core rules (global - todos los agentes) — MUST remain last for precedence
+    # Core rules (global - all agents) — MUST remain last for precedence
     - core/context-management.md
     - core/tool-usage.md
     - core/token-efficiency.md
     - core/operating-protocol.md
     - core/engineering-standards.md
     - core/governance.md
-
 workflows:
   source_dir: "workflows"
   files:
@@ -47,14 +43,11 @@ workflows:
     - infrastructure/k8s-validate.md
     # Security
     - security/security-check.md
-
 prompts:
   source_dir: "prompts"
   files: []
-
 instructions:
   source_dir: "rules"
-
 skills:
   source_dir: "skills"
   # Skills are directory-based (each entry is a directory name containing SKILL.md)
@@ -234,7 +227,6 @@ skills:
     - name: terragrunt-expert
       retired_at: "2026-05-15"
       reason: Merged into terraform-expert skill (v4 language ecosystem refactor).
-
 subagents:
   source_dir: "subagents"
   # Subagents are specialized agents for specific tasks.
@@ -262,286 +254,14 @@ subagents:
     # Investigation
     - research.md
     - ultraresearch.md
-
 mcp:
   source_dir: "mcp"
   # MCP (Model Context Protocol) servers configuration
   file: "mcp.json"
-
 # =============================================================================
 # Per-Agent Configuration
 # =============================================================================
-
 agents:
-  windsurf:
-    enabled: false
-    description: "Windsurf IDE / Codeium Cascade"
-    detect:
-      paths:
-        - "${HOME}/.codeium"
-        - "/Applications/Windsurf.app"
-      commands: []
-    targets:
-      rules:
-        path: "${HOME}/.codeium/windsurf/memories/global_rules.md"
-        format: merged
-        strip_frontmatter: true
-        source_files:
-          - agents/windsurf-global.md
-        header: |
-          ---
-          trigger: always
-          ---
-
-      workflows:
-        path: "${HOME}/.codeium/windsurf/global_workflows"
-        format: individual
-        output_extension: ".md"
-        strip_frontmatter: false
-
-      skills:
-        path: "${HOME}/.codeium/windsurf/skills"
-        format: directory
-
-      mcp:
-        path: "${HOME}/.codeium/windsurf/mcp_config.json"
-        format: json
-
-      hooks:
-        scripts_path: "${HOME}/.codeium/windsurf/hooks"
-        settings_path: "${HOME}/.codeium/windsurf/hooks.json"
-        settings_fragment: "hooks/windsurf/hooks.json"
-        scripts:
-          - "hooks/windsurf/baseline-skills.sh"
-        format: hooks
-
-  windsurf-jetbrains:
-    enabled: false
-    description: "Codeium Plugin for JetBrains IDEs"
-    detect:
-      paths:
-        - "${HOME}/Library/Application Support/JetBrains/*/plugins/codeium"
-        - "${HOME}/.codeium/memories"
-      commands: []
-    targets:
-      rules:
-        path: "${HOME}/.codeium/memories/global_rules.md"
-        format: merged
-        strip_frontmatter: true
-        source_files:
-          - agents/windsurf-global.md
-        header: |
-          ---
-          trigger: always
-          ---
-
-      workflows:
-        path: "${HOME}/.codeium/global_workflows"
-        format: individual
-        output_extension: ".md"
-        strip_frontmatter: false
-
-      skills:
-        path: "${HOME}/.codeium/skills"
-        format: directory
-
-      mcp:
-        path: "${HOME}/.codeium/mcp_config.json"
-        format: json
-
-      hooks:
-        scripts_path: "${HOME}/.codeium/hooks"
-        settings_path: "${HOME}/.codeium/hooks.json"
-        settings_fragment: "hooks/windsurf-jetbrains/hooks.json"
-        scripts:
-          - "hooks/windsurf/baseline-skills.sh"
-        format: hooks
-
-  copilot-cli:
-    enabled: true
-    description: "GitHub Copilot CLI (gh copilot)"
-    detect:
-      paths: []
-      commands:
-        - "gh copilot --version"
-    targets:
-      instructions:
-        path: "${HOME}/.config/gh-copilot/instructions.md"
-        format: merged
-        strip_frontmatter: true
-        # Kernel mode: deploy copilot-global.md standalone.
-        source_files:
-          - agents/copilot-global.md
-
-      skills:
-        path: "${HOME}/.copilot/skills"
-        format: directory
-
-  copilot-vscode:
-    enabled: false
-    description: "GitHub Copilot (VS Code)"
-    detect:
-      paths:
-        - "${HOME}/.vscode/extensions"
-      commands:
-        - "code --list-extensions 2>/dev/null | grep -q github.copilot"
-    targets:
-      rules:
-        path: "${HOME}/Library/Application Support/Code/User/prompts"
-        glob_paths:
-          - "${HOME}/.vscode/extensions/github.copilot-chat-*/assets/prompts"
-        format: merged
-        output_filename: "Default.instructions.md"
-        strip_frontmatter: false
-        # Kernel mode: deploy copilot-global.md standalone (includes applyTo frontmatter).
-        source_files:
-          - agents/copilot-global.md
-
-      prompts:
-        path: "${HOME}/Library/Application Support/Code/User/prompts"
-        format: merged
-        output_filename: "default.prompt.md"
-        strip_frontmatter: true
-        header: |
-          ---
-          description: Prompts reutilizables
-          ---
-
-      skills:
-        path: "${HOME}/.copilot/skills"
-        format: directory
-
-      hooks:
-        scripts_path: "${HOME}/.github/hooks"
-        settings_path: "${HOME}/.github/hooks/baseline-skills.json"
-        settings_fragment: "hooks/copilot-vscode/hooks.json"
-        scripts:
-          - "hooks/copilot-vscode/baseline-skills.sh"
-        format: hooks
-
-  copilot-intellij:
-    enabled: true
-    description: "GitHub Copilot (IntelliJ/JetBrains)"
-    detect:
-      paths:
-        - "${HOME}/Library/Application Support/JetBrains/*/plugins/github-copilot-intellij"
-      commands: []
-    targets:
-      rules:
-        path: "${HOME}/.config/github-copilot/intellij"
-        format: merged
-        output_filename: "Default.instructions.md"
-        strip_frontmatter: false
-        # Kernel mode: deploy copilot-global.md standalone (includes applyTo frontmatter).
-        source_files:
-          - agents/copilot-global.md
-
-      prompts:
-        path: "${HOME}/.config/github-copilot/intellij"
-        format: merged
-        output_filename: "default.prompt.md"
-        strip_frontmatter: true
-        header: |
-          ---
-          description: Prompts reutilizables
-          ---
-
-      skills:
-        path: "${HOME}/.copilot/skills"
-        format: directory
-
-  cursor:
-    enabled: true
-    description: "Cursor IDE"
-    detect:
-      paths:
-        - "/Applications/Cursor.app"
-        - "${HOME}/.cursor"
-      commands: []
-    targets:
-      rules:
-        path: "${HOME}/.cursor/rules"
-        format: merged
-        output_filename: "global.mdc"
-        strip_frontmatter: true
-        # Kernel mode: deploy cursor-global.md standalone.
-        source_files:
-          - agents/cursor-global.md
-        header: |
-          ---
-          alwaysApply: true
-          ---
-
-      skills:
-        path: "${HOME}/.cursor/skills"
-        format: directory
-
-      subagents:
-        path: "${HOME}/.cursor/agents"
-        format: individual
-        strip_frontmatter: true
-
-      mcp:
-        path: "${HOME}/.cursor/mcp.json"
-        format: json
-
-      hooks:
-        scripts_path: "${HOME}/.cursor/hooks"
-        settings_path: "${HOME}/.cursor/hooks.json"
-        settings_fragment: "hooks/cursor/hooks.json"
-        scripts:
-          - "hooks/cursor/baseline-skills.sh"
-        format: hooks
-
-  cursor-cli:
-    enabled: true
-    description: "Cursor CLI (terminal / CI)"
-    detect:
-      paths: []
-      commands:
-        - "cursor --version"
-    targets:
-      rules:
-        path: "${HOME}/.cursor/rules/global.md"
-        format: merged
-        strip_frontmatter: true
-        source_files:
-          - agents/cursor-cli-global.md
-
-      skills:
-        path: "${HOME}/.cursor/skills"
-        format: directory
-
-      subagents:
-        path: "${HOME}/.cursor/agents"
-        format: individual
-        strip_frontmatter: true
-
-      mcp:
-        path: "${HOME}/.cursor/mcp.json"
-        format: json
-
-      hooks:
-        scripts_path: "${HOME}/.cursor/hooks"
-        settings_path: "${HOME}/.cursor/hooks.json"
-        settings_fragment: "hooks/cursor/hooks.json"
-        scripts:
-          - "hooks/cursor/baseline-skills.sh"
-        format: hooks
-
-  claude-desktop:
-    enabled: true
-    description: "Claude Desktop (Anthropic)"
-    detect:
-      paths:
-        - "${HOME}/Library/Application Support/Claude"
-      commands: []
-    targets:
-      mcp:
-        path: "${HOME}/Library/Application Support/Claude/claude_desktop_config.json"
-        format: json
-        source_file: "mcp.json"
-
   claude-code:
     enabled: true
     description: "Claude Code (Anthropic) — supports default ~/.claude and ~/.claude-{name} workspaces"
@@ -564,20 +284,16 @@ agents:
         # Remove this to revert to the full merge of agents/claude-code.md + core/*.md.
         source_files:
           - agents/claude-code-global.md
-
       skills:
         path: "${DETECTED_BASE}/skills"
         format: directory
-
       subagents:
         path: "${DETECTED_BASE}/agents"
         format: individual
         strip_frontmatter: true
-
       mcp:
         path: "${DETECTED_BASE}/.mcp.json"
         format: json
-
       hooks:
         scripts_path: "${DETECTED_BASE}/hooks"
         settings_path: "${DETECTED_BASE}/settings.json"
@@ -589,7 +305,6 @@ agents:
           - "hooks/claude-code/memory-persist.sh"
           - "hooks/claude-code/git-guardrails.sh"
         format: hooks
-
   codex-cli:
     enabled: true
     description: "OpenAI Codex CLI"
@@ -603,20 +318,16 @@ agents:
         format: merged
         strip_frontmatter: true
         source_files:
-          - agents/codex-global.md
-
+          - agents/codex-cli-global.md
       skills:
         path: "${HOME}/.codex/skills"
         format: directory
-
       subagents:
         path: "${HOME}/.codex/agents"
         format: individual
         strip_frontmatter: true
-
-      # mcp: codex-cli uses ~/.codex/config.toml (TOML format) — not supported by sync.sh (json only).
-      # Manage manually: add MCP servers to ~/.codex/config.toml under [mcp] section.
-
+        # mcp: codex-cli uses ~/.codex/config.toml (TOML format) — not supported by sync.sh (json only).
+        # Manage manually: add MCP servers to ~/.codex/config.toml under [mcp] section.
   codex-app:
     enabled: true
     description: "OpenAI Codex App (desktop)"
@@ -630,49 +341,8 @@ agents:
       skills:
         path: "${HOME}/.codex/skills"
         format: directory
-
-      # mcp: shared with codex-cli (~/.codex/config.toml, TOML format) — not supported by sync.sh.
-      # Manage manually alongside codex-cli MCP config.
-
-  gemini-cli:
-    enabled: true
-    description: "Google Gemini CLI"
-    detect:
-      paths: []
-      commands:
-        - "gemini --version"
-    targets:
-      rules:
-        path: "${HOME}/.gemini/GEMINI.md"
-        format: merged
-        strip_frontmatter: true
-        # Kernel mode: deploy gemini-global.md standalone (not merged with core rules).
-        # Remove this to revert to the full merge of core/*.md.
-        source_files:
-          - agents/gemini-global.md
-
-      skills:
-        path: "${HOME}/.gemini/skills"
-        format: directory
-
-      subagents:
-        path: "${HOME}/.gemini/agents"
-        format: individual
-        strip_frontmatter: true
-
-      mcp:
-        path: "${HOME}/.gemini/settings.json"
-        format: json
-        merge_key: "mcpServers"
-
-      hooks:
-        scripts_path: "${HOME}/.gemini/hooks"
-        settings_path: "${HOME}/.gemini/settings.json"
-        settings_fragment: "hooks/gemini/settings.fragment.json"
-        scripts:
-          - "hooks/gemini/baseline-skills.sh"
-        format: hooks
-
+        # mcp: shared with codex-cli (~/.codex/config.toml, TOML format) — not supported by sync.sh.
+        # Manage manually alongside codex-cli MCP config.
   antigravity:
     enabled: true
     description: "Google Antigravity IDE"
@@ -686,29 +356,24 @@ agents:
         path: "${HOME}/.gemini/GEMINI.md"
         format: merged
         strip_frontmatter: true
-        # Kernel mode: shared with gemini-cli — both deploy gemini-global.md to ~/.gemini/GEMINI.md.
+        # Kernel mode: deploy antigravity-global.md to ~/.gemini/GEMINI.md.
         source_files:
-          - agents/gemini-global.md
-
+          - agents/antigravity-global.md
       workflows:
         path: "${HOME}/.gemini/antigravity/global_workflows"
         format: individual
         output_extension: ".md"
         strip_frontmatter: false
-
       skills:
         path: "${HOME}/.gemini/antigravity/skills"
         format: directory
-
       #subagents:
       #  path: "${HOME}/.gemini/antigravity/agents"
       #  format: individual
       #  strip_frontmatter: true
-
       mcp:
         path: "${HOME}/.gemini/antigravity/mcp_config.json"
         format: json
-
   opencode:
     enabled: true
     description: "OpenCode"
@@ -724,22 +389,18 @@ agents:
         # Kernel mode: deploy opencode-global.md standalone.
         source_files:
           - agents/opencode-global.md
-
       skills:
         path: "${HOME}/.config/opencode/skills"
         format: directory
-
       subagents:
         path: "${HOME}/.config/opencode/agents"
         format: individual
         transform_frontmatter: "opencode"
-
       mcp:
         path: "${HOME}/.config/opencode/opencode.json"
         format: json
         source_file: "opencode-mcp.json"
         merge_key: "mcp"
-
       config:
         path: "${HOME}/.config/opencode/opencode.json"
         format: json
@@ -747,36 +408,58 @@ agents:
         merge_key: "agent"
         inject_keys:
           subagent_depth: 3
-
-      # hooks: disabled — opencode plugin API differs from claude-code hooks;
-      # baseline-skill loading is handled via opencode-global.md kernel rules instead
-      # hooks:
+          # hooks: disabled — opencode plugin API differs from claude-code hooks;
+          # baseline-skill loading is handled via opencode-global.md kernel rules instead
+# hooks:
       #   scripts_path: "${HOME}/.config/opencode/plugins"
       #   scripts:
       #     - "hooks/opencode/baseline-skills-plugin.js"
       #   format: hooks
 
-  local-project:
-    enabled: false
-    description: "Copiar reglas a proyecto local"
+  pi:
+    enabled: true
+    description: "Pi CLI agent"
+    detect:
+      paths: []
+      commands:
+        - "pi --version"
     targets:
       rules:
-        path: "${REPO_ROOT}/.windsurf/rules"
+        path: "${HOME}/.pi/agent/AGENTS.md"
         format: merged
-        output_filename: "global.md"
         strip_frontmatter: true
-        header: |
-          ---
-          trigger: always
-          ---
+        # Kernel mode: deploy pi-global.md standalone.
+        source_files:
+          - agents/pi-global.md
 
-      workflows:
-        path: "${REPO_ROOT}/.windsurf/workflows"
+      skills:
+        path: "${HOME}/.pi/agent/skills"
+        format: directory
+
+      # mcp: none — pi has no native MCP support. subagents: none — pi has no file-based subagents.
+
+  omp:
+    enabled: true
+    description: "OMP (oh-my-pi)"
+    detect:
+      paths: []
+      commands:
+        - "omp --version"
+    targets:
+      rules:
+        path: "${HOME}/.omp/agent/AGENTS.md"
         format: merged
-        output_filename: "default.md"
         strip_frontmatter: true
-        header: |
-          ---
-          name: project-workflows
-          description: Workflows del proyecto
-          ---
+        # Kernel mode: deploy omp-global.md standalone.
+        source_files:
+          - agents/omp-global.md
+
+      skills:
+        path: "${HOME}/.omp/agent/skills"
+        format: directory
+
+      mcp:
+        path: "${HOME}/.omp/agent/mcp.json"
+        format: json
+        source_file: "mcp.json"
+        merge_key: "mcpServers"

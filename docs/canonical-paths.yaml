@@ -11,32 +11,6 @@
 #             source: "<documentation reference>"
 
 agents:
-  windsurf:
-    canonical_paths:
-      rules:
-        - path: "${HOME}/.codeium/windsurf/memories/global_rules.md"
-          source: "https://docs.codeium.com/windsurf/memories"
-      skills:
-        - path: "${HOME}/.codeium/windsurf/skills"
-          source: "https://docs.codeium.com/windsurf/skills"
-      workflows:
-        - path: "${HOME}/.codeium/windsurf/global_workflows"
-          source: "https://docs.codeium.com/windsurf/workflows"
-        - path: "${HOME}/.windsurf/workflows"
-          source: "https://docs.codeium.com/windsurf/workflows"
-
-  windsurf-jetbrains:
-    canonical_paths:
-      rules:
-        - path: "${HOME}/.codeium/memories/global_rules.md"
-          source: "https://docs.codeium.com/windsurf/jetbrains"
-      workflows:
-        - path: "${HOME}/.codeium/global_workflows"
-          source: "https://docs.codeium.com/windsurf/jetbrains"
-      skills:
-        - path: "${HOME}/.codeium/skills"
-          source: "https://docs.codeium.com/windsurf/jetbrains"
-
   claude-code:
     canonical_paths:
       rules:
@@ -50,56 +24,62 @@ agents:
         - path: "${DETECTED_BASE}/hooks"
           source: "https://docs.anthropic.com/claude-code/hooks"
 
-  claude-desktop:
-    canonical_paths: {}
-
-  copilot-cli:
-    canonical_paths:
-      instructions:
-        - path: "${HOME}/.config/gh-copilot/instructions.md"
-          source: "https://docs.github.com/en/copilot/using-github-copilot/copilot-cli"
-
-  copilot-vscode:
-    canonical_paths:
-      rules:
-        - path: "${HOME}/Library/Application Support/Code/User/prompts"
-          source: "https://code.visualstudio.com/docs/copilot/copilot-customization"
-      prompts:
-        - path: "${HOME}/Library/Application Support/Code/User/prompts"
-          source: "https://code.visualstudio.com/docs/copilot/copilot-customization"
-
-  copilot-intellij:
-    canonical_paths: {}
-
-  gemini-cli:
+  antigravity:
     canonical_paths:
       rules:
         - path: "${HOME}/.gemini/GEMINI.md"
-          source: "https://github.com/google-gemini/gemini-cli"
+          source: "internal"
       skills:
-        - path: "${HOME}/.gemini/skills"
-          source: "https://github.com/google-gemini/gemini-cli"
+        - path: "${HOME}/.gemini/antigravity/skills"
+          source: "internal"
+      workflows:
+        - path: "${HOME}/.gemini/antigravity/global_workflows"
+          source: "internal"
+      mcp:
+        - path: "${HOME}/.gemini/antigravity/mcp_config.json"
+          source: "internal"
 
-  antigravity:
-    canonical_paths: {}
+  codex-cli:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.codex/AGENTS.md"
+          source: "https://github.com/openai/codex"
+      skills:
+        - path: "${HOME}/.codex/skills"
+          source: "https://github.com/openai/codex"
+      subagents:
+        - path: "${HOME}/.codex/agents"
+          source: "https://github.com/openai/codex"
+
+  codex-app:
+    canonical_paths:
+      skills:
+        - path: "${HOME}/.codex/skills"
+          source: "https://github.com/openai/codex"
+
+  pi:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.pi/agent/AGENTS.md"
+          source: "https://pi.dev/docs"
+      skills:
+        - path: "${HOME}/.pi/agent/skills"
+          source: "https://pi.dev/docs"
+
+  omp:
+    canonical_paths:
+      rules:
+        - path: "${HOME}/.omp/agent/AGENTS.md"
+          source: "https://omp.sh/docs"
+      skills:
+        - path: "${HOME}/.omp/agent/skills"
+          source: "https://omp.sh/docs"
+      mcp:
+        - path: "${HOME}/.omp/agent/mcp.json"
+          source: "https://omp.sh/docs/mcp-config"
 
   opencode:
     canonical_paths:
       rules:
         - path: "${HOME}/.config/opencode/AGENTS.md"
           source: "https://opencode.ai/docs/rules/"
-
-  codex-cli:
-    canonical_paths:
-      rules:
-        - path: "${HOME}/.codex/instructions.md"
-          source: "https://github.com/openai/codex"
-
-  cursor:
-    canonical_paths:
-      rules:
-        - path: "${HOME}/.cursor/rules/global.mdc"
-          source: "https://docs.cursor.com/context/rules-for-ai"
-
-  local-project:
-    canonical_paths: {}

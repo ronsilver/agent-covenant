@@ -1,6 +1,6 @@
 # Subagents Catalog (17)
 
-Active subagents for discrete workflows. Each subagent is a focused AI persona with specialized system prompt, deployed across OpenCode, Claude Code, Cursor, Codex, and Gemini.
+Active subagents for discrete workflows. Each subagent is a focused AI persona with specialized system prompt, deployed across OpenCode, Claude Code, and Codex CLI.
 
 For operational details, permission policies, workflow steps, and orchestration graph — see [`content/subagents/README.md`](../../content/subagents/README.md).
 
@@ -10,14 +10,13 @@ For operational details, permission policies, workflow steps, and orchestration 
 
 | Agent | Path |
 |-------|------|
-| **Windsurf** | `~/.codeium/windsurf/agents/` |
-| **Windsurf JetBrains** | `~/.codeium/agents/` |
 | **Claude Code** | `~/.claude/agents/` |
 | **OpenCode** | `~/.config/opencode/agents/` |
+| **Codex CLI** | `~/.codex/agents/` |
 
 ---
 
-## Propósito por subagente
+## Purpose by subagent
 
 ### Meta / Thinking & Analysis
 
@@ -103,7 +102,7 @@ user/orchestrator -> ultrathinking (if High-complexity/irreversible decision)
 
 ## How to Use
 
-1. **In your editor** (Claude Code, OpenCode, Cursor, Codex, Gemini): invoke a subagent via `task` when its purpose matches your need.
+1. **In your editor** (Claude Code, OpenCode, Codex CLI): invoke a subagent via `task` when its purpose matches your need.
 2. **Composition**: subagents reference each other via `task` for orchestration (e.g., `ultrareview` launches 5 specialists).
 3. **Handoff**: each agent hands off its output to the next in the pipeline or to the host for human decision.
 4. **Sync**: deployed via `./scripts/sync.sh` per agent target.
@@ -115,7 +114,7 @@ user/orchestrator -> ultrathinking (if High-complexity/irreversible decision)
 1. Create new `<name>.md` in `content/subagents/` with YAML frontmatter (`name`, `description`, `permissionMode`, `mode`, `targets`, `permission` block).
 2. Add entry to `manifest.yaml` under `subagents.files`.
 3. Run `make sync` to deploy to all targets.
-4. Document sécções obligatorias: "Session start — load boot skills", "Scope restriction", "Skill-router fallback", "Clarify-first", "Anti-patterns" (see [`content/subagents/README.md`](../../content/subagents/README.md) for full list and examples).
+4. Document mandatory sections: "Session start — load boot skills", "Scope restriction", "Skill-router fallback", "Clarify-first", "Anti-patterns" (see [`content/subagents/README.md`](../../content/subagents/README.md) for full list and examples).
 
 See [content/subagents/_TEMPLATE](../../content/subagents/_TEMPLATE) for the frontmatter structure.
 

@@ -24,9 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/subagents/ultrathinking.md` + `content/subagents/ultrareview.md` — Plan-Audit Mode verdict contract (`AUDIT: APPROVE | FINDINGS <n>`) on `[STAGE:S3|…]` dispatch
 - `scripts/validate-router-delegation.sh` — extended with pipeline-contract + config-parity checks (a)-(f): executor ask-gating, stage-label/Flow-A-E headers, real-key guard, inert-key warn, md-vs-mirror deep-equal parity incl. full bash map, inject_keys depth, glob parity
 - `docs/plans/wip/` — scoped WIP plan-artifact convention (definitive plans git-visible, wip ignored)
+- `docs/adr/0038-agent-set-consolidation.md` — ADR: agent set pruned 18 → 7 (antigravity, claude-code, codex-app, codex-cli, omp, opencode, pi); skill-invocation taxonomy (TOOL vs FILE) enforced in kernels + subagents
 
 ### Changed
 
+- `Makefile` — reordered into grouped sections (Verification/Lint/Format/Test/Validation/Sync/Benchmark/Help); added `lint-yaml-json` target; `make check` now gates lint-md + lint-yaml-json; benchmark excluded from CI (cost policy)
 - `tests/benchmark/` → `scripts/benchmark/` — benchmark harness moved out of `tests/` (repo convention: `tests/` holds only `*.bats`; Python tooling lives in `scripts/`). Bats regression suite stays at `tests/test_benchmark.bats` (13/13 no-spend; CI unchanged, `make test` spends $0).
 - `make benchmark` → `make benchmark-live` — legacy target removed (now fails with no-rule instead of spending); live runs require `BENCH_APPROVED=1` + interactive `--confirm-live` (y/N with cost-cap shown, fails closed on non-TTY) + `--max-cost-usd` default cap `10.0`. `scripts/benchmark/benchmark.py` live and `--smoke` paths both gate on `--confirm-live`; `.gitignore` path updated to `scripts/benchmark/out/`.
 
@@ -56,6 +58,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/mcp/opencode-agents-config.json` — mirror lockstep: `tools.edit`/`tools.write` enabled, `permission.edit`/`permission.write` globs `docs/plans/**`, full `permission.task` + bash map + retained keys byte-equivalent to md frontmatter
 - `manifest.example.yaml`/`manifest.yaml` + `scripts/lib/sync.sh` — inject `subagent_depth: 3` via `inject_keys` on the config target
 - `scripts/validate-router-delegation.sh` — `## Dispatch` header check replaced by `## Pipeline state machine`
+- `content/rules/agents/` — added codex-cli/pi/omp kernels, removed copilot kernel (6 kernels, ADR-0038)
+- `manifest.yaml` + `manifest.example.yaml` — pruned to 7 agents (ADR-0038)
+- `content/subagents/*.md` (17) — Step-0 boot-skill lists made mechanism-neutral (kernel <SKILLS> governs load) + targets pruned to {opencode, claudecode, codex}
+- `scripts/validate-kernel-skill-coherence.sh` — TOOL_AGENTS=(claude-code opencode), FILE_AGENTS=(antigravity codex-cli pi omp)
+- docs + README + AGENTS.md + CONTRIBUTING.md — removed-agent references pruned (ADR-0038)
 
 ### Removed
 
@@ -85,6 +92,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `skill-router` (Core) — boot-skills section rewritten: Step-Zero invocation mandate + verbatim-body exception; version 3.0 -> 3.1 (ADR-0036)
 - `governance` (Core) — subagent binding unified to 7 boot skills; overflow exception scoped to subagents only; version 2.3 -> 2.4 (ADR-0036)
 - `tool-usage` (Core) — Core Compliance Gate extended 5 -> 7 skills; version 2.1 -> 2.2 (ADR-0036)
+- `content/skills/skill-router/SKILL.md` — mechanism-neutral boot-skill loading language (version 3.2, ADR-0038)
+- `content/skills/governance/SKILL.md` — mechanism-neutral transitive-binding language (version 2.5, ADR-0038)
 
 ## [0.0.2] - 2026-08-16
 

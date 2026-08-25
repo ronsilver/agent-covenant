@@ -145,10 +145,10 @@ skills:
 
 ## Adding a New Agent Kernel
 
-1. Create `content/rules/agents/<agent>-global.md` following the microkernel pattern (see `windsurf-global.md`).
+1. Create `content/rules/agents/<agent>-global.md` following the microkernel pattern (see `antigravity-global.md`).
 2. Add the agent to `manifest.yaml` under `agents:` with `source_files: [agents/<agent>-global.md]`.
 3. Run `./scripts/sync.sh --agent <agent> --dry-run` to verify.
-4. Supported agents: windsurf, copilot, claude-code, gemini, antigravity, opencode, cursor (disabled until installed).
+4. Supported agents: antigravity, claude-code, codex-app, codex-cli, omp, opencode, pi.
 
 ## Quarterly Review (S15)
 
@@ -170,7 +170,7 @@ Requires Prometheus (metrics) and Loki (logs) datasources.
 Before submitting changes, run:
 
 ```bash
-make check    # lint → fmt-check → validate → test
+make check    # lint → lint-md → lint-yaml-json → fmt-check → validate → test
 
 # Strict schema v2 check on all skills:
 for d in content/skills/*/; do

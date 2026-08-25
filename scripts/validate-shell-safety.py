@@ -2,7 +2,7 @@
 """validate-shell-safety.py — Scan content/ for ! outside fenced code blocks.
 
 These patterns trigger Zsh history expansion when loaded by any AI agent
-(OpenCode, Claude Code, Cursor, etc.), causing permission errors like:
+(OpenCode, Claude Code, Codex CLI, etc.), causing permission errors like:
 "Bash command permission check failed for pattern '!*'"
 
 Dangerous patterns: !"  !'  !`  !*  (bang followed by quote/backtick/star)
@@ -18,6 +18,7 @@ import re
 import sys
 
 CONTENT_DIR = os.path.join(os.path.dirname(__file__), "..", "content")
+
 
 def scan_file(filepath: str, content_dir: str) -> list:
     """Return list of (relative_path, line_number, line_text) for violations."""

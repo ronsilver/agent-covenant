@@ -1,6 +1,6 @@
 ---
 name: agent-expert
-description: "Multi-agent system orchestration based on Anthropic patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer, autonomous agents): analysis of individual agents (capabilities, limitations, MCP configuration, skills, hooks), subagent design with restricted permissionMode, agent runner catalogs (Claude Code, OpenCode, Cursor, Windsurf, Gemini, Copilot, Codex), agent security (injection defense, tool restrictions, output validation), and model routing (cost-performance optimization). Use when coordinating multiple AI agents, implementing agent handoffs, analyzing agent capabilities across platforms, designing subagent permission boundaries, choosing orchestration patterns, or implementing agent safety guardrails. Trigger: multi-agent orchestration, subagent permissions, agent safety. Do NOT trigger for: single-agent tasks without coordination or handoff needs, agent architecture design without multi-agent coordination (use agent-architecture-expert). See also: agent-architecture-expert for Anthropic pattern deep-dive."
+description: "Multi-agent system orchestration based on Anthropic patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer, autonomous agents): analysis of individual agents (capabilities, limitations, MCP configuration, skills, hooks), subagent design with restricted permissionMode, agent runner catalogs (Claude Code, OpenCode, Antigravity, Codex CLI, Codex App, Pi, OMP), agent security (injection defense, tool restrictions, output validation), and model routing (cost-performance optimization). Use when coordinating multiple AI agents, implementing agent handoffs, analyzing agent capabilities across platforms, designing subagent permission boundaries, choosing orchestration patterns, or implementing agent safety guardrails. Trigger: multi-agent orchestration, subagent permissions, agent safety. Do NOT trigger for: single-agent tasks without coordination or handoff needs, agent architecture design without multi-agent coordination (use agent-architecture-expert). See also: agent-architecture-expert for Anthropic pattern deep-dive."
 license: MIT
 metadata:
   author: Community
@@ -46,7 +46,7 @@ metadata:
 
 ## Overview
 
-Multi-agent orchestration using Anthropic patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer, autonomous agents). Covers agent runner capabilities across Claude Code, OpenCode, Cursor, Windsurf, Gemini, Copilot, and Codex; subagent permission design with explicit allow/denylists; agent safety with 6-layer defense-in-depth; and model routing for cost-performance optimization (Haiku/Sonnet/Opus).
+Multi-agent orchestration using Anthropic patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer, autonomous agents). Covers agent runner capabilities across Claude Code, OpenCode, Antigravity, Codex CLI, Codex App, Pi, and OMP; subagent permission design with explicit allow/denylists; agent safety with 6-layer defense-in-depth; and model routing for cost-performance optimization (Haiku/Sonnet/Opus).
 
 ## Quick Reference
 

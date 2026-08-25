@@ -559,10 +559,12 @@ validate_agents() {
                     if [[ "${CI:-}" == "true" ]]; then
                         log_debug "    ${target_type}: ${target_path} (skipped in CI)"
                     elif [[ ! -d "${parent_dir}" ]]; then
-                        # Check if we can create it (parent of parent must exist and be writable)
-                        local parent_parent
-                        parent_parent=$(dirname "${parent_dir}")
-                        if [[ -d "${parent_parent}" ]] && [[ -w "${parent_parent}" ]]; then
+                        # Check if we can create it (nearest existing ancestor must be writable)
+                        local probe_dir="${parent_dir}"
+                        while [[ "${probe_dir}" != "/" && ! -d "${probe_dir}" ]]; do
+                            probe_dir=$(dirname "${probe_dir}")
+                        done
+                        if [[ -w "${probe_dir}" ]]; then
                             log_debug "    ${target_type}: ${target_path} (will create)"
                         else
                             log_error "    ${target_type}: ${target_path} (parent not writable)"

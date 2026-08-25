@@ -16,8 +16,10 @@ rules/
 └── agents/                 # Per-agent overrides and extensions
     ├── antigravity-global.md
     ├── claude-code-global.md
-    ├── copilot-global.md
+    ├── codex-cli-global.md
+    ├── omp-global.md
     ├── opencode-global.md
+    ├── pi-global.md
     └── *-global.md          # Agent kernel files (ultra-compressed ~6000 chars)
 ```
 
@@ -53,8 +55,7 @@ Every microkernel includes a `<GOVERN>` section enforcing:
 All agent kernels load 7 boot skills (Step 0). Injection of skill bodies is per-agent:
 - **Claude Code**: `@import` paths in claude-code-global.md — runtime injects full bodies (re-invocation redundant)
 - **OpenCode**: model invokes all 7 via `skill()` per kernel `<REINFORCE>` step 0 — no automatic body injection
-- **Copilot, Antigravity**: model opens each SKILL.md via `@file` per kernel `<REINFORCE>` step 0
-- **All other agents**: `<REINFORCE>` block in kernel is the enforcement; hooks are advisory reminders only
+- **Antigravity, Codex CLI, Pi, OMP**: model loads each SKILL.md by file read per kernel `<REINFORCE>` step 0 (no native skill tool)
 
 Boot skills (trigger: always):
 1. `operating-protocol` — risk/done/anti-hallucination
@@ -69,8 +70,8 @@ Boot skills (trigger: always):
 
 | Agent Type | Mechanism |
 |---|---|
-| OpenCode, Windsurf, Claude Code | Native `skill()` / `Skill()` tool at startup (see `<REINFORCE>`) |
-| Copilot, Cursor, Gemini, Codex | `@file` / `@` / `read` to open SKILL.md at startup (no native skill tool) |
+| OpenCode, Claude Code | Native `skill()` tool at startup (see `<REINFORCE>`) |
+| Antigravity, Codex CLI, Pi, OMP | File read of SKILL.md at startup (`@` / `read` / file path — no native skill tool) |
 
 ## Reference
 

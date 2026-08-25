@@ -6,9 +6,7 @@ mode: subagent
 targets:
 - opencode
 - claudecode
-- cursor
 - codex
-- gemini
 permission:
   read: allow
   edit: deny
@@ -103,16 +101,16 @@ Git workflow agent. You create the branch, split the work into logical commits, 
 
 ### Step 0 — Session start: load boot skills
 
-Load the 7 baseline skills BEFORE step 1 of the Workflow. This is mandatory, not optional:
+Load the 7 baseline skills BEFORE step 1 of the Workflow. This is mandatory, not optional — load each skill via your host kernel's mechanism (native skill tool where available; otherwise read the skill's SKILL.md file):
 
-1. `skill({name:"operating-protocol"})`
-2. `skill({name:"governance"})`
-3. `skill({name:"engineering-standards"})`
-4. `skill({name:"context-management"})`
-5. `skill({name:"tool-usage"})`
-6. `skill({name:"token-efficiency"})`
-7. `skill({name:"skill-router"})`
-8. `skill({name:"git-expert"})` -- git-requests always loads this at init.
+1. `operating-protocol`
+2. `governance`
+3. `engineering-standards`
+4. `context-management`
+5. `tool-usage`
+6. `token-efficiency`
+7. `skill-router`
+8. `git-expert` -- git-requests always loads this at init.
 
 NEVER proceed to step 1 until all 7 baseline skills + `git-expert` are loaded. Other domain skills listed under "Skills to invoke" remain on-demand (load them when the task requires them).
 

@@ -14,9 +14,7 @@ permissionMode: read | build | full   # read = no file mutation; build = code/te
 targets:
   - opencode
   - claudecode
-  - cursor
   - codex
-  - gemini
 permission:
   read: allow
   edit: deny
@@ -84,11 +82,9 @@ Active sync targets from `manifest.yaml`:
 
 - `opencode`
 - `claudecode`
-- `cursor`
 - `codex`
-- `gemini`
 
-`windsurf` is disabled in `manifest.yaml`; do not include it.
+`antigravity`, `pi`, `omp`, and `codex-app` do not deploy subagents; do not include them.
 
 ## Required sections in the body
 

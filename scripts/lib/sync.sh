@@ -540,7 +540,7 @@ write_sync_file() {
     fi
 }
 
-# Transform frontmatter for agents that require it (e.g. Cursor .mdc)
+# Transform frontmatter for agents that require it (e.g. Claude Code .mdc-style headers)
 transform_file_frontmatter() {
     local source_file="$1"
     local agent="$2"

@@ -13,13 +13,13 @@ before/after examples.
 
 | # | Pillar | Weight | Definition |
 |---|--------|--------|------------|
-| 1 | **Autosuficiencia** | 20pt | Skill is usable without chasing `references/` files for the 80% common case |
-| 2 | **Árbol de decisiones** | 15pt | Contains a decision table or branching workflow with ≥3 routes |
-| 3 | **Anti-patrones** | 15pt | ≥3 `❌ WRONG` / `✅ CORRECT` pairs with concrete code examples |
-| 4 | **Verificación** | 15pt | Workflow ends with a verification checklist or confirm steps |
-| 5 | **Profundidad** | 10pt | Documents known bugs, platform quirks, or edge cases |
-| 6 | **Triggers precisos** | 15pt | `description` has ≥3 trigger keywords + ≥1 anti-trigger ("Do NOT use for...") |
-| 7 | **Referencias vivas** | 10pt | ≥2 external URLs with `last_verified: YYYY-MM-DD` dates |
+| 1 | **Self-sufficiency** | 20pt | Skill is usable without chasing `references/` files for the 80% common case |
+| 2 | **Decision tree** | 15pt | Contains a decision table or branching workflow with >=3 routes |
+| 3 | **Anti-patterns** | 15pt | >=3 `[X] WRONG` / `[OK] CORRECT` pairs with concrete code examples |
+| 4 | **Verification** | 15pt | Workflow ends with a verification checklist or confirm steps |
+| 5 | **Depth** | 10pt | Documents known bugs, platform quirks, or edge cases |
+| 6 | **Precise triggers** | 15pt | `description` has >=3 trigger keywords + >=1 anti-trigger ("Do NOT use for...") |
+| 7 | **Living references** | 10pt | >=2 external URLs with `last_verified: YYYY-MM-DD` dates |
 
 **Total:** 100pt. Minimum passing: 70pt. World-class target: 80pt+
 
@@ -42,7 +42,7 @@ Set minimum via env var: `QUALITY_MIN_SCORE=80 make validate-quality`
 
 ## Pillar Details
 
-### 1. Autosuficiencia (20pt)
+### 1. Self-sufficiency (20pt)
 
 **Goal:** Agent can complete the 80% scenario using only `SKILL.md` content.
 Reference files are for the 20% edge cases.
@@ -61,13 +61,13 @@ reference files for advanced topics only.
 
 ---
 
-### 2. Árbol de decisiones (15pt)
+### 2. Decision tree (15pt)
 
 **Goal:** Agent can route between scenarios without asking the user.
 
 **Measurement:**
-- Markdown table with ≥3 content rows, or
-- ≥3 `If X: / When Y:` conditional branches in the workflow
+- Markdown table with >=3 content rows, or
+- >=3 `If X: / When Y:` conditional branches in the workflow
 
 **Example:**
 ```markdown
@@ -80,15 +80,15 @@ reference files for advanced topics only.
 
 ---
 
-### 3. Anti-patrones (15pt)
+### 3. Anti-patterns (15pt)
 
 **Goal:** Teach the agent what NOT to do, not just what to do.
 
-**Measurement:** Count of `❌`/`✅` pairs where both markers have adjacent code blocks.
+**Measurement:** Count of `[X]`/`[OK]` pairs where both markers have adjacent code blocks.
 
 **Example:**
 ```markdown
-### ❌ Hardcoding credentials
+### [X] Hardcoding credentials
 ```go
 // WRONG
 db := sql.Open("postgres", "user=admin password=secret")
@@ -102,14 +102,14 @@ db := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 
 ---
 
-### 4. Verificación (15pt)
+### 4. Verification (15pt)
 
 **Goal:** Every workflow has a "did it work?" gate before claiming done.
 
 **Measurement:**
 - `## Verification` section present (7pt)
-- ≥3 checklist items `- [ ]` (5pt)
-- ≥5 verify/confirm/validate keywords (3pt)
+- >=3 checklist items `- [ ]` (5pt)
+- >=5 verify/confirm/validate keywords (3pt)
 
 **Example:**
 ```markdown
@@ -124,7 +124,7 @@ Before claiming done:
 
 ---
 
-### 5. Profundidad (10pt)
+### 5. Depth (10pt)
 
 **Goal:** Skill shows real expertise — not just API docs, but known quirks.
 
@@ -133,20 +133,20 @@ plus presence of a troubleshooting section.
 
 **Example:**
 ```
-⚠ Known issue: Library v2.3.1 throws on Unicode chars. Use v2.3.2+ or
+[WARN] Known issue: Library v2.3.1 throws on Unicode chars. Use v2.3.2+ or
 apply this workaround in older versions: [code].
 ```
 
 ---
 
-### 6. Triggers precisos (15pt)
+### 6. Precise triggers (15pt)
 
 **Goal:** `description` field lets the agent decide when to load the skill
 and when to skip it.
 
 **Measurement:**
-- ≥3 trigger keywords (e.g., "Use when building X, debugging Y, implementing Z")
-- ≥1 anti-trigger (e.g., "Do NOT trigger for pure configuration changes")
+- >=3 trigger keywords (e.g., "Use when building X, debugging Y, implementing Z")
+- >=1 anti-trigger (e.g., "Do NOT trigger for pure configuration changes")
 
 **Before (bad):**
 ```yaml
@@ -163,13 +163,13 @@ description: Security audit rules for cloud-native services. Trigger: OWASP revi
 
 ---
 
-### 7. Referencias vivas (10pt)
+### 7. Living references (10pt)
 
 **Goal:** External references are verifiable and don't rot silently.
 
 **Measurement:**
-- ≥2 external URLs (not internal/proprietary repos)
-- ≥1 `last_verified: YYYY-MM-DD` date
+- >=2 external URLs (not internal/proprietary repos)
+- >=1 `last_verified: YYYY-MM-DD` date
 
 **Example:**
 ```markdown
@@ -198,14 +198,14 @@ make validate-quality MIN=80       # stricter world-class threshold
 ## Skill Quality Lifecycle
 
 ```
-[Draft]  → score < 50   → needs major work
-[Good]   → score 50-69   → needs specific improvements
-[Great]  → score 70-79   → passing, one or two weak pillars
-[World-class] → score 80+ → all 7 pillars strong
+[Draft]  -> score < 50   -> needs major work
+[Good]   -> score 50-69   -> needs specific improvements
+[Great]  -> score 70-79   -> passing, one or two weak pillars
+[World-class] -> score 80+ -> all 7 pillars strong
 ```
 
 New skills start as `status: draft`. They graduate to `status: stable` only
-when scoring ≥70 on the 7-pillar standard.
+when scoring >=70 on the 7-pillar standard.
 
 ---
 

@@ -53,10 +53,7 @@ jobs:
         run: npm install -g markdownlint-cli@0.44.0
 
       - name: markdownlint
-        run: |
-          markdownlint $(find . -name "*.md" \
-            -not -path "./.git/*" \
-            -not -path "./node_modules/*")
+        run: make lint-md
 
   # ── 3. YAML / JSON lint ──────────────────────────────────────────────────
   lint-yaml-json:
@@ -72,17 +69,8 @@ jobs:
           chmod +x /usr/local/bin/yq
           sudo apt-get install -y jq
 
-      - name: Validate YAML files
-        run: |
-          find . -name "*.yaml" -o -name "*.yml" \
-            | grep -v ".git/" \
-            | xargs -I{} yq '.' {} > /dev/null
-
-      - name: Validate JSON files
-        run: |
-          find . -name "*.json" \
-            | grep -v ".git/" \
-            | xargs -I{} jq '.' {} > /dev/null
+      - name: lint-yaml-json
+        run: make lint-yaml-json
 
   # ── 4. Security scan (gitleaks) ──────────────────────────────────────────
   security:
@@ -100,6 +88,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # ── 5. Manifest + skill validation ───────────────────────────────────────
+  # Benchmark targets (benchmark-live / benchmark-probe / benchmark-dry) are
+  # EXCLUDED from CI by policy: benchmark-live spends LLM money. The guard step
+  # in this job fails CI if `make check` ever resolves to a benchmark target.
+  # Do NOT add a benchmark job or step to this workflow.
   validate:
     name: "Validate: Manifest + Skills"
     runs-on: ubuntu-latest
@@ -112,6 +104,10 @@ jobs:
             -o /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
           sudo apt-get install -y jq
+
+      - name: "Guard: benchmark excluded from CI (policy: LLM cost)"
+        run: |
+          make -n check | grep -q benchmark && { echo "ERROR: benchmark target in make check chain; CI policy forbids benchmark."; exit 1; } || true
 
       - name: Validate manifest and skills
         run: make validate

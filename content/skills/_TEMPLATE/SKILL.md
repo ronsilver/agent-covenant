@@ -11,9 +11,7 @@ metadata:
 compatibility:
   - claude-code
   - opencode
-  - cursor
   - codex
-  - gemini
 ---
 
 # My Skill Name
@@ -150,7 +148,7 @@ Before claiming "done", confirm ALL:
 
 ## Shell Safety
 
-When including shell commands or special characters, follow these rules to prevent Zsh history expansion errors in any AI agent (OpenCode, Claude Code, Cursor, etc.).
+When including shell commands or special characters, follow these rules to prevent Zsh history expansion errors in any AI agent (OpenCode, Claude Code, Codex CLI, etc.).
 
 ### Dangerous Characters
 

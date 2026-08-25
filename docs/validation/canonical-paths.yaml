@@ -1,95 +1,17 @@
 # =============================================================================
-# Canonical Paths - Documentación oficial de paths por agente
+# Canonical Paths - official per-agent paths
 # =============================================================================
-# Este archivo documenta los paths canónicos según la documentación oficial
-# de cada agente. Se usa para validar que manifest.yaml use los paths correctos.
+# This file documents canonical paths per official agent docs.
+# Used to validate that manifest.yaml uses the correct paths.
 #
-# Referencias:
+# References:
 # - Claude Code: https://code.claude.com/docs/en/claude-directory
-# - Windsurf: https://dev.to/yardenporat/codium-windsurf-ide-rules-file-1hn9
 # - Antigravity: https://codelabs.developers.google.com/getting-started-google-antigravity
 # =============================================================================
 
 version: "1.0"
 
 agents:
-  windsurf:
-    description: "Windsurf IDE / Codeium Cascade"
-    canonical_paths:
-      rules:
-        # Global rules (memoria persistente)
-        - path: "${HOME}/.codeium/windsurf/memories/global_rules.md"
-          format: merged
-          scope: global
-          source: "https://docs.codeium.com/windsurf/cascade"
-        
-        # Project-level rules (wave 8+)
-        - path: "${REPO_ROOT}/.windsurf/rules/*.md"
-          format: individual
-          scope: workspace
-          source: "https://windsurf.com/blog/windsurf-wave-8-cascade-customization-features"
-      
-      workflows:
-        - path: "${HOME}/.codeium/windsurf/global_workflows"
-          format: individual
-          scope: global
-          source: "https://docs.codeium.com/windsurf/cascade"
-        
-        - path: "${REPO_ROOT}/.windsurf/workflows"
-          format: individual
-          scope: workspace
-      
-      skills:
-        - path: "${HOME}/.codeium/windsurf/skills"
-          format: directory
-          scope: global
-        
-        - path: "${REPO_ROOT}/.windsurf/skills"
-          format: directory
-          scope: workspace
-      
-      subagents:
-        - path: "${HOME}/.codeium/windsurf/agents"
-          format: individual
-          scope: global
-        
-        - path: "${REPO_ROOT}/.windsurf/agents"
-          format: individual
-          scope: workspace
-      
-      mcp:
-        - path: "${HOME}/.codeium/windsurf/mcp_config.json"
-          format: json
-          scope: global
-
-  windsurf-jetbrains:
-    description: "Codeium Plugin for JetBrains IDEs"
-    canonical_paths:
-      rules:
-        - path: "${HOME}/.codeium/memories/global_rules.md"
-          format: merged
-          scope: global
-      
-      workflows:
-        - path: "${HOME}/.codeium/global_workflows"
-          format: individual
-          scope: global
-      
-      skills:
-        - path: "${HOME}/.codeium/skills"
-          format: directory
-          scope: global
-      
-      subagents:
-        - path: "${HOME}/.codeium/agents"
-          format: individual
-          scope: global
-      
-      mcp:
-        - path: "${HOME}/.codeium/mcp_config.json"
-          format: json
-          scope: global
-
   claude-code:
     description: "Claude Code (Anthropic) — default + workspace"
     canonical_paths:
@@ -161,26 +83,11 @@ agents:
           format: json
           scope: workspace
 
-  claude-desktop:
-    description: "Claude Desktop (Anthropic)"
-    canonical_paths:
-      mcp:
-        - path: "${HOME}/Library/Application Support/Claude/claude_desktop_config.json"
-          format: json
-          scope: global
-          platform: macos
-          source: "https://modelcontextprotocol.io/quickstart/user"
-        
-        - path: "${HOME}/.config/Claude/claude_desktop_config.json"
-          format: json
-          scope: global
-          platform: linux
-
   antigravity:
     description: "Google Antigravity IDE"
     canonical_paths:
       rules:
-        # Global GEMINI.md (compartido con gemini-cli)
+        # Global GEMINI.md (deployed to ~/.gemini/GEMINI.md)
         - path: "${HOME}/.gemini/GEMINI.md"
           format: merged
           scope: global
@@ -209,55 +116,52 @@ agents:
           format: json
           scope: global
 
-  gemini-cli:
-    description: "Google Gemini CLI"
+  codex-cli:
+    description: "OpenAI Codex CLI"
     canonical_paths:
       rules:
-        - path: "${HOME}/.gemini/GEMINI.md"
-          format: merged
-          scope: global
+        - path: "${HOME}/.codex/AGENTS.md"
+          source: "https://github.com/openai/codex"
+      skills:
+        - path: "${HOME}/.codex/skills"
+          source: "https://github.com/openai/codex"
+      subagents:
+        - path: "${HOME}/.codex/agents"
+          source: "https://github.com/openai/codex"
 
-  copilot-vscode:
-    description: "GitHub Copilot (VS Code)"
+  codex-app:
+    description: "OpenAI Codex App (desktop)"
     canonical_paths:
-      rules:
-        - path: "${HOME}/Library/Application Support/Code/User/prompts/Default.instructions.md"
-          format: merged
-          scope: global
-          platform: macos
-          source: "https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot"
-        
-        - path: "${HOME}/.config/Code/User/prompts/Default.instructions.md"
-          format: merged
-          scope: global
-          platform: linux
-      
-      prompts:
-        - path: "${HOME}/Library/Application Support/Code/User/prompts"
-          format: individual
-          scope: global
-          platform: macos
+      skills:
+        - path: "${HOME}/.codex/skills"
+          source: "https://github.com/openai/codex"
 
-  copilot-intellij:
-    description: "GitHub Copilot (IntelliJ/JetBrains)"
+  pi:
+    description: "Pi CLI agent"
     canonical_paths:
       rules:
-        - path: "${HOME}/.config/github-copilot/intellij/Default.instructions.md"
-          format: merged
-          scope: global
+        - path: "${HOME}/.pi/agent/AGENTS.md"
+          source: "https://pi.dev/docs"
+      skills:
+        - path: "${HOME}/.pi/agent/skills"
+          source: "https://pi.dev/docs"
 
-  cursor:
-    description: "Cursor IDE"
+  omp:
+    description: "OMP (oh-my-pi)"
     canonical_paths:
       rules:
-        - path: "${HOME}/.cursor/rules/global.mdc"
-          format: merged
-          scope: global
-          source: "https://docs.cursor.com/context/rules-for-ai"
+        - path: "${HOME}/.omp/agent/AGENTS.md"
+          source: "https://omp.sh/docs"
+      skills:
+        - path: "${HOME}/.omp/agent/skills"
+          source: "https://omp.sh/docs"
+      mcp:
+        - path: "${HOME}/.omp/agent/mcp.json"
+          source: "https://omp.sh/docs/mcp-config"
 
 notes:
-  - "Los paths con ${HOME} son globales (aplican a todos los proyectos)"
-  - "Los paths con ${REPO_ROOT} son workspace-specific"
-  - "Algunos agentes soportan ambos scopes con precedencia workspace > global"
-  - "Platform-specific paths se activan solo en el OS correspondiente"
-  - "La validación debe considerar que paths pueden no existir aún (se crean en sync)"
+  - "Paths with ${HOME} are global (apply to all projects)"
+  - "Paths with ${REPO_ROOT} are workspace-specific"
+  - "Some agents support both scopes with workspace > global precedence"
+  - "Platform-specific paths activate only on the corresponding OS"
+  - "Validation must consider that paths may not exist yet (created during sync)"

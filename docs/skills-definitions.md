@@ -1,136 +1,136 @@
-# Skills Propuestas — justas y necesarias
+# Proposed Skills - just and necessary
 
 ---
 
-## 🔒 Core — siempre cargadas, inmutables
+## Core - always loaded, immutable
 
-[Definicion de skills Core](skills-definitions.md)
+> [Core skills definition](skills-definitions.md)
 
 ---
 
-## 🖥️ Lenguajes — 1 skill = ecosistema completo
+## Languages - 1 skill = complete ecosystem
 
-> Incluir en estas skills: linting + best practices + Security + testing + debugging + instrumentacion con opentelemtry
-> Incluido en la skill de terraform, la herramienta spacelift y su cli llamado spacectl
+> Include in these skills: linting + best practices + Security + testing + debugging + opentelemetry instrumentation
+> Included in the terraform skill, the spacelift tool and its cli called spacectl
 
-| Skill | Absorbe | Descripción |
+| Skill | Absorbe | Description |
 |---|---|---|
-| golang-expert | go-microservice-expert + protobuf-grpc-expert + linting(Go) + OTEL(Go) | Ecosistema completo de desarrollo Go: microservicios concurrentes, comunicación via gRPC/Protobuf, instrumentación con OpenTelemetry y análisis estático con linters especializados. |
-| python-expert | python-fastapi-expert + langgraph-langchain-expert + linting(Python) | Stack Python para backend asíncrono con FastAPI, orquestación de flujos de agentes con LangGraph/LangChain, y enforcement de calidad mediante linters y type checkers. |
-| typescript-expert | react-nextjs-expert + nodejs-backend-expert + state-management-redux-zustand + frontend-testing-jest-vitest + linting(TS) | Stack full-typeScript: SSR/CSR con Next.js, APIs backend con Node.js, gestión de estado con Redux/Zustand, testing unitario e integración con Jest/Vitest y análisis estático con ESLint/TSConfig estricto. |
-| java-expert | java-spring-expert + linting(Java) + enterprise patterns | Desarrollo enterprise con Spring Boot, aplicación de patrones arquitectónicos de la Spring Boot (REST APIs, enterprise workflows), y validación estática de calidad de código. |
-| scala-expert | Spark DataFrame/Dataset, sbt, ScalaTest, PySpark | Computación distribuida con Apache Spark (API DataFrame/Dataset), gestión de build con sbt, testing funcional con ScalaTest y interoperabilidad con PySpark. |
-| swift-expert | mobile-sdk-expert(iOS) + mobile-cicd-fastlane(iOS) | Desarrollo nativo iOS con Swift, construcción y distribución de SDKs móviles, y automatización de pipelines CI/CD mediante Fastlane y Xcode CLI. |
-| kotlin-expert | mobile-sdk-expert(Android) + mobile-cicd-fastlane(Android) | Desarrollo nativo Android con Kotlin, empaquetado de SDKs, y pipelines de integración continua con Fastlane y Android Build Tools. |
-| ruby-expert | Rails + Rails + RSpec | Desarrollo web con Ruby on Rails, personalización de aplicaciones web con el framework Rails, y testing BDD/TDD con RSpec y Capybara. |
-| scripting-expert | Bash/Zsh + PowerShell + ShellCheck | Automatización de infraestructura y sistemas operativos mediante scripts shell y PowerShell, con validación estática y hardening via ShellCheck y PSScriptAnalyzer. |
-| terraform-expert | spacelift + spacectl | Infraestructura como código con Terraform, orquestación de workflows de deploy con Spacelift, e interacción programática via CLI spacectl. |
+| golang-expert | go-microservice-expert + protobuf-grpc-expert + linting(Go) + OTEL(Go) | Complete Go development ecosystem: concurrent microservices, communication via gRPC/Protobuf, OpenTelemetry instrumentation and static analysis with specialized linters. |
+| python-expert | python-fastapi-expert + langgraph-langchain-expert + linting(Python) | Python toolchain for async backend with FastAPI, agent flow orchestration with LangGraph/LangChain, and quality enforcement through linters and type checkers. |
+| typescript-expert | react-nextjs-expert + nodejs-backend-expert + state-management-redux-zustand + frontend-testing-jest-vitest + linting(TS) | Full-TypeScript toolchain: SSR/CSR with Next.js, backend APIs with Node.js, state management with Redux/Zustand, unit and integration testing with Jest/Vitest and static analysis with strict ESLint/TSConfig. |
+| java-expert | java-spring-expert + linting(Java) + enterprise patterns | Enterprise development with Spring Boot, application of Spring Boot architectural patterns (REST APIs, enterprise workflows), and static validation of code quality. |
+| scala-expert | Spark DataFrame/Dataset, sbt, ScalaTest, PySpark | Distributed computing with Apache Spark (DataFrame/Dataset API), build management with sbt, functional testing with ScalaTest and interoperability with PySpark. |
+| swift-expert | mobile-sdk-expert(iOS) + mobile-cicd-fastlane(iOS) | Native iOS development with Swift, mobile SDK build and distribution, and CI/CD pipeline automation via Fastlane and Xcode CLI. |
+| kotlin-expert | mobile-sdk-expert(Android) + mobile-cicd-fastlane(Android) | Native Android development with Kotlin, SDK packaging, and continuous integration pipelines with Fastlane and Android Build Tools. |
+| ruby-expert | Rails + Rails + RSpec | Web development with Ruby on Rails, customization of web applications with the Rails framework, and BDD/TDD testing with RSpec and Capybara. |
+| scripting-expert | Bash/Zsh + PowerShell + ShellCheck | Infrastructure and OS automation via shell and PowerShell scripts, with static validation and hardening via ShellCheck and PSScriptAnalyzer. |
+| terraform-expert | spacelift + spacectl | Infrastructure as code with Terraform, orchestration of deploy workflows with Spacelift, and programmatic interaction via the spacectl CLI. |
 
 ---
 
-## ☁️ Cloud & Infra
+## Cloud & Infra
 
-| Skill | Absorbe | Descripción |
+| Skill | Absorbe | Description |
 |---|---|---|
-| aws-cloud-expert | serverless-lambda-expert + cdn-edge-cloudfront | Diseño de arquitecturas nativas cloud en AWS, computación serverless con Lambda@Edge, optimización de latencia mediante CloudFront y gestión de infraestructura con CloudFormation/CDK. |
-| kubernetes-expert | k8s-troubleshooting | Orquestación de cargas de trabajo con Kubernetes, incluyendo definición de recursos nativos (Deployments, StatefulSets, CRDs), networking (CNI, Ingress, Service Mesh) y resolución sistemática de incidentes. |
-| docker-expert | — | Containerización de aplicaciones, optimización de imágenes multi-stage, configuración de runtime (cgroups, namespaces), y gestión de registries con scanning de vulnerabilidades. |
-| helm-expert | — | Empaquetado de aplicaciones Kubernetes con Helm Charts, gestión de releases, values dinámicos, hooks de lifecycle y dependencias entre charts. |
-| argocd-expert | gitops-argocd-flux | Implementación de GitOps con ArgoCD (y FluxCD): sincronización declarativa, políticas de sync automatizado, manejo de secrets con Sealed Secrets/External Secrets, y rollback controlado. |
-| finops-cost-optimization | — | Análisis y optimización de gasto cloud: rightsizing de recursos, compra de Savings Plans/Reserved Instances, etiquetado obligatorio, budgets y reporte de costos por workload. |
-| aws-bedrock-agentcore-expert | — | Integración de modelos foundation de AWS Bedrock, configuración de agentes con action groups, knowledge bases, y guardrails de contenido para aplicaciones generativas. |
+| aws-cloud-expert | serverless-lambda-expert + cdn-edge-cloudfront | Design of cloud-native architectures on AWS, serverless computing with Lambda@Edge, latency optimization via CloudFront and infrastructure management with CloudFormation/CDK. |
+| kubernetes-expert | k8s-troubleshooting | Orchestration of workloads with Kubernetes, including native resource definition (Deployments, StatefulSets, CRDs), networking (CNI, Ingress, Service Mesh) and systematic incident resolution. |
+| docker-expert | — | Application containerization, multi-stage image optimization, runtime configuration (cgroups, namespaces), and registry management with vulnerability scanning. |
+| helm-expert | — | Kubernetes application packaging with Helm Charts, release management, dynamic values, lifecycle hooks and dependencies between charts. |
+| argocd-expert | gitops-argocd-flux | GitOps implementation with ArgoCD (and FluxCD): declarative synchronization, automated sync policies, secret management with Sealed Secrets/External Secrets, and controlled rollback. |
+| finops-cost-optimization | — | Cloud cost analysis and optimization: resource right-sizing, Savings Plans/Reserved Instances purchase, mandatory tagging, budgets and cost reporting by workload. |
+| aws-bedrock-agentcore-expert | — | Integration of AWS Bedrock foundation models, agent configuration with action groups, knowledge bases, and content guardrails for generative applications. |
 
 ---
 
-## 🗄️ Datos
+## Data
 
-| Skill | Descripción |
+| Skill | Description |
 |---|---|
-| postgres-database-expert | Diseño de esquemas relacionales, optimización de planes de ejecución (EXPLAIN ANALYZE), indexing estratégico (B-Tree, GIN, BRIN), partitioning, replicación lógica y tuning de parámetros del motor. | soportar aurora postgres y rds postgres de aws |
-| snowflake-expert | Data warehousing cloud-native: modelado dimensional, optimización de micro-partitions, gestión de costos por warehouse, streams/tasks para CDC, y control de acceso basado en roles (RBAC). |
-| mongodb-expert | Modelado de documentos, estrategias de sharding, replicación con replica sets, operaciones de agregación, change streams y transacciones multi-documento ACID. | soportar documentdb de aws |
-| dynamodb-expert | Diseño de tablas basado en patrones de acceso (single-table design), gestión de índices secundarios (LSI/GSI), streams para event-driven, y optimización de capacidad (on-demand vs provisioned). |
-| redis-cache-expert | Implementación de estructuras de datos in-memory (Strings, Hashes, Sorted Sets, Streams), configuración de persistencia (RDB/AOF), clustering con Redis Cluster, y políticas de eviction. | soportar elasticache de redis en aws |
-| elasticsearch-opensearch-expert | Diseño de mappings y analyzers, queries complejas (bool, nested, aggregations), tuning de clusters (shards, replicas, segment merging), y monitoreo de JVM heap. |
-| vector-databases | Almacenamiento y recuperación de embeddings de alta dimensionalidad, indexado aproximado (ANN: HNSW, IVF), metadata filtering e integración con pipelines de RAG. |
-| time-series-db | Gestión de datos temporales: modelado de series de tiempo, retención con downsampling, compresión, ingestión de alta frecuencia y consultas range-based (InfluxDB, TimescaleDB, Prometheus). |
-| mysql-expert | Administración de instancias MySQL/MariaDB, replicación maestro-esclavo/grupo, partitioning, tuning de InnoDB (buffer pool, redo log), y migraciones online con pt-online-schema-change. | soportar aurora mysql y rds mysql de aws |
-| liquibase-expert | Versionado declarativo de esquemas de base de datos, orquestación de changesets (XML/YAML/SQL), validación de checksums, y estrategias de rollback atomático. |
-| database-migration-strategies | Planificación de migraciones con cero downtime: dual-write, strangler fig pattern, CDC (Change Data Capture), validación de consistencia y procedimientos de rollback. | considerar tambien utilizar herramientas de aws como DMS, proxy rds ... |
+| postgres-database-expert | Relational schema design, execution plan optimization (EXPLAIN ANALYZE), strategic indexing (B-Tree, GIN, BRIN), partitioning, logical replication and engine parameter tuning. | support aws aurora postgres and rds postgres |
+| snowflake-expert | Cloud-native data warehousing: dimensional modeling, micro-partition optimization, per-warehouse cost management, streams/tasks for CDC, and role-based access control (RBAC). |
+| mongodb-expert | Document modeling, sharding strategies, replica set replication, aggregation operations, change streams and multi-document ACID transactions. | support aws documentdb |
+| dynamodb-expert | Table design based on access patterns (single-table design), secondary index management (LSI/GSI), streams for event-driven, and capacity optimization (on-demand vs provisioned). |
+| redis-cache-expert | Implementation of in-memory data structures (Strings, Hashes, Sorted Sets, Streams), persistence configuration (RDB/AOF), Redis Cluster clustering, and eviction policies. | support aws elasticache redis |
+| elasticsearch-opensearch-expert | Mapping and analyzer design, complex queries (bool, nested, aggregations), cluster tuning (shards, replicas, segment merging), and JVM heap monitoring. |
+| vector-databases | Storage and retrieval of high-dimensional embeddings, approximate indexing (ANN: HNSW, IVF), metadata filtering and integration with RAG pipelines. |
+| time-series-db | Temporal data management: time series modeling, retention with downsampling, compression, high-frequency ingestion and range-based queries (InfluxDB, TimescaleDB, Prometheus). |
+| mysql-expert | MySQL/MariaDB instance administration, master-slave/group replication, partitioning, InnoDB tuning (buffer pool, redo log), and online migrations with pt-online-schema-change. | support aws aurora mysql and rds mysql |
+| liquibase-expert | Declarative versioning of database schemas, changeset orchestration (XML/YAML/SQL), checksum validation, and atomic rollback strategies. |
+| database-migration-strategies | Zero-downtime migration planning: dual-write, strangler fig pattern, CDC (Change Data Capture), consistency validation and rollback procedures. | also consider using aws tools such as DMS, rds proxy ... |
 
 ---
 
-## 🔌 Protocolos & Comunicación
+## Protocols & Communication
 
-| Skill | Absorbe | Descripción |
+| Skill | Absorbe | Description |
 |---|---|---|
-| authentication-expert | oauth-oidc-jwt-expert | Implementación de flujos de autenticación y autorización: OAuth 2.0 (Authorization Code, Client Credentials), OpenID Connect, JWT (firma JWS/JWE), refresh tokens y PKCE. |
-| openapi-expert | rest-openapi-expert | Especificación formal de APIs REST con OpenAPI 3.x, generación de stubs, validación de requests/responses, y documentación interactiva (Swagger UI/Redoc). |
-| architecture-expert | api-design + architecture-design | Diseño de arquitecturas de software (monolítica modular, microservicios desacoplados, event-driven, hexagonal/ports-adapters), definición de APIs, selección de stack tecnológico y estrategias de despliegue. |
+| authentication-expert | oauth-oidc-jwt-expert | Implementation of authentication and authorization flows: OAuth 2.0 (Authorization Code, Client Credentials), OpenID Connect, JWT (JWS/JWE signing), refresh tokens and PKCE. |
+| openapi-expert | rest-openapi-expert | Formal REST API specification with OpenAPI 3.x, stub generation, request/response validation, and interactive documentation (Swagger UI/Redoc). |
+| architecture-expert | api-design + architecture-design | Software architecture design (modular monolith, decoupled microservices, event-driven, hexagonal/ports-adapters), API definition, technology selection and deployment strategies. |
 
 
 ---
 
-## ⚙️ Tools
+## Tools
 
-| Skill | Absorbe | Descripción |
+| Skill | Absorbe | Description |
 |---|---|---|
-| github-actions-expert | — | Construcción de pipelines CI/CD con GitHub Actions: definición de workflows YAML (.github/workflows/) con triggers por eventos (push, pull_request, schedule, workflow_dispatch), matrices de build (strategy.matrix) para múltiples OS/arquitecturas/versiones, gestión de secrets con GitHub Secrets y OIDC para cloud providers (AWS, GCP, Azure), reusable workflows (workflow_call), composite actions, self-hosted runners vs. GitHub-hosted runners, security hardening (pin actions a full-length commit SHA, principle of least privilege para GITHUB_TOKEN con permissions mínimas, prevención de script injection attacks mediante variables de entorno intermedias, masking de valores sensibles con ::add-mask::), artifact signing, caché de dependencias (actions/cache), y monitoreo de flaky tests. |
-| github-expert | — | Gestión avanzada de repositorios con GitHub: branch protection rules (requerir PR reviews, status checks, firmas GPG), CODEOWNERS para asignación de ownership por path/patrón con reglas de precedencia, rulesets para políticas escalables a nivel organización, releases semánticas con GitHub Releases y changelog automation (semantic-release, release-please), gestión de issues/PRs con templates (.github/ISSUE_TEMPLATE/, .github/PULL_REQUEST_TEMPLATE.md) y labels automáticos, monitoreo de seguridad (Dependabot alerts/version updates, secret scanning, code scanning con CodeQL, dependency review), vulnerability advisory database, OpenSSF Scorecards, y dependency graph para tracking completo del supply chain. |
-| git-expert | git-protocol + git-guardrails | Dominio del protocolo Git a nivel de plumbing e internales: objetos internos (blob, tree, commit, tag, packfiles), content-addressable filesystem con SHA-1, transfer protocols (smart HTTP, SSH, Git protocol), reescritura de historia segura (rebase interactivo, filter-repo, filter-branch), reflog para recuperación de commits perdidos, hooks locales (pre-commit, commit-msg, pre-push) y server-side (update, pre-receive, post-receive) para enforcement de políticas (convención de mensajes, ACLs por directorio), guardrails contra force-pushes (--force-with-lease, receive.denyNonFastForwards), detección y prevención de leaks de secrets (git-secrets, gitleaks, truffleHog), signed commits (GPG/SSH signing, verified commits), conventional commits para mensajes estandarizados, y estrategias de branching (Git Flow, GitHub Flow, trunk-based development). |
+| github-actions-expert | — | CI/CD pipeline construction with GitHub Actions: YAML workflow definition (.github/workflows/) with event triggers (push, pull_request, schedule, workflow_dispatch), build matrices (strategy.matrix) for multiple OS/architectures/versions, secret management with GitHub Secrets and OIDC for cloud providers (AWS, GCP, Azure), reusable workflows (workflow_call), composite actions, self-hosted vs GitHub-hosted runners, security hardening (pin actions to full-length commit SHA, principle of least privilege for GITHUB_TOKEN with minimal permissions, prevention of script injection attacks via intermediate environment variables, masking sensitive values with ::add-mask::), artifact signing, dependency caching (actions/cache), and flaky test monitoring. |
+| github-expert | — | Advanced GitHub repository management: branch protection rules (require PR reviews, status checks, GPG signatures), CODEOWNERS for ownership assignment by path/pattern with precedence rules, rulesets for org-level scalable policies, semantic releases with GitHub Releases and changelog automation (semantic-release, release-please), issue/PR management with templates (.github/ISSUE_TEMPLATE/, .github/PULL_REQUEST_TEMPLATE.md) and automatic labels, security monitoring (Dependabot alerts/version updates, secret scanning, code scanning with CodeQL, dependency review), vulnerability advisory database, OpenSSF Scorecards, and dependency graph for full supply chain tracking. |
+| git-expert | git-protocol + git-guardrails | Mastery of the Git protocol at plumbing and internals level: internal objects (blob, tree, commit, tag, packfiles), content-addressable filesystem with SHA-1, transfer protocols (smart HTTP, SSH, Git protocol), safe history rewriting (interactive rebase, filter-repo, filter-branch), reflog for recovery of lost commits, local hooks (pre-commit, commit-msg, pre-push) and server-side (update, pre-receive, post-receive) for policy enforcement (message convention, per-directory ACLs), guardrails against force-pushes (--force-with-lease, receive.denyNonFastForwards), secret leak detection and prevention (git-secrets, gitleaks, truffleHog), signed commits (GPG/SSH signing, verified commits), conventional commits for standardized messages, and branching strategies (Git Flow, GitHub Flow, trunk-based development). |
 
 ---
 
-## ✅ Calidad & Proceso
+## Quality & Process
 
-| Skill | Absorbe | Descripción |
+| Skill | Absorbe | Description |
 |---|---|---|
-| reviewer-expert | review | Ejecución de code reviews sistemáticos alineados con IEEE 1028: detección de defectos latentes (60-65% en inspecciones formales vs. <50% en informales), transferencia de conocimiento del dominio, validación de cobertura de tests, cumplimiento de OWASP Top 10, y análisis de evolvabilidad del código (75% de los comentarios según estudios de Microsoft). Velocidad óptima: 200-400 LOC/hora. |
-| refactoring-expert | refactoring | Aplicación disciplinada del catálogo de refactorings de Fowler (2nd ed.): extracción de funciones/clases, encapsulación de colecciones, decomposición condicional, reemplazo de primitivos por objetos, y split-phase. Preservación de comportamiento observable mediante tests de caracterización y refactoring por pasos pequeños con retroalimentación inmediata. |
-| testing-expert | testing-strategy | Diseño de estrategias de testing basadas en la pirámide de Cohn/Mike Bland: tests unitarios rápidos (TDD, first-class citizens), tests de integración con Test Doubles (mocks, stubs, fakes), tests de contrato con Pact, E2E con Playwright/Cypress, property-based testing (QuickCheck/Hypothesis), y fuzz testing. Métricas: cobertura de código como señal (no proof), detección de flaky tests, y cultura de "no test, no fix". |
-| debugging-expert | systematic-debugging | Aplicación de metodologías de debugging estructurado del SRE Book de Google: reproducción de estado (reproduction case), instrumentación con tracing distribuido (OpenTelemetry), análisis de trazas de stack, profiling de memoria/CPU, uso de git bisect para localización binaria de commits defectuosos, y análisis de post-mortems sin blame. |
-| performance-expert | performance-optimization | Profiling sistemático con herramientas de observabilidad (pprof, async-profiler, py-spy): identificación de hot paths, análisis de allocación de memoria y garbage collection, optimización de consultas N+1, implementación de cachés multi-nivel (L1/L2/CDN), connection pooling, y tuning de kernels de sistemas operativos para workloads de baja latencia. |
-| accessibility-expert | accessibility-compliance | Verificación de cumplimiento WCAG 2.2 niveles A/AA/AAA basado en los 4 principios POUR (Perceivable, Operable, Understandable, Robust): uso semántico de HTML5, roles ARIA y landmarks, navegación por teclado (tab order, skip links), contraste de color (WCAG 1.4.3), testing con axe-core, y validación con lectores de pantalla (NVDA, JAWS, VoiceOver) y teclado únicamente. |
-| playwright-expert | playwright-automation | Automatización de testing E2E con Playwright: locators resilientes (role + name), manejo de network interception y mocking de APIs, testing de accesibilidad integrado (axe-core), ejecución paralela con sharding, generación de traces y videos para debugging de fallos flaky, testing visual con screenshots, y CI integration con reporters personalizados. |
-| scalability-expert | scalability-patterns | Diseño de sistemas elásticos y de alta disponibilidad: sharding de datos (consistent hashing), caché distribuida (CDN, Redis Cluster), colas de mensajes para desacoplamiento (SQS, Kafka), auto-scaling basado en métricas (CPU, request queue), patrones CQRS/Event Sourcing, manejo de overload (circuit breakers, rate limiting), y eliminación de single points of failure. |
-| idempotency-expert | idempotency-patterns | Diseño de operaciones idempotentes en sistemas distribuidos: generación y validación de claves de idempotencia (idempotency keys), deduplicación de requests con ventanas temporales, transacciones compensatorias (Saga, TCC), validación de estado previo (conditional updates con ETags), manejo de retries con backoff exponencial, y garantía de exactly-once semantics mediante deduplication consumers. |
-| planning-expert | grill-with-docs | Planificación de desarrollo basada en documentación técnica previa: elaboración de RFCs (Request for Comments) para propuestas de arquitectura, TRDs (Technical Requirement Documents) para especificación de soluciones, ADRs (Architecture Decision Records) para registro de decisiones técnicas, y grill sessions para validación cruzada de diseño antes de cualquier línea de código. |
-| research-expert | repo-pack | Análisis exploratorio de repositorios: generación de mapas de dependencias (AST parsing, dependency graphs), detección de arquitecturas y bounded contexts, identificación cuantitativa de deuda técnica (code churn, cyclomatic complexity, cognitive complexity), reconocimiento de patrones de diseño y anti-patterns, y análisis de hotspots mediante mining de repositorios (Git log analysis). |
-| documentation-expert | issue-to-trd | Transformación de requerimientos e issues en documentos técnicos de diseño (TRD): especificaciones de API con OpenAPI, manuales de operación (runbooks), documentación como código (Docs as Code), executable documentation mediante tests, y mantenimiento de wikis estructuradas con diagramas de arquitectura actualizados. |
-| diagram-expert | diagram-generation | Creación de diagramas de arquitectura con C4 Model (Context, Containers, Components, Code) para diferentes niveles de abstracción, diagramas UML (secuencia, clases, actividad), flujos de datos (DFD), modelos entidad-relación (ERD), diagramas de secuencia para diseño de APIs, y arquitecturas de despliegue (infraestructura). Herramientas: PlantUML, Mermaid, Structurizr. |
-| operational-excellence | — | Implementación de prácticas SRE del Google SRE Book: definición de SLIs (Service Level Indicators), SLOs (Service Level Objectives) y SLAs, elaboración de runbooks operacionales, cultura de post-mortems sin blame, eliminación de toil mediante automatización, monitoreo de distributed systems (latencia, tráfico, errores, saturación), y mejora continua de la confiabilidad mediante error budgets. |
-| evaluation-expert | advanced-evaluation | Evaluación comparativa de soluciones técnicas mediante análisis estructurado de trade-offs (rendimiento vs. costo, consistencia vs. disponibilidad CAP theorem, complejidad operativa), diseño y ejecución de POCs (Proof of Concepts) con métricas objetivas, matrices de decisión ponderadas, y análisis de riesgos técnicos para selección de stack tecnológico. |
-| reasoning-expert | reasoning + reasoning-trace | Mejora del razonamiento del agente mediante técnicas de Chain-of-Thought (CoT), Tree-of-Thought (ToT) para exploración de múltiples caminos, ReAct (Reasoning + Acting), y mantenimiento de trazabilidad completa de la línea de inferencia (reasoning traces) para auditoría y debugging de decisiones del agente. |
-| skill-router | — | Enrutamiento dinámico de tareas hacia la skill especializada más adecuada mediante análisis de intención (intent classification), matching de dominio del problema contra perfiles de skills, contexto de ejecución actual, y fallback a skills de propósito general cuando no hay match con confianza suficiente. |
+| reviewer-expert | review | Execution of systematic code reviews aligned with IEEE 1028: latent defect detection (60-65% in formal inspections vs <50% in informal ones), domain knowledge transfer, test coverage validation, OWASP Top 10 compliance, and code evolvability analysis (75% of comments per Microsoft studies). Optimal speed: 200-400 LOC/hour. |
+| refactoring-expert | refactoring | Disciplined application of the Fowler refactoring catalog (2nd ed.): function/class extraction, collection encapsulation, conditional decomposition, replacement of primitives with objects, and split-phase. Preservation of observable behavior through characterization tests and small-step refactoring with immediate feedback. |
+| testing-expert | testing-strategy | Design of testing strategies based on the Cohn/Mike Bland pyramid: fast unit tests (TDD, first-class citizens), integration tests with Test Doubles (mocks, stubs, fakes), contract tests with Pact, E2E with Playwright/Cypress, property-based testing (QuickCheck/Hypothesis), and fuzz testing. Metrics: code coverage as a signal (not proof), flaky test detection, and a "no test, no fix" culture. |
+| debugging-expert | systematic-debugging | Application of structured debugging methodologies from Google's SRE Book: state reproduction (reproduction case), distributed tracing instrumentation (OpenTelemetry), call-trace analysis, memory/CPU profiling, git bisect for binary localization of defective commits, and blameless post-mortem analysis. |
+| performance-expert | performance-optimization | Systematic profiling with observability tools (pprof, async-profiler, py-spy): hot path identification, memory allocation and garbage collection analysis, N+1 query optimization, multi-level cache implementation (L1/L2/CDN), connection pooling, and OS kernel tuning for low-latency workloads. |
+| accessibility-expert | accessibility-compliance | WCAG 2.2 levels A/AA/AAA compliance verification based on the 4 POUR principles (Perceivable, Operable, Understandable, Robust): semantic HTML5 usage, ARIA roles and landmarks, keyboard navigation (tab order, skip links), color contrast (WCAG 1.4.3), testing with axe-core, and validation with screen readers (NVDA, JAWS, VoiceOver) and keyboard only. |
+| playwright-expert | playwright-automation | E2E testing automation with Playwright: resilient locators (role + name), network interception and API mocking, integrated accessibility testing (axe-core), parallel execution with sharding, trace and video generation for flaky failure debugging, visual testing with screenshots, and CI integration with custom reporters. |
+| scalability-expert | scalability-patterns | Design of elastic, high-availability systems: data sharding (consistent hashing), distributed cache (CDN, Redis Cluster), message queues for decoupling (SQS, Kafka), metric-based auto-scaling (CPU, request queue), CQRS/Event Sourcing patterns, overload handling (circuit breakers, rate limiting), and elimination of single points of failure. |
+| idempotency-expert | idempotency-patterns | Design of idempotent operations in distributed systems: idempotency key generation and validation, request deduplication with time windows, compensating transactions (Saga, TCC), precondition validation (conditional updates with ETags), retry handling with exponential backoff, and exactly-once semantics guarantee via deduplication consumers. |
+| planning-expert | grill-with-docs | Development planning based on prior technical documentation: RFCs (Request for Comments) for architecture proposals, TRDs (Technical Requirement Documents) for solution specification, ADRs (Architecture Decision Records) for recording technical decisions, and grill sessions for cross-validation of design before any line of code. |
+| research-expert | repo-pack | Exploratory repository analysis: dependency map generation (AST parsing, dependency graphs), architecture and bounded context detection, quantitative technical debt identification (code churn, cyclomatic complexity, cognitive complexity), design pattern and anti-pattern recognition, and hotspot analysis via repository mining (Git log analysis). |
+| documentation-expert | issue-to-trd | Transformation of requirements and issues into technical design documents (TRD): API specifications with OpenAPI, operations manuals (runbooks), documentation as code (Docs as Code), executable documentation via tests, and maintenance of structured wikis with updated architecture diagrams. |
+| diagram-expert | diagram-generation | Creation of architecture diagrams with C4 Model (Context, Containers, Components, Code) for different abstraction levels, UML diagrams (sequence, classes, activity), data flows (DFD), entity-relationship models (ERD), sequence diagrams for API design, and deployment architectures (infrastructure). Tools: PlantUML, Mermaid, Structurizr. |
+| operational-excellence | — | Implementation of Google SRE Book practices: definition of SLIs (Service Level Indicators), SLOs (Service Level Objectives) and SLAs, operational runbook creation, blameless post-mortem culture, toil elimination via automation, distributed systems monitoring (latency, traffic, errors, saturation), and continuous reliability improvement via error budgets. |
+| evaluation-expert | advanced-evaluation | Comparative evaluation of technical solutions through structured trade-off analysis (performance vs cost, consistency vs availability CAP theorem, operational complexity), design and execution of POCs (Proof of Concepts) with objective metrics, weighted decision matrices, and technical risk analysis for technology selection. |
+| reasoning-expert | reasoning + reasoning-trace | Agent reasoning improvement via Chain-of-Thought (CoT), Tree-of-Thought (ToT) for multi-path exploration, ReAct (Reasoning + Acting), and full inference line traceability (reasoning traces) maintenance for agent decision auditing and debugging. |
+| skill-router | — | Dynamic task routing toward the most appropriate specialized skill via intent classification, problem domain matching against skill profiles, current execution context, and fallback to general-purpose skills when there is no match with sufficient confidence. |
 
 ---
 
-## 🧠 AI & Agentes
+## AI & Agents
 
-| Skill | Absorbe | Descripción |
+| Skill | Absorbe | Description |
 |---|---|---|
-| prompt-expert | agent-prompt-engineering + prompt-engineering | Ingeniería de prompts: diseño de system prompts, few-shot prompting, prompt chaining, evaluación de robustez ante jailbreaks/injections, y optimización de tokens de entrada. |
-| mcp-expert | mcp-server-design | Diseño e implementación de servidores MCP (Model Context Protocol): definición de tool schemas, manejo de transporte (stdio/SSE), y exponibilidad de capacidades a agentes clientes. |
-| agent-expert | multi-agent-patterns + agent-analysis-expert + subagent-analysis-expert | Orquestación de sistemas multi-agente: patrones de delegación (supervisor, plan-and-execute), análisis de agentes individuales y diseño de subagentes con scopes restringidos. |
-| agent-architecture-expert | rag-architecture | Diseño de arquitecturas RAG: ingestion pipelines, chunking semántico, embedding models, vector stores, retrieval strategies (hybrid search, reranking) y grounding de respuestas. |
-| llm-expert | llm-operations-expert + llm-observability + llm-cost-estimation | Operacionalización de LLMs en producción: deploy de modelos, gestión de versiones, logging de prompts/completions, tracing distribuido, monitoreo de latencia y estimación de costos de inferencia. |
+| prompt-expert | agent-prompt-engineering + prompt-engineering | Prompt engineering: system prompt design, few-shot prompting, prompt chaining, robustness evaluation against jailbreaks/injections, and input token optimization. |
+| mcp-expert | mcp-server-design | Design and implementation of MCP (Model Context Protocol) servers: tool schema definition, transport handling (stdio/SSE), and capability exposure to client agents. |
+| agent-expert | multi-agent-patterns + agent-analysis-expert + subagent-analysis-expert | Multi-agent system orchestration: delegation patterns (supervisor, plan-and-execute), individual agent analysis and subagent design with restricted scopes. |
+| agent-architecture-expert | rag-architecture | RAG architecture design: ingestion pipelines, semantic chunking, embedding models, vector stores, retrieval strategies (hybrid search, reranking) and response grounding. |
+| llm-expert | llm-operations-expert + llm-observability + llm-cost-estimation | LLM operationalization in production: model deployment, version management, prompt/completion logging, distributed tracing, latency monitoring and inference cost estimation. |
 
 ---
 
-## 🛡️ Seguridad & Compliance
+## Security & Compliance
 
-| Skill | Absorbe | Descripción |
+| Skill | Absorbe | Description |
 |---|---|---|
-| security-expert | security-audit + threat-hunting | Auditoría de seguridad en código fuente (SAST) e infraestructura (DAST/IaC scanning), y ejecución de threat hunting proactivo mediante análisis de logs y behavioral analytics. |
+| security-expert | security-audit + threat-hunting | Security audit in source code (SAST) and infrastructure (DAST/IaC scanning), and proactive threat hunting execution via log analysis and behavioral analytics. |
 
 
 ---
 
 ---
 
-## 🗑️ Eliminar
+## Delete
 
-Las siguientes skills se proponen para eliminación:
+The following skills are proposed for deletion:
 
 > **Note:** Some entries below (`fraud-detection-patterns`, `order-gateway-testing`, `kyc-aml-compliance`) are fintech-domain-specific and have been removed from the active catalog. They remain in this historical list for record-keeping only.
 
