@@ -80,6 +80,8 @@ is_exempt_file() {
 	# DOMAIN-SPECIFIC references (marked with [DOMAIN-SPECIFIC] in file)
 	[[ "$filepath" == *"ruby-expert/references/spree-patterns.md" ]] && return 0
 	[[ "$filepath" == *"java-expert/references/killbill.md" ]] && return 0
+	# Tool-generated gitnexus skills (ADR-0037): examples from gitnexus docs corpus
+	[[ "$filepath" == *"content/skills/gitnexus-"* ]] && return 0
 	return 1
 }
 

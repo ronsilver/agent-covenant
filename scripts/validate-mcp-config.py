@@ -5,7 +5,7 @@ Checks (applied to canonical content/mcp/*.json and the deployed
 ~/.config/opencode/opencode.json when present):
 
 1. No absolute binary paths in server commands, except the documented uv-tool
-   venv exception (e.g. graphify's ~/.local/share/uv/tools/*/bin/python).
+   venv exception.
    Bare binaries (npx, uvx, go, python) are the portability contract.
 2. No literal PATH injected into any server environment/env.
 3. No real secret patterns in the file (ghp_, gho_, glsa_, secret_, sk-, xox).
@@ -29,7 +29,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# Documented exception: uv tool venvs (e.g. graphify) are absolute by design.
+# Documented exception: uv tool venvs are absolute by design.
 UV_TOOL_VENV_RE = re.compile(r"^/.*/\.local/share/uv/tools/[^/]+/bin/python")
 
 # Token patterns (prefixes enough to catch real credentials, not placeholders).

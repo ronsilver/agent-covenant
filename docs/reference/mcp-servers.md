@@ -21,7 +21,7 @@
 | **context7** | Up-to-date library and framework documentation | Cloud (SSE) |
 | **gitmcp** | Semantic search over GitHub repositories | Cloud (SSE) |
 | **openspec** | OpenSpec proposal and spec management | Standard (npx) |
-| **graphify** | Knowledge graph query server (graphify.serve stdio) | Standard (uvx) |
+| **gitnexus** | GitNexus code intelligence | Standard (npx) |
 
 ## Synced Locations
 
@@ -60,7 +60,7 @@ must NOT transform them, or every `make sync` re-breaks deployments:
 - **Bare binaries only**: server commands use `npx`, `uvx`, `go`, `python` —
   never absolute paths. Absolute paths couple the config to the PATH of the
   sync machine (homebrew vs mise vs asdf) and break on other machines. The only
-  exception is the uv-tool venv for `graphify`
+  exception is the uv-tool venv interpreter
   (`~/.local/share/uv/tools/*/bin/python`), validated by
   `scripts/validate-mcp-config.py`.
 - **No PATH injection**: never inject a literal `PATH` into a server's

@@ -33,7 +33,7 @@ Out of scope (recorded, not created):
 
 ## Existing Coverage Map
 
-The 63 active skills in `manifest.yaml` under `skills.directories` cover: security (security-expert, penetration-testing-expert), AI agents (agent-expert, agent-architecture-expert, web-browsing-agent-expert, mcp-expert), infrastructure, data, frontend, backend, quality, process, and core.
+The 71 active skills in `manifest.yaml` under `skills.directories` cover: security (security-expert, penetration-testing-expert), AI agents (agent-expert, agent-architecture-expert, web-browsing-agent-expert, mcp-expert), infrastructure, data, frontend, backend, quality, process, and core.
 
 ## Updateable-Resource Cruce
 
@@ -68,7 +68,6 @@ The cruce de proyectos vs recurso actualizable: every master-catalog entry maps 
 | 24 | thedotmack/claude-mem | https://github.com/thedotmack/claude-mem | context tooling | COV | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
 | 25 | RyjoxTechnologies/Octopoda-OS | https://github.com/RyjoxTechnologies/Octopoda-OS | context tooling | COV | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
 | 26 | activeloopai/hivemind | https://github.com/activeloopai/hivemind | context tooling | COV | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
-| 27 | safishamsi/graphify | https://github.com/safishamsi/graphify | context tooling | COV | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
 | 28 | muratcankoylan/agent-skills-for-context-engineering | https://github.com/muratcankoylan/agent-skills-for-context-engineering | context tooling | COV | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
 | 29 | colbymchenry/codegraph | https://github.com/colbymchenry/codegraph | context/token | UPD | content/skills/token-efficiency/references/retrieval-economics.md | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
 | 30 | drona23/claude-token-efficient | https://github.com/drona23/claude-token-efficient | token optimization | UPD | content/skills/token-efficiency/references/baselines.md | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
@@ -271,7 +270,6 @@ Every master-catalog entry (1-190) has exactly one disposition: ADD / STR / UPD 
 | 24 | thedotmack/claude-mem | context tooling | COV | agent memory -> context-management |
 | 25 | RyjoxTechnologies/Octopoda-OS | context tooling | COV | agent memory OS -> context-management |
 | 26 | activeloopai/hivemind | context tooling | COV | shared memory -> context-management |
-| 27 | safishamsi/graphify | context tooling | COV | knowledge graph -> context-management |
 | 28 | muratcankoylan/agent-skills-for-context-engineering | context tooling | COV | context engineering skills -> context-management |
 | 29 | colbymchenry/codegraph | context/token | UPD | refreshed by T14c (token-efficiency retrieval-economics) |
 | 30 | drona23/claude-token-efficient | token optimization | UPD | refreshed by T14e (token-efficiency baselines) |

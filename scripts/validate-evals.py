@@ -15,9 +15,6 @@ Schema B validation is TWO-TIER:
     have non-empty expected_behaviors AND non-empty flags_to_avoid; the file
     must have a numeric rubric.pass_threshold.
 
-graphify is EXEMPT from evals (hardcoded allowlist, user-mandated) and is never
-required to have an evals.json.
-
 Usage:
   python3 scripts/validate-evals.py            # report mode (exit 0)
   python3 scripts/validate-evals.py --ci      # CI gate (exit 1 on any error)
@@ -33,8 +30,18 @@ SKILLS_DIR = os.path.join(
 )
 EVALS_RELPATH = os.path.join("evals", "evals.json")
 
-# User-mandated exemption: graphify is never required to carry evals.
-EXEMPT_SKILLS = {"graphify"}
+# Tool-generated skills (gitnexus analyze); ADR-0037 exemption.
+EXEMPT_SKILLS = {
+    "gitnexus-cli",
+    "gitnexus-debugging",
+    "gitnexus-exploring",
+    "gitnexus-guide",
+    "gitnexus-impact-analysis",
+    "gitnexus-pdg-query",
+    "gitnexus-pr-review",
+    "gitnexus-refactoring",
+    "gitnexus-taint-analysis",
+}
 
 # Core skills use the real-world Schema B variant (routing/behavior fields).
 # They are NOT retrofitted (governance gate) and are validated leniently.

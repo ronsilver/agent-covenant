@@ -32,8 +32,6 @@ Source: codegraph answer-directly-vs-explore-agent (~50k main context, scale-inv
 
 Optional file-level summary for AI navigation: bounded sentence describing file responsibility + source file + label + generated_by + summary_version. Stored as sidecar `node-summaries.json` or inline in graph. First layer of progressive disclosure: load node summaries -> identify relevant files -> load full content only for matches.
 
-Source: safishamsi/graphify node summaries RFC. [V: https://github.com/safishamsi/graphify, accessed 2026-06-30]
-
 ## Cross-File Refactoring as Atomic Retrieval
 
 For cross-file refactors (rename, move, find references): use LSP-based semantic retrieval to load all affected symbols as one atomic call, not file-by-file blind reads.

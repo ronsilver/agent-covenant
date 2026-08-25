@@ -9,26 +9,29 @@ Canonical frontmatter and contract for all subagents under `content/subagents/`.
 name: kebab-case-name
 description: One-line third-person purpose stating role, artifact delivered, and read or write boundary.
 # Boundary note: skills retain the imperative "Use when" convention per ADR-0002; subagents must use third-person self-descriptions.
-permissionMode: read | build | full
-model: provider/model-id     # optional; required when deviating from default
-                              # example: anthropic/claude-sonnet-4
+permissionMode: read | build | full   # read = no file mutation; build = code/tests/docs writes; full = git writes (git-requests)
+# model: FORBIDDEN in subagent frontmatter (ADR-0023) — subagents inherit the session default model.
 targets:
   - opencode
   - claudecode
   - cursor
   - codex
   - gemini
-tools:
-  allow:
-    - read
-    - grep
-    - glob
-    - webfetch     # optional; required for read-only agents that corroborate via web
-    - task          # needed to delegate to other subagents
-  deny:
-    - write
-    - edit
-    - bash          # or a bash allow/deny map if bash is needed
+permission:
+  read: allow
+  edit: deny
+  glob: allow
+  grep: allow
+  list: allow
+  bash:
+    "*": ask
+    "<pattern>": allow | ask | deny
+  task:
+    "*": ask
+  webfetch: allow
+  websearch: allow
+  question: allow
+# DEPRECATED: tools.allow / tools.deny arrays (see migration notes) — use the permission: object.
 ---
 ```
 
@@ -37,14 +40,18 @@ tools:
 | Value | Meaning | File mutation | Git mutation | Use for |
 |---|---|---|---|---|
 | `read` | Read-only analysis/review. | No | No | `ultraplan`, `ultrareview`, `ultradebugger`, `ultrathinking`, `ultraresearch`, `research`, `code-review`, `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor`, `ultraorchestrator` |
+| `build` | Can write code/tests/docs inside the project workspace. | Yes | No | `ultracode`, `test-writer`, `docs-writer` |
+| `full` | Can write to git (branch, commit, push, PR). | No (only git) | Yes | `git-requests` |
 
 ## mode (all subagents)
 
 | Value | Meaning |
 |---|---|
 | `subagent` | Invoked via `task` by primary agent or other subagents. All 17 subagents use this value. |
-| `build` | Can write code/tests inside the project workspace. | Yes | No | `ultracode`, `test-writer`, `docs-writer` |
-| `full` | Can write to git (branch, commit, push, PR). | No (only git) | Yes | `git-requests` |
+| `primary` | Root orchestrator agent (host session); never set in subagent files. |
+| `all` | Applies to any agent type; never set in subagent files. |
+
+`build` / `full` are `permissionMode` values (see table above), NOT `mode` values.
 
 ## tools block
 
@@ -100,7 +107,7 @@ Active sync targets from `manifest.yaml`:
 - All other read-only agents produce deliverables that `ultracode` implements.
 - `ultracode` is the only agent that mutates source code of the project.
 - `git-requests` is the only agent that mutates git history.
-- `ultraorchestrator` is the routing meta-agent; it classifies requests and emits an ADVISORY verdict (route + executor) to the host. It may dispatch bounded write-exception agents (`test-writer`, `docs-writer`) directly; `ultracode`/`git-requests` require host approval.
+- `ultraorchestrator` is the routing meta-agent; it classifies requests into flows A-F and emits an ADVISORY verdict (route + executor) to the host. It dispatches 13 targets autonomously (5 ultra* pipeline agents + `research` + `code-review` + 7 review specialists + `docs-writer`); `test-writer`, `ultracode`, `git-requests` are `ask`-gated (host approval).
 
 ## Skill references must be valid
 

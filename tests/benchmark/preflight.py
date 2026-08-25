@@ -2,7 +2,7 @@
 """Preflight inventories, immutable snapshot, and repo fingerprint for the
 opencode benchmark harness. Stdlib only.
 
-- ``context`` inventory: 1 global rule, 63 skills, 17 subagents, 0
+- ``context`` inventory: 1 global rule, 71 skills, 17 subagents, 0
   write-capable MCP servers (the harness configures its own sanitized MCP
   fixtures; it never reads the repository's live MCP config).
 - ``baseline`` inventory: 0 global rules, 0 skills, 0 subagents, 0
@@ -26,7 +26,7 @@ SKILLS_DIR = CONTENT / "skills"
 MCP_FIXTURE_DIR = Path(__file__).resolve().parent / "mcp-fixtures"
 PROMPTS_DIR = Path(__file__).resolve().parent / "prompts"
 
-CONTEXT_COUNTS = {"rules": 1, "skills": 63, "subagents": 17, "mcp_write_capable": 0}
+CONTEXT_COUNTS = {"rules": 1, "skills": 71, "subagents": 17, "mcp_write_capable": 0}
 BASELINE_COUNTS = {"rules": 0, "skills": 0, "subagents": 0, "mcp_write_capable": 0}
 CONTEXT_GLOBAL_RULE = "opencode-global.md"
 ENV_ALLOWLIST_KEYS = ("HOME", "LANG", "PATH", "TMPDIR")
@@ -143,7 +143,7 @@ def marker_catalog():
         if path.is_dir() and (path / "SKILL.md").is_file() and path.name != "_TEMPLATE"
     )
     if len(skill_names) != CONTEXT_COUNTS["skills"]:
-        raise RuntimeError(f"expected 63 skills, found {len(skill_names)}")
+        raise RuntimeError(f"expected 71 skills, found {len(skill_names)}")
     subagent_names = sorted(_subagent_names())
     global_rules = sorted(path.name for path in RULES_DIR.glob("*-global.md"))
     if not global_rules:

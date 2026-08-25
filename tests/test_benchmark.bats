@@ -171,14 +171,14 @@ assert validate_attempt(base), "missing field must be rejected"
     [ ! -e "$MARKER" ]
 }
 
-@test "manifest parser accepts 63 entries and fails closed on malformed fixtures" {
+@test "manifest parser accepts 71 entries and fails closed on malformed fixtures" {
     run python3 -c '
 import sys
 sys.path.insert(0, sys.argv[1])
 from manifest import parse_manifest_skills
 names = parse_manifest_skills(sys.argv[2])
-assert len(names) == 63, len(names)
-assert len(set(names)) == 63
+assert len(names) == 71, len(names)
+assert len(set(names)) == 71
 ' "$PY_DIR" "$REPO_ROOT/manifest.example.yaml"
     [ "$status" -eq 0 ]
 

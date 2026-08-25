@@ -114,14 +114,9 @@
       ],
       "enabled": true
     },
-    "graphify": {
+    "gitnexus": {
       "type": "local",
-      "command": [
-        "/Users/silver/.local/share/uv/tools/graphifyy/bin/python",
-        "-m",
-        "graphify.serve",
-        "/Users/silver/Documents/Repositories/Silver/agent-covenant/graphify-out/graph.json"
-      ],
+      "command": ["npx", "-y", "gitnexus@latest", "mcp"],
       "enabled": true
     }
   }
