@@ -32,8 +32,8 @@ bats_require_minimum_version 1.5.0
 }
 
 @test "gate: skill-router mandates Step-Zero invocation of all 7" {
-    grep -qF 'Boot Skills (MUST invoke ALL 7 via `skill()` at session start)' "${CONTENT_DIR}/skills/skill-router/SKILL.md"
-    grep -qF 'All 7 boot skills invoked via `skill()` at session start, OR each body verified verbatim in context' "${CONTENT_DIR}/skills/skill-router/SKILL.md"
+    grep -qF 'Boot Skills (MUST load ALL 7 at session start — mechanism per host kernel: native skill tool where available, otherwise read each SKILL.md)' "${CONTENT_DIR}/skills/skill-router/SKILL.md"
+    grep -qF 'All 7 boot skills loaded at session start via host kernel mechanism, OR each body verified verbatim in context' "${CONTENT_DIR}/skills/skill-router/SKILL.md"
 }
 
 @test "gate: kernels carry the anti-waiver clause" {

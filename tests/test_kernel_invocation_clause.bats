@@ -56,15 +56,31 @@ bats_require_minimum_version 1.5.0
 }
 
 # ---------------------------------------------------------------------------
-# copilot-global.md
+# codex-cli-global.md / pi-global.md / omp-global.md
 # ---------------------------------------------------------------------------
 
-@test "copilot: references SKILL.md as invocation mechanism" {
-    grep -q "SKILL.md" "${AGENTS_DIR}/copilot-global.md"
+@test "codex-cli: references SKILL.md as invocation mechanism" {
+    grep -q "SKILL.md" "${AGENTS_DIR}/codex-cli-global.md"
 }
 
-@test "copilot: does not contain mcp11_ tokens" {
-    run ! grep -q "mcp11_" "${AGENTS_DIR}/copilot-global.md"
+@test "codex-cli: does not contain mcp11_ tokens" {
+    run ! grep -q "mcp11_" "${AGENTS_DIR}/codex-cli-global.md"
+}
+
+@test "pi: references SKILL.md as invocation mechanism" {
+    grep -q "SKILL.md" "${AGENTS_DIR}/pi-global.md"
+}
+
+@test "pi: does not contain mcp11_ tokens" {
+    run ! grep -q "mcp11_" "${AGENTS_DIR}/pi-global.md"
+}
+
+@test "omp: references SKILL.md as invocation mechanism" {
+    grep -q "SKILL.md" "${AGENTS_DIR}/omp-global.md"
+}
+
+@test "omp: does not contain mcp11_ tokens" {
+    run ! grep -q "mcp11_" "${AGENTS_DIR}/omp-global.md"
 }
 
 # ---------------------------------------------------------------------------
