@@ -5,7 +5,7 @@ description: "Define how Skills Core govern the ecosystem — modification rules
 license: MIT
 metadata:
   author: Community
-  version: "2.4"
+  version: "2.5"
   category: core
   status: stable
 disable-model-invocation: false
@@ -67,7 +67,7 @@ If context limits prevent this, they MUST reject the task with `[SCOPE VIOLATION
 Core-skill loading is TRANSITIVE across every load path: skills invoking skills,
 agents spawning subagents, global rules referencing skills or subagents, and hooks
 triggering skills or subagents MUST ensure the target context holds all 7 boot skills
-(loaded via `skill()` or verbatim bodies present) before dependent work begins.
+(loaded via host skill mechanism or verbatim bodies present) before dependent work begins.
 Orchestrators MUST carry this binding into every `task` dispatch prompt.
 
 ### Hooks

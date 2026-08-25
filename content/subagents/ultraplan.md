@@ -6,9 +6,7 @@ mode: subagent
 targets:
   - opencode
   - claudecode
-  - cursor
   - codex
-  - gemini
 permission:
   read: allow
   edit: deny
@@ -120,15 +118,15 @@ If the objective is ambiguous, contradictory, or lacks data that changes the des
 
 ### Step 0 — Session start: load boot skills
 
-Load the 7 baseline skills BEFORE step 1 of the Workflow. This is mandatory, not optional:
+Load the 7 baseline skills BEFORE step 1 of the Workflow. This is mandatory, not optional — load each skill via your host kernel's mechanism (native skill tool where available; otherwise read the skill's SKILL.md file):
 
-1. `skill({name:"operating-protocol"})`
-2. `skill({name:"governance"})`
-3. `skill({name:"engineering-standards"})`
-4. `skill({name:"context-management"})`
-5. `skill({name:"tool-usage"})`
-6. `skill({name:"token-efficiency"})`
-7. `skill({name:"skill-router"})`
+1. `operating-protocol`
+2. `governance`
+3. `engineering-standards`
+4. `context-management`
+5. `tool-usage`
+6. `token-efficiency`
+7. `skill-router`
 
 NEVER proceed to step 1 until all 7 are loaded. Domain skills listed under "Skills to invoke" remain on-demand (load them when the task requires them).
 

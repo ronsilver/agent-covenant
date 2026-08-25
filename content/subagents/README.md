@@ -173,9 +173,7 @@ mode: subagent                  # subagent = invoked via task (default for all s
 targets:
   - opencode
   - claudecode
-  - cursor
   - codex
-  - gemini
 permission:
   read: allow | ask | deny
   edit: allow | ask | deny
@@ -231,7 +229,7 @@ See the canonical schema: [`docs/reference/subagent-schema.md`](../../docs/refer
 
 ## How to Use
 
-1. **In OpenCode / Claude Code / Cursor / Codex / Gemini**: invoke a sub-agent for tasks matching its purpose.
+1. **In OpenCode / Claude Code / Codex CLI**: invoke a sub-agent for tasks matching its purpose.
 2. **Composition**: sub-agents reference each other for task orchestration via `task`.
 3. **Sync**: deployed via `./scripts/sync.sh` per agent target.
 

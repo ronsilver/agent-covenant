@@ -18,13 +18,22 @@ For each agent session where a core rule skill was relevant, record:
 | context-management | claude-code | 0 | 0 | 0 | 0 | - |
 | tool-usage | claude-code | 0 | 0 | 0 | 0 | - |
 | token-efficiency | claude-code | 0 | 0 | 0 | 0 | - |
-| engineering-standards | windsurf | 0 | 0 | 0 | 0 | - |
-| operating-protocol | windsurf | 0 | 0 | 0 | 0 | - |
-| context-management | windsurf | 0 | 0 | 0 | 0 | - |
-| tool-usage | windsurf | 0 | 0 | 0 | 0 | - |
-| token-efficiency | windsurf | 0 | 0 | 0 | 0 | - |
 | context-degradation | claude-code | 0 | 0 | 0 | 0 | - |
-| context-degradation | windsurf | 0 | 0 | 0 | 0 | - |
+| engineering-standards | codex-cli | 0 | 0 | 0 | 0 | - |
+| operating-protocol | codex-cli | 0 | 0 | 0 | 0 | - |
+| context-management | codex-cli | 0 | 0 | 0 | 0 | - |
+| tool-usage | codex-cli | 0 | 0 | 0 | 0 | - |
+| token-efficiency | codex-cli | 0 | 0 | 0 | 0 | - |
+| engineering-standards | pi | 0 | 0 | 0 | 0 | - |
+| operating-protocol | pi | 0 | 0 | 0 | 0 | - |
+| context-management | pi | 0 | 0 | 0 | 0 | - |
+| tool-usage | pi | 0 | 0 | 0 | 0 | - |
+| token-efficiency | pi | 0 | 0 | 0 | 0 | - |
+| engineering-standards | omp | 0 | 0 | 0 | 0 | - |
+| operating-protocol | omp | 0 | 0 | 0 | 0 | - |
+| context-management | omp | 0 | 0 | 0 | 0 | - |
+| tool-usage | omp | 0 | 0 | 0 | 0 | - |
+| token-efficiency | omp | 0 | 0 | 0 | 0 | - |
 
 ## Decision Gate (F2.9)
 
