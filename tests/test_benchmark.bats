@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 # =============================================================================
-# Regression tests for the benchmark harness (tests/benchmark/).
+# Regression tests for the benchmark harness (scripts/benchmark/).
 # Exactly 12 base no-spend cases + 1 T11 quality case = 13/13.
 # No base case spends money, uses network access, mutates the repository, or
 # launches `opencode`. A fake `opencode` fails the test if it is ever launched.
@@ -9,8 +9,8 @@
 
 setup() {
     REPO_ROOT="$BATS_TEST_DIRNAME/.."
-    BENCH="$REPO_ROOT/tests/benchmark/benchmark.py"
-    PY_DIR="$REPO_ROOT/tests/benchmark"
+    BENCH="$REPO_ROOT/scripts/benchmark/benchmark.py"
+    PY_DIR="$REPO_ROOT/scripts/benchmark"
     MARKER="$BATS_TEST_TMPDIR/opencode-launched"
     FAKE_BIN="$BATS_TEST_TMPDIR/bin"
     mkdir -p "$FAKE_BIN"
@@ -23,7 +23,7 @@ EOF
     chmod +x "$FAKE_BIN/opencode"
     export BENCH_LAUNCH_MARKER="$MARKER"
     export PATH="$FAKE_BIN:$PATH"
-    rm -rf "$REPO_ROOT/tests/benchmark/out"
+    rm -rf "$REPO_ROOT/scripts/benchmark/out"
 }
 
 @test "benchmark --help exits 0" {
@@ -90,7 +90,7 @@ EOF
     HOME_BASE="$(grep "^HOME\[baseline\]=" <<<"$output" | cut -d= -f2-)"
     [ -n "$HOME_CTX" ] && [ -n "$HOME_BASE" ]
     [ "$HOME_CTX" != "$HOME_BASE" ]
-    [ ! -e "$REPO_ROOT/tests/benchmark/out" ]
+    [ ! -e "$REPO_ROOT/scripts/benchmark/out" ]
     [ ! -e "$MARKER" ]
 
     # --pure is defense-in-depth only: appended to all 10 commands when set
@@ -147,8 +147,8 @@ base.update({
     "record_type": "attempt", "batch_id": "b", "logical_run_id": "l",
     "attempt_id": "a", "attempt_index": 0, "retry_of_attempt_id": None,
     "retry_reason": None, "mode": "context", "prompt_id": "p1",
-    "prompt_file": "tests/benchmark/prompts/p1-manifest.md",
-    "snapshot_path": "tests/benchmark/out/snapshot/prompts/p1-manifest.md",
+    "prompt_file": "scripts/benchmark/prompts/p1-manifest.md",
+    "snapshot_path": "scripts/benchmark/out/snapshot/prompts/p1-manifest.md",
     "snapshot_sha256": "0" * 64, "source_prompt_sha256": "0" * 64,
     "snapshot_read_only": True, "started_at": None, "finished_at": None,
     "timeout_s": 600.0, "timed_out": False, "wall_ms": 0, "first_token_ms": -1,
@@ -158,9 +158,9 @@ base.update({
     "reserved_cost_usd": 0.0, "released_cost_usd": 0.0,
     "cost_state": "not_reserved", "quality_score": 0.0,
     "instruction_adherence": 0.0, "success_rate": 0.0, "model_refusal": False,
-    "stdout_path": "tests/benchmark/out/raw/a.stdout",
-    "stderr_path": "tests/benchmark/out/raw/a.stderr",
-    "raw_events_path": "tests/benchmark/out/raw/a.jsonl",
+    "stdout_path": "scripts/benchmark/out/raw/a.stdout",
+    "stderr_path": "scripts/benchmark/out/raw/a.stderr",
+    "raw_events_path": "scripts/benchmark/out/raw/a.jsonl",
     "token_source": "export", "error_count": 0,
 })
 assert validate_attempt(base) == [], validate_attempt(base)
@@ -287,7 +287,7 @@ assert (os.stat(p).st_mode & 0o444) == 0o444, "snapshot must be read-only"
 assert len(s1["files"]) == 2
 ' "$PY_DIR"
     [ "$status" -eq 0 ]
-    run git -C "$REPO_ROOT" check-ignore tests/benchmark/out/
+    run git -C "$REPO_ROOT" check-ignore scripts/benchmark/out/
     [ "$status" -eq 0 ]
     [ ! -e "$MARKER" ]
 }
@@ -320,8 +320,8 @@ def mk_attempt(mode="context", stdout=None, stderr=None):
         "record_type": "attempt", "batch_id": "b", "logical_run_id": "l",
         "attempt_id": "a", "attempt_index": 0, "retry_of_attempt_id": None,
         "retry_reason": None, "mode": mode, "prompt_id": "p1",
-        "prompt_file": "tests/benchmark/prompts/p1-manifest.md",
-        "snapshot_path": "tests/benchmark/out/snapshot/prompts/p1-manifest.md",
+        "prompt_file": "scripts/benchmark/prompts/p1-manifest.md",
+        "snapshot_path": "scripts/benchmark/out/snapshot/prompts/p1-manifest.md",
         "snapshot_sha256": "0" * 64, "source_prompt_sha256": "0" * 64,
         "snapshot_read_only": True, "started_at": None, "finished_at": None,
         "timeout_s": 600.0, "timed_out": False, "wall_ms": 0, "first_token_ms": -1,
@@ -331,15 +331,15 @@ def mk_attempt(mode="context", stdout=None, stderr=None):
         "reserved_cost_usd": 0.0, "released_cost_usd": 0.0,
         "cost_state": "not_reserved", "quality_score": 0.0,
         "instruction_adherence": 0.0, "success_rate": 0.0, "model_refusal": False,
-        "stdout_path": stdout or "tests/benchmark/out/raw/a.stdout",
-        "stderr_path": stderr or "tests/benchmark/out/raw/a.stderr",
-        "raw_events_path": "tests/benchmark/out/raw/a.jsonl",
+        "stdout_path": stdout or "scripts/benchmark/out/raw/a.stdout",
+        "stderr_path": stderr or "scripts/benchmark/out/raw/a.stderr",
+        "raw_events_path": "scripts/benchmark/out/raw/a.jsonl",
         "token_source": "export", "error_count": 0,
     })
     assert validate_attempt(d) == [], validate_attempt(d)
     return d
 
-snapshot = {"path": "tests/benchmark/out/snapshot/prompts", "read_only": True,
+snapshot = {"path": "scripts/benchmark/out/snapshot/prompts", "read_only": True,
             "files": ["a"], "sha256": "0" * 64}
 inv_ok = {
     "context": {"valid": True, "counts": {"rules": 1, "skills": 63,
