@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/skills/penetration-testing-expert/evals/evals.json` — new evals (canonical Schema B, 3 cases)
 - `content/skills/web-browsing-agent-expert/evals/evals.json` — new evals (canonical Schema B, 3 cases)
 - `content/skills/token-efficiency/evals/evals.json` — added eval 9 (safety: compression yields to correctness) and eval 10 (measurement loop), removed unverified KV-cache numbers from eval 4, added reference-dependency note
-- `tests/benchmark/` — deterministic stdlib-only benchmark harness for `opencode run` with 12 raw + 5 derived metrics, 5 static prompts, context and baseline modes (paired selection runs both), HOME-override baseline isolation with a fail-closed `--smoke` gate, and 13 Bats tests at `tests/test_benchmark.bats`
+- `scripts/benchmark/` — deterministic stdlib-only benchmark harness for `opencode run` with 12 raw + 5 derived metrics, 5 static prompts, context and baseline modes (paired selection runs both), HOME-override baseline isolation with a fail-closed `--smoke` gate, and 13 Bats tests at `tests/test_benchmark.bats`
 - `docs/adr/0036-boot-skill-step-zero-enforcement.md` — zero-reasoning execution plan (T1-T6, ADR-0036 draft) for fixing the boot-skill partial-load defect: Step-Zero invocation mandate, per-agent injection truth table, count-drift unification to 7, transitive binding across skill/subagent/rule/hook load paths, CI regression gates
 - `docs/adr/0037-graphify-to-gitnexus-migration.md` — ADR-0037: graphify → gitnexus migration (GATE-ANSWER sheet v2, host-approved 2026-08-24)
 - `content/skills/gitnexus-*` — 9 gitnexus skills registered (tool-generated, exempt evals/quality per ADR-0037)
@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/plans/wip/` — scoped WIP plan-artifact convention (definitive plans git-visible, wip ignored)
 
 ### Changed
+
+- `tests/benchmark/` → `scripts/benchmark/` — benchmark harness moved out of `tests/` (repo convention: `tests/` holds only `*.bats`; Python tooling lives in `scripts/`). Bats regression suite stays at `tests/test_benchmark.bats` (13/13 no-spend; CI unchanged, `make test` spends $0).
+- `make benchmark` → `make benchmark-live` — legacy target removed (now fails with no-rule instead of spending); live runs require `BENCH_APPROVED=1` + interactive `--confirm-live` (y/N with cost-cap shown, fails closed on non-TTY) + `--max-cost-usd` default cap `10.0`. `scripts/benchmark/benchmark.py` live and `--smoke` paths both gate on `--confirm-live`; `.gitignore` path updated to `scripts/benchmark/out/`.
 
 - `content/subagents/README.md` — orchestration flow rewritten for ratified 6-flow router (A-F) with shared bounded audit loop (<=2 iterations); ultraorchestrator delegation graph corrected to 13 autonomous dispatch targets (5 ultra* + research + code-review + 7 review specialists + docs-writer) with test-writer/ultracode/git-requests ask-gated; "litmus table" wording replaced; `codesearch`/`todoread` marked inert in file-format example
 - `content/subagents/_TEMPLATE/SUBAGENT.md` — read-only template hardened: `cat`/`jq`/`yq`/`find` demoted allow->ask (bash write-bypass channels via redirect/-exec); `docs-writer: deny` added to task block (read-only agents must not dispatch write agents); `codesearch`/`todoread` marked inert and removed from template
