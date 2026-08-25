@@ -39,7 +39,7 @@ Set up environment tokens via `~/.mcp.env` (see `.env.example` in this directory
 make sync       # Deploy to all enabled agents
 ```
 
-MCP config syncs to each agent's native location: `~/.codeium/windsurf/.mcp.json`, `~/.claude/.mcp.json`, etc.
+MCP config syncs to each agent's native location: `~/.claude/.mcp.json`, `~/.config/opencode/opencode.json`, `~/.gemini/antigravity/mcp_config.json`, `~/.omp/agent/mcp.json`, etc. (codex-cli uses TOML — manual; pi: none).
 
 ## Custom Server
 

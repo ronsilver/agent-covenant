@@ -1,6 +1,6 @@
 # Agent Covenant
 
-Centralized development rules for AI coding agents (GitHub Copilot, Cursor, Claude Code, Codex CLI, Gemini CLI, Antigravity, OpenCode).
+Centralized development rules for AI coding agents (Claude Code, OpenCode, Antigravity, Codex CLI, Codex App, Pi, OMP).
 
 > **AI agents**: see [`AGENTS.md`](AGENTS.md) for project-specific instructions (where to create content, validation commands, schema formats).
 
@@ -38,7 +38,7 @@ The kernel stays under 6,000 chars. Skills provide depth without bloating the al
 ## Quick Start
 
 ```bash
-make check       # Full pipeline: lint → fmt-check → validate → test
+make check       # Full pipeline: lint → lint-md → lint-yaml-json → fmt-check → validate → test
 make sync        # Deploy to all enabled agents
 make sync-dry    # Preview without writing
 make list        # List available agents
@@ -77,10 +77,10 @@ Each `content/` subdirectory has its own `README.md` with purpose, format, and l
 
 | Directory | Contents |
 |---|---|
-| `docs/adr/` | 31 Architecture Decision Records (0001–0032; 0026 missing) |
+| `docs/adr/` | 37 Architecture Decision Records (0001–0038; 0026 missing) |
 | `docs/architecture/` | Architecture diagram |
 | `docs/grafana/` | Importable skill usage dashboard (JSON) |
-| `docs/plans/` | Active revision plans: [refactor-05-aug-2026.md](docs/plans/processed/refactor-05-aug-2026.md) (fintech-bias removal) |
+| `docs/plans/` | Active revision plans: [refactor-05-aug-2026.md](docs/plans/processed/refactor-05-aug-2026.md) (fintech-bias removal) · [cleanup-agent-set-2026-08-24.md](docs/plans/cleanup-agent-set-2026-08-24.md) (agent-set consolidation) |
 | `docs/reference/` | Detailed catalogs: [skills](docs/reference/skills-catalog.md), [MCP](docs/reference/mcp-servers.md), [subagents](docs/reference/subagents-catalog.md), [workflows](docs/reference/workflows-catalog.md), [rules](docs/reference/rules-reference.md), [LSP](docs/reference/lsp-reference.md), [issue-as-prompt](docs/reference/issue-as-prompt.md), [subagent-strategy-mapping](docs/reference/subagent-strategy-mapping.md), [master-catalog-mapping](docs/reference/master-catalog-mapping.md) |
 | `docs/SKILL_QUALITY_STANDARD.md` | 7-pillar quality standard for skills (scoring, examples, CI) |
 | `docs/reports/` | Repository reports and audits |
@@ -92,12 +92,13 @@ Each `content/` subdirectory has its own `README.md` with purpose, format, and l
 
 | Agent | Status | Skills | Subagents | MCP | Hooks | Workflows | Prompts |
 |-------|--------|--------|-----------|-----|-------|-----------|---------|
-| **claude-desktop** | Enabled | — | — | Yes | — | — | — |
 | **claude-code** | Enabled | Yes | Yes | Yes | Yes | Yes | — |
-| **copilot-cli** | Enabled | Yes | — | — | — | — | — |
-| **copilot-app** | Enabled | Yes | — | — | — | — | — |
 | **antigravity** | Enabled | Yes | — | Yes | — | Yes | — |
 | **opencode** | Enabled | Yes | Yes | Yes | Yes | — | — |
+| **codex-cli** | Enabled | Yes | Yes | — | — | — | — |
+| **codex-app** | Enabled | Yes | — | — | — | — | — |
+| **pi** | Enabled | Yes | — | — | — | — | — |
+| **omp** | Enabled | Yes | — | Yes | — | — | — |
 
 ## Usage
 
@@ -107,7 +108,7 @@ make sync-dry          # Dry run
 make sync-force        # Force redeploy (bypass cache)
 
 # Single agent
-./scripts/sync.sh --agent windsurf
+./scripts/sync.sh --agent opencode
 ./scripts/sync.sh --agent claude-code
 
 # Extra flags

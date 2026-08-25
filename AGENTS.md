@@ -27,22 +27,18 @@ All agents with native skill tooling load these **6 Core + 1 Mandatory Domain** 
 - `token-efficiency` — verbosity/word limits/thinking budget
 - `skill-router` — domain skill catalog discovery (mandatory router for ambiguous tasks)
 
-**Kernel mode** (Claude Code, Windsurf, Copilot): deploys `*-global.md` only. Full rules available as skills.
-**Merge mode** (Gemini, OpenCode, Antigravity, Cursor): full merge of core rules + agent rules.
+**Kernel mode** (Claude Code, OpenCode, Antigravity, Codex CLI, Pi, OMP): deploys `*-global.md` only. Full rules available as skills.
+**Merge mode**: not used — all 7 agents run kernel mode.
 
 ## Known Limitations
 
 | Agent | Known Limitation | Source |
 |---|---|---|
-| Windsurf | `global_rules.md` has 6,000 character limit | V |
-| Windsurf | No native subagent support; hooks only via MCP callbacks | V |
-| Claude Desktop | stdio only MCP transport (no SSE/HTTP); no rules/skills/hooks | V |
 | Claude Code | SSE transport deprecated (stdio/HTTP recommended) | I |
 | OpenCode | No native lifecycle hooks (plugin-based only) | V |
-| Gemini CLI | MCP stdio only | V |
-| GitHub Copilot | No native workflows/hooks/subagents support (except via VS Code) | V |
 | Codex CLI | MCP config uses TOML format (not JSON); no native hooks support | V |
-| Cursor | No native hooks support | V |
+| Pi | No native subagent support | I |
+| OMP | No native subagent support | I |
 
 *V=VERIFIED(repo/official docs) \| I=INFERRED*
 
@@ -53,24 +49,16 @@ All agents with native skill tooling load these **6 Core + 1 Mandatory Domain** 
 |---|---|---|---|---|---|---|---|
 | Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/.mcp.json` | `~/.claude/skills/` | `~/.claude/agents/` | `~/.claude/settings.json` | — | — |
 | OpenCode | `~/.config/opencode/AGENTS.md` | `~/.config/opencode/opencode.json` | `~/.config/opencode/skills/` | `~/.config/opencode/agents/` | `~/.config/opencode/plugins/` | `~/.config/opencode/commands/` | `~/.config/opencode/commands/` |
-| Windsurf | `~/.codeium/windsurf/memories/global_rules.md` | `~/.codeium/windsurf/mcp_config.json` | `~/.codeium/windsurf/skills/` | — | — | `~/.codeium/windsurf/global_workflows/` | — |
-| Cursor | `~/.cursor/rules/` | `~/.cursor/mcp.json` | `~/.cursor/skills/` | `~/.cursor/agents/` | `~/.cursor/hooks/` | — | — |
-| Gemini CLI | `~/.gemini/GEMINI.md` | `~/.gemini/settings.json` | `~/.gemini/skills/` | `~/.gemini/agents/` | `~/.gemini/settings.json` | — | — |
 | Codex CLI | `~/.codex/AGENTS.md` | `~/.codex/config.toml` | `~/.codex/skills/` | `~/.codex/agents/` | — | — | — |
-| Copilot | `~/.config/gh-copilot/instructions.md` | via `gh copilot` config | `~/.copilot/skills/` | — | — | — | — |
 
 ### Project (Repo-level) — Synced via `make sync`
 | Agent | Rules | MCP | Skills | Subagents | Hooks | Workflows | Prompts |
 |---|---|---|---|---|---|---|---|
 | Claude Code | `./CLAUDE.md` (kernel) | `./.mcp.json` | `./.claude/skills/` | `./.claude/agents/` | `./.claude/hooks/` | — | — |
 | OpenCode | `./AGENTS.md` (kernel) | `./opencode.json` | `./.opencode/skills/` | `./.opencode/agents/` | `./.opencode/plugins/` | `./.opencode/commands/` | `./.opencode/commands/` |
-| Windsurf | `./.windsurf/rules/global.md` | — | `./.windsurf/skills/` | — | — | `./.windsurf/workflows/` | — |
-| Cursor | `./.cursor/rules/global.mdc` | `./.cursor/mcp.json` | `./.cursor/skills/` | `./.cursor/agents/` | `./.cursor/hooks/` | `./.cursor/commands/` | — |
-| Gemini CLI | `./GEMINI.md` (merged) | `./.gemini/settings.json` | `./.gemini/skills/` | `./.gemini/agents/` | `./.gemini/hooks/` | `./.gemini/commands/` | — |
 | Codex CLI | `./AGENTS.md` (merged) | — | `./.codex/skills/` | `./.codex/agents/` | — | — | — |
-| Copilot | `./.github/copilot-instructions.md` | `./.vscode/mcp.json` | — | — | — | — | `./.github/prompts/` |
 
-> **Note**: Project-level paths are created by `sync.sh`. Kernel-mode agents (Claude Code, Windsurf, Copilot) deploy `*-global.md` only. Merge-mode agents deploy full merged rules.
+> **Note**: Project-level paths are created by `sync.sh`. All supported agents deploy `*-global.md` kernels.
 
 ## Validation Rules
 
@@ -107,7 +95,7 @@ All agents with native skill tooling load these **6 Core + 1 Mandatory Domain** 
 - [ ] `permissionMode` explicitly set: `read \| build \| full`
 - [ ] Tool allowlist or denylist defined (no open-ended access)
 - [ ] `model` field specified when deviating from default
-- [ ] Targets declared: subset of `{opencode, claudecode, cursor, codex, gemini}`
+- [ ] Targets declared: subset of `{opencode, claudecode, codex}`
 - [ ] `mode: subagent` set (not `all` nor `primary`)
 - [ ] **No `hidden: true` allowed.** All subagents defined in `content/subagents/` MUST be visible in every agent's TUI/CLI agent picker. Specialist subagents (reviewers, domain experts) are still invokable via `task` by orchestrators AND directly by the user. Hiding them creates a discoverability gap: orchestrators know they exist, users do not. The `hidden` field is reserved for system-internal agents only and must never be used in `content/subagents/`. Violation → `[DISCOVERABILITY VIOLATION]`.
 
@@ -156,7 +144,7 @@ Central configuration. Every content file **must** be registered to be synced.
 
 | Command | Purpose |
 |---------|---------|
-| `make check` | Full pipeline: lint → fmt-check → validate → test |
+| `make check` | Full pipeline: lint → lint-md → lint-yaml-json → fmt-check → validate → test |
 | `make validate` | Manifest validation (files exist, frontmatter valid, templates in content/) |
 | `make validate-quality` | Skill 7-pillar scoring (CI-blocking, min 70) |
 | `make validate-skill-refs` | Skill cross-reference check (non-blocking) |
@@ -191,7 +179,7 @@ Do not duplicate catalog content in AGENTS.md. Use these canonical references:
 4. **Subagent Binding**: Subagents MUST load all 7 boot skills or reject with `[SCOPE VIOLATION]`.
 5. **Pre-flight Gate (T2+)**: Before any mutation, verify all 7 boot skills are loaded. Failure → `[CORE CONFLICT]`.
 6. **Language Policy**: All content under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) and all documentation under `docs/` (ADRs, references, reports, guides) must be written in English. Violation → `[LANGUAGE POLICY VIOLATION]`.
-7. **CI Gate**: All CI checks must pass before merge. `make check` (lint → fmt-check → validate → test) is the mandatory pre-merge gate. No PR may be merged with failing CI jobs. Violation → `[CI GATE VIOLATION]`.
+7. **CI Gate**: All CI checks must pass before merge. `make check` (lint → lint-md → lint-yaml-json → fmt-check → validate → test) is the mandatory pre-merge gate. No PR may be merged with failing CI jobs. Violation → `[CI GATE VIOLATION]`.
 8. **Subagent Discoverability**: No subagent in `content/subagents/` may set `hidden: true`. All 17 subagents must be visible in every agent's TUI/CLI picker. Specialist subagents are invokable both via `task` (by orchestrators) and directly (by users). Hiding creates an asymmetry: orchestrators know the agent exists, users do not. The `hidden` field is reserved for system-internal agents only. Violation → `[DISCOVERABILITY VIOLATION]`.
 9. **No Icons in content/**: All files under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) MUST NOT contain emoji icons or status dingbats (❌ ✅ 🔴 🟢 🟡 🟠 ⚪ ⚠️ ⚡ 🔒 ✏️ ⭐ ✨ 💡 🔥 📌 🔍 🚨 🔐 ✔ ✖ ✓ ✗ ▶ and similar visual markers). Replace with text labels: `Correct:` / `Incorrect:` / `[BLOCKER]` / `[WARN]` / `[PASS]` / `[FAIL]`. Arrows (`→ ←`), bullets (`•`), and em-dashes are permitted (prose typography, not status markers). Rationale: icons are non-diffable noise, inconsistent across editors, and break grep-based validation. Violation → `[CONTENT ICON VIOLATION]`.
 10. **English-Only content/**: All prose in files under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) MUST be written in English. This strengthens invariant #6 (Language Policy) by making it explicit that skill `description:` frontmatter clauses and subagent "Known blind spots" sections are prose, not identifiers — they must be English. Proper nouns (team member names like "José", "Lisbaldy de Jesús Ojeda", place names like "Nuevo León") and data examples (`José → Jose` in normalization engine docs) are permitted as they are data, not prose. Violation → `[LANGUAGE POLICY VIOLATION]`.
@@ -240,7 +228,7 @@ Every change to this repository **must** update the following before closing:
 <!-- gitnexus:start -->
 ## GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **agent-covenant** (7581 symbols, 8569 relationships, 90 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **agent-covenant** (7563 symbols, 8551 relationships, 90 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 

@@ -27,12 +27,12 @@
 
 | Agent | MCP Config Path |
 |-------|-----------------|
-| **Windsurf** | `~/.codeium/windsurf/mcp_config.json` |
-| **Windsurf JetBrains** | `~/.codeium/mcp_config.json` |
 | **Claude Code** | `./.mcp.json` (project scope — Claude Code 2.x reads this; config-dir `.mcp.json` is legacy) |
-| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | **Antigravity** | `~/.gemini/antigravity/mcp_config.json` |
 | **OpenCode** | `~/.config/opencode/opencode.json` |
+| **OMP** | `~/.omp/agent/mcp.json` |
+
+Codex CLI: TOML (~/.codex/config.toml, manual — not synced); Pi: no MCP; Codex App: shares codex-cli config.
 
 ## Token Configuration
 
