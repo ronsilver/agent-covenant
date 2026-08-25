@@ -745,6 +745,8 @@ agents:
         format: json
         source_file: "opencode-agents-config.json"
         merge_key: "agent"
+        inject_keys:
+          subagent_depth: 3
 
       # hooks: disabled — opencode plugin API differs from claude-code hooks;
       # baseline-skill loading is handled via opencode-global.md kernel rules instead

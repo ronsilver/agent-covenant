@@ -46,8 +46,8 @@ tests/benchmark/out/
 # Test fixtures (generated)
 tests/fixtures/
 
+docs/plans/wip/
 docs/plans
-plans
 
 # Local manifest (use manifest.example.yaml as committed template)
 manifest.yaml

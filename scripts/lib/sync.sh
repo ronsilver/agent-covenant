@@ -1015,6 +1015,12 @@ sync_json_impl() {
                 clean_json=$(yq -o json '.' "${expanded_target}" 2>/dev/null || cat "${expanded_target}")
                 final_content=$(jq -s --arg k "${merge_key}" '.[0] + {($k): .[1][$k]}' <(printf '%s\n' "${clean_json}") <(printf '%s\n' "${json_content}"))
             fi
+
+            local inject_json
+            inject_json=$(jq -c '.inject_keys // {}' <<<"${target_config}")
+            if [[ "${inject_json}" != "{}" ]]; then
+                final_content=$(jq -s --argjson inj "${inject_json}" '.[0] + $inj' <(printf '%s\n' "${final_content}"))
+            fi
             write_sync_file "${expanded_target}" "${final_content}" "${source_file}" "${agent}"
         done <<<"${target_paths}"
     else
