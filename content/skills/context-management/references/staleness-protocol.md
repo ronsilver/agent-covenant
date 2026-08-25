@@ -37,7 +37,6 @@ If file A is stale AND file B imports/depends on A, then B is TRANSITIVELY SUSPE
 - Impact-radius: a change to symbol X -> all readers of X are suspect. Re-read readers before acting on prior context of them.
 
 Source: colbymchenry/codegraph impact radius (getImpactRadius: change symbol -> affect readers). [V: https://github.com/colbymchenry/codegraph, accessed 2026-06-30]
-Source: safishamsi/graphify incremental cache invalidation (SHA256 semantic cache, re-runs only modified files). [V: https://github.com/safishamsi/graphify, accessed 2026-06-30]
 
 ## Bi-Temporal Version Stamps (supersede-never-delete)
 

@@ -1,7 +1,7 @@
 # Benchmark Harness for `opencode run`
 
 Deterministic, stdlib-only Python 3 harness for measuring the `context`
-configuration (1 global rule, 63 skills, 17 subagents, 0 write-capable MCP
+configuration (1 global rule, 71 skills, 17 subagents, 0 write-capable MCP
 servers) against `baseline` (0/0/0/0). `paired` is a CLI selection meaning
 "run both canonical modes"; it is not a third execution mode. No artifact uses
 an obsolete singular benchmark path or stale mode terminology.
@@ -41,7 +41,7 @@ hash, and repository fingerprint:
 
 | Mode | rules | skills | subagents | write-capable MCP |
 |---|---|---|---|---|
-| context | 1 (`content/rules/agents/opencode-global.md`) | 63 | 17 | 0 |
+| context | 1 (`content/rules/agents/opencode-global.md`) | 71 | 17 | 0 |
 | baseline | 0 | 0 | 0 | 0 |
 
 Any inventory error or missing loaded evidence exits `2`/`INCONCLUSIVE`
@@ -72,7 +72,7 @@ baseline `input_raw` is 0; reported, not gating), `baseline_exit_code`,
 `baseline_usage_event_valid` (baseline attempt `error_count == 0`),
 `verdict`.
 
-The loaded-evidence marker catalog is deterministic: 63 skill names
+The loaded-evidence marker catalog is deterministic: 71 skill names
 (`content/skills/*/` excluding `_TEMPLATE`), 17 subagent names (`name:`
 frontmatter, excluding `README.md`), the `*-global.md` kernel rule filenames,
 the 12 MCP server names from `content/mcp/opencode-mcp.json`, plus the literal
@@ -164,7 +164,7 @@ marker in a baseline attempt's stdout/stderr (missing output files are
 skipped, never fatal). The deterministic threshold table is fixed:
 `quality_score >= 0.75`, `instruction_adherence >= 0.75`, and
 `success_rate == 1.0` per prompt; p1 additionally requires a non-empty category
-grouping whose counts sum to the validated 63 skills.
+grouping whose counts sum to the validated 71 skills.
 
 ## Limitations of structural quality proxies
 

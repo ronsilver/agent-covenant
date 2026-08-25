@@ -223,4 +223,4 @@ Each skill SHOULD carry an `evals/evals.json`. Two schemas are accepted:
   ```
 - **Schema A (legacy, accepted):** top-level `evals` list; each case has `prompt` (str) and `expected_output` (str, >=60 chars).
 
-Validation is enforced by `make validate-evals` (`scripts/validate-evals.py`). graphify is exempt. New skills MUST use Schema B; existing Schema A skills are not required to migrate.
+Validation is enforced by `make validate-evals` (`scripts/validate-evals.py`). New skills MUST use Schema B; existing Schema A skills are not required to migrate.

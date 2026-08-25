@@ -55,9 +55,7 @@ manifest.yaml
 # Shared agent-covenant directory (user-local, not committed)
 agent-covenant/
 
-# Graphify generated artifacts (knowledge graph, HTML viz, report)
-graphify-out/
-content/skills/.graphify_version
+/.gitnexus/
 # Agent Covenant shared directory (local deploy target, not repo content)
 ~/.config/agent-covenant/
 

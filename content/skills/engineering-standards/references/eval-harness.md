@@ -53,7 +53,7 @@ executable by `alternative-skill-creator/scripts/evaluate_skill.py`
 (dual-support; Schema B fields are carried natively on the case struct). NEW
 skills MUST use canonical Schema B (non-empty `expected_behaviors` AND non-empty
 `flags_to_avoid` per case, numeric `rubric.pass_threshold`) — positive-only
-cases are incomplete. graphify is exempt. Presence + schema + minimal quality
+cases are incomplete. Presence + schema + minimal quality
 are enforced by `make validate-evals`.
 
 NOTE: `scripts/validate-skill-quality.py` scores SKILL.md against the 7-pillar

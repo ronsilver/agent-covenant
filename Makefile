@@ -27,8 +27,7 @@ lint-md: ## Run markdownlint on all markdown files
 			-not -path "./.git/*" \
 			-not -path "./node_modules/*" \
 			-not -path "./.opencode/node_modules/*" \
-			-not -path "./docs/plans/*" \
-			-not -path "./graphify-out/*"); \
+			-not -path "./docs/plans/*"); \
 	else \
 		echo "  markdownlint not installed, skipping (npm install -g markdownlint-cli)"; \
 	fi
@@ -142,7 +141,7 @@ validate-no-fintech: ## Check content/ is free of fintech-domain coupling
 	@echo ""
 
 .PHONY: validate-evals
-validate-evals: ## Validate skill evals presence, schema, and minimal quality (graphify exempt)
+validate-evals: ## Validate skill evals presence, schema, and minimal quality
 	@echo "Running eval validation..."
 	@python3 $(SCRIPTS_DIR)/validate-evals.py --ci || (echo "[ERROR] Eval validation failed"; exit 1)
 	@echo "[PASS] Eval validation passed"

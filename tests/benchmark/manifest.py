@@ -2,7 +2,7 @@
 """Exact p1 manifest parser for the opencode benchmark harness. Stdlib only.
 
 Parses only the ``skills.directories`` YAML sequence from ``manifest.yaml``.
-Requires exactly 63 unique existing strings. Rejects malformed YAML, duplicate
+Requires exactly 71 unique existing strings. Rejects malformed YAML, duplicate
 entries, missing paths, unexpected types, or any I/O error by raising
 ``ManifestError``; the CLI maps that to exit 2 and ``INCONCLUSIVE``. There is
 no fallback count.
@@ -10,7 +10,7 @@ no fallback count.
 
 from pathlib import Path
 
-REQUIRED_SKILL_COUNT = 63
+REQUIRED_SKILL_COUNT = 71
 
 
 class ManifestError(ValueError):
@@ -50,7 +50,7 @@ def _find_directories_block(lines):
 
 
 def parse_manifest_skills(path):
-    """Return the validated list of 63 unique skill directory names.
+    """Return the validated list of 71 unique skill directory names.
 
     Raises ManifestError for malformed YAML, duplicates, missing paths,
     unexpected types, or I/O errors."""

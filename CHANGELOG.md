@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/skills/token-efficiency/evals/evals.json` — added eval 9 (safety: compression yields to correctness) and eval 10 (measurement loop), removed unverified KV-cache numbers from eval 4, added reference-dependency note
 - `tests/benchmark/` — deterministic stdlib-only benchmark harness for `opencode run` with 12 raw + 5 derived metrics, 5 static prompts, context and baseline modes (paired selection runs both), HOME-override baseline isolation with a fail-closed `--smoke` gate, and 13 Bats tests at `tests/test_benchmark.bats`
 - `docs/adr/0036-boot-skill-step-zero-enforcement.md` — zero-reasoning execution plan (T1-T6, ADR-0036 draft) for fixing the boot-skill partial-load defect: Step-Zero invocation mandate, per-agent injection truth table, count-drift unification to 7, transitive binding across skill/subagent/rule/hook load paths, CI regression gates
+- `docs/adr/0037-graphify-to-gitnexus-migration.md` — ADR-0037: graphify → gitnexus migration (GATE-ANSWER sheet v2, host-approved 2026-08-24)
+- `content/skills/gitnexus-*` — 9 gitnexus skills registered (tool-generated, exempt evals/quality per ADR-0037)
+- gitnexus MCP server (`npx -y gitnexus@latest mcp`, stdio) in `content/mcp/*.json`
+- `/.gitnexus/` gitignore entry
 
 ### Changed
 
@@ -30,6 +34,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Makefile` — wired `validate-router-delegation` into `validate`
 - `tests/test_validate.bats` — added 4 router-dispatch regression tests
 - `.gitignore` — removed `docs/plans` ignore so router-persisted plans become git-visible
+- `manifest.yaml` + `manifest.example.yaml` — removed graphify, added gitnexus-* ×9 (ADR-0037)
+- `scripts/validate-evals.py` — graphify exemption → gitnexus exemption (ADR-0037)
+- `scripts/validate-skill-quality.py` — EXCLUDE += gitnexus-* (ADR-0037)
+- `Makefile` — removed graphify-out exclusion from markdownlint paths (ADR-0037)
+- `scripts/validate-mcp-config.py` — dropped graphify example from uv-tool exception docs (ADR-0037)
+- README + skills catalog + mcp-servers + master-catalog-mapping — counts 71/12, graphify rows removed (ADR-0037)
+- Core refs ×4 (context-management SKILL.md + staleness-protocol + dependency-graph-retrieval, engineering-standards eval-harness) — graphify sources removed (ADR-0037)
+- `scripts/validate-no-fintech.sh` (gitnexus-* file exemption, tool-generated content per ADR-0037)
 
 ### Removed
 
@@ -38,6 +50,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/skills/alternative-skill-creator/scripts/init_skill.py` — `EVALS_TEMPLATE` now defaults to Schema B (canonical) and documents Schema A as legacy
 - `content/skills/_TEMPLATE/SKILL.md` — documented evals schema (Schema B canonical, Schema A legacy, graphify exempt)
 - `content/skills/engineering-standards/references/eval-harness.md` — added dual-schema note + negative-case (`flags_to_avoid`) guidance
+- `content/skills/graphify/` — removed (16 files) per ADR-0037
+- graphify MCP entries — removed from `content/mcp/*.json` + synced `.mcp.json` (ADR-0037)
+- `.gitattributes` — removed dead graphify merge driver (ADR-0037)
+- `.gitignore` — removed graphify entries (`graphify-out/`, `.graphify_version`), added `/.gitnexus/` (ADR-0037)
+- `CLAUDE.md` — removed (untracked, analyze-generated; AGENTS.md is canonical per ADR-0037 G7)
 
 ### Fixed
 

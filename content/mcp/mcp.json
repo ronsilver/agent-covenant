@@ -91,14 +91,10 @@
       ],
       "description": "OpenSpec spec-driven development workflow"
     },
-    "graphify": {
-      "command": "/Users/silver/.local/share/uv/tools/graphifyy/bin/python",
-      "args": [
-        "-m",
-        "graphify.serve",
-        "/Users/silver/Documents/Repositories/Silver/agent-covenant/graphify-out/graph.json"
-      ],
-      "description": "Knowledge graph query server (query_graph, get_node, get_neighbors, get_community, god_nodes, graph_stats, shortest_path)"
+    "gitnexus": {
+      "command": "npx",
+      "args": ["-y", "gitnexus@latest", "mcp"],
+      "description": "GitNexus code intelligence (query, context, impact, detect_changes, rename, explain)"
     }
   }
 }

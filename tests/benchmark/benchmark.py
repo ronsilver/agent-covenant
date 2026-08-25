@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic stdlib-only benchmark runner for `opencode run`.
 
-Canonical modes: ``context`` (1 global rule, 63 skills, 17 subagents, 0
+Canonical modes: ``context`` (1 global rule, 71 skills, 17 subagents, 0
 write-capable MCP) and ``baseline`` (0/0/0/0). ``paired`` is a CLI selection
 that runs both canonical modes; it is not a third execution mode.
 

@@ -279,7 +279,6 @@ Re-read decision: modified? -> yes. Read >10 turns ago? -> yes. Contradicts rece
 | claude-mem (File Read Gate, Endless Mode, session IDs) | https://github.com/thedotmack/claude-mem | 2026-06 |
 | serena (LSP symbol retrieval, Markdown memories) | https://github.com/oraios/serena | 2026-06 |
 | repomix (per-file inclusion levels, split, secret scan) | https://github.com/yamadashy/repomix | 2026-06 |
-| graphify (node summaries, incremental cache) | https://github.com/safishamsi/graphify | 2026-06 |
 | hivemind (Capture Tasks, summaries) | https://github.com/activeloopai/hivemind | 2026-06 |
 | context-mode (PreCompact hook) | https://github.com/mksglu/context-mode | 2026-06 |
 | perceptiontheory context-sculpting ([BLOCKER] rejected) | https://perceptiontheory.bearblog.dev/context-sculpting/ | 2026-06 |

@@ -1,6 +1,6 @@
 # Agent Skills
 
-63 active skills following the [Agent Skills](https://agentskills.io) open standard (schema v2). Skills are loaded on-demand via progressive disclosure when the agent detects relevance. Every skill except `graphify` (exempt) carries `evals/evals.json`, validated by `make validate-evals` (Schema B canonical, Schema A legacy).
+71 active skills following the [Agent Skills](https://agentskills.io) open standard (schema v2). Skills are loaded on-demand via progressive disclosure when the agent detects relevance. Skills carry `evals/evals.json`, validated by `make validate-evals` (Schema B canonical, Schema A legacy). Tool-generated gitnexus skills are exempt from evals/quality (see ADR-0037).
 
 No deprecated skills in active rotation. All retired skills are documented in `manifest.yaml` under `retired:`.
 

@@ -23,7 +23,7 @@ Unified Model Context Protocol server configuration for all enabled AI agents. 1
 | `context7` | npx | Library documentation |
 | `gitmcp` | npx | GitHub code search |
 | `openspec` | npx | OpenSpec project management |
-| `graphify` | uvx | Knowledge graph query server (query_graph, get_node, get_neighbors, get_community, god_nodes, graph_stats, shortest_path) |
+| `gitnexus` | npx | GitNexus code intelligence (query, context, impact, PR review) |
 
 ## Prerequisites
 
