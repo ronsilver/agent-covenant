@@ -16,8 +16,32 @@ SHELL_ALL     := $(SHELL_SCRIPTS) $(SHELL_LIBS)
 BASH_EXEC := $(if $(filter 1,$(VERBOSE)),bash -x,bash)
 
 # =============================================================================
-# Validation (self-check)
+# Verification
 # =============================================================================
+
+.PHONY: check
+check: lint lint-md lint-yaml-json fmt-check validate validate-no-fintech validate-subagent-mode validate-mcp-config validate-quality validate-shell-safety test ## Run full validation chain
+	@echo "Tip: run 'make validate-skill-refs' to check skill reference integrity."
+	@echo ""
+	@echo "✓ All checks passed"
+
+# =============================================================================
+# Lint
+# =============================================================================
+
+.PHONY: lint
+lint: ## Run shellcheck on all scripts
+	@echo "Running shellcheck..."
+	shellcheck -x $(SHELL_SCRIPTS)
+	@echo "Running shellcheck on libraries..."
+	shellcheck --shell=bash $(SHELL_LIBS)
+	@echo "Running shellcheck on test files..."
+	@if ls $(TESTS_DIR)/*.bats 1>/dev/null 2>&1; then \
+		shellcheck --shell=bash $(TESTS_DIR)/*.bats; \
+	else \
+		echo "  No .bats files found, skipping"; \
+	fi
+	@echo "✓ shellcheck passed"
 
 .PHONY: lint-md
 lint-md: ## Run markdownlint on all markdown files
@@ -33,19 +57,35 @@ lint-md: ## Run markdownlint on all markdown files
 	fi
 	@echo "✓ markdownlint passed"
 
-.PHONY: lint
-lint: ## Run shellcheck on all scripts
-	@echo "Running shellcheck..."
-	shellcheck -x $(SHELL_SCRIPTS)
-	@echo "Running shellcheck on libraries..."
-	shellcheck --shell=bash $(SHELL_LIBS)
-	@echo "Running shellcheck on test files..."
-	@if ls $(TESTS_DIR)/*.bats 1>/dev/null 2>&1; then \
-		shellcheck --shell=bash $(TESTS_DIR)/*.bats; \
+.PHONY: lint-yaml-json
+lint-yaml-json: ## Lint all YAML and JSON files (yq/jq)
+	@echo "Running YAML lint (yq)..."
+	@if command -v yq >/dev/null 2>&1; then \
+		find . \( -name "*.yaml" -o -name "*.yml" \) \
+			-not -path "./.git/*" \
+			-not -path "./node_modules/*" \
+			-not -path "./.opencode/node_modules/*" \
+			-not -path "./docs/plans/*" \
+			| xargs -I{} yq '.' {} > /dev/null; \
 	else \
-		echo "  No .bats files found, skipping"; \
+		echo "  yq not installed, skipping (brew install yq)"; \
 	fi
-	@echo "✓ shellcheck passed"
+	@echo "Running JSON lint (jq)..."
+	@if command -v jq >/dev/null 2>&1; then \
+		find . -name "*.json" \
+			-not -path "./.git/*" \
+			-not -path "./node_modules/*" \
+			-not -path "./.opencode/node_modules/*" \
+			-not -path "./docs/plans/*" \
+			| xargs -I{} jq '.' {} > /dev/null; \
+	else \
+		echo "  jq not installed, skipping (brew install jq)"; \
+	fi
+	@echo "✓ YAML/JSON lint passed"
+
+# =============================================================================
+# Format
+# =============================================================================
 
 .PHONY: fmt-check
 fmt-check: ## Check shell script formatting
@@ -66,11 +106,19 @@ fmt: ## Format shell scripts in-place
 		shfmt -w -i 4 -ci $(TESTS_DIR)/*.bats; \
 	fi
 
+# =============================================================================
+# Test
+# =============================================================================
+
 .PHONY: test
 test: ## Run bats tests
 	@echo "Running bats tests..."
 	bats $(TESTS_DIR)/
 	@echo "✓ tests passed"
+
+# =============================================================================
+# Validation
+# =============================================================================
 
 .PHONY: validate
 validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons validate-evals validate-router-delegation ## Run manifest + subagent + MCP + kernel budget + icon + eval + router delegation validation
@@ -147,26 +195,6 @@ validate-evals: ## Validate skill evals presence, schema, and minimal quality
 	@echo "[PASS] Eval validation passed"
 	@echo ""
 
-.PHONY: check
-check: lint lint-md fmt-check validate validate-no-fintech validate-subagent-mode validate-mcp-config validate-quality validate-shell-safety test ## Run full validation chain
-	@echo "Tip: run 'make validate-skill-refs' to check skill reference integrity."
-	@echo ""
-	@echo "✓ All checks passed"
-
-.PHONY: benchmark-live benchmark-probe benchmark-dry
-benchmark-live: ## Run LIVE benchmark (spends LLM money; requires BENCH_APPROVED=1 + interactive confirm)
-	@if [ "$(BENCH_APPROVED)" != "1" ]; then \
-		echo "[BLOCKED] Live benchmark spends LLM money. Set BENCH_APPROVED=1 to confirm."; \
-		exit 1; \
-	fi
-	python3 scripts/benchmark/benchmark.py --mode $(or $(MODE),paired) --runs $(or $(RUNS),5) --max-runs $(or $(MAX_RUNS),10) --max-cost-usd $(or $(MAX_COST_USD),10) --confirm-live
-
-benchmark-probe: ## Probe dry-run: emit exactly two mode commands, no spend
-	python3 scripts/benchmark/benchmark.py --probe-only --dry-run
-
-benchmark-dry: ## Dry-run: print opencode run commands, write nothing
-	python3 scripts/benchmark/benchmark.py --dry-run
-
 # =============================================================================
 # Sync
 # =============================================================================
@@ -186,6 +214,24 @@ sync-force: ## Force sync ignoring the content cache  [VERBOSE=1 for trace]
 .PHONY: list
 list: ## List available agents
 	$(BASH_EXEC) $(SCRIPTS_DIR)/sync.sh --list
+
+# =============================================================================
+# Benchmark
+# =============================================================================
+
+.PHONY: benchmark-live benchmark-probe benchmark-dry
+benchmark-live: ## Run LIVE benchmark (spends LLM money; requires BENCH_APPROVED=1 + interactive confirm)
+	@if [ "$(BENCH_APPROVED)" != "1" ]; then \
+		echo "[BLOCKED] Live benchmark spends LLM money. Set BENCH_APPROVED=1 to confirm."; \
+		exit 1; \
+	fi
+	python3 scripts/benchmark/benchmark.py --mode $(or $(MODE),paired) --runs $(or $(RUNS),5) --max-runs $(or $(MAX_RUNS),10) --max-cost-usd $(or $(MAX_COST_USD),10) --confirm-live
+
+benchmark-probe: ## Probe dry-run: emit exactly two mode commands, no spend
+	python3 scripts/benchmark/benchmark.py --probe-only --dry-run
+
+benchmark-dry: ## Dry-run: print opencode run commands, write nothing
+	python3 scripts/benchmark/benchmark.py --dry-run
 
 # =============================================================================
 # Help
