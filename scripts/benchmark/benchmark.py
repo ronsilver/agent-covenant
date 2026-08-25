@@ -5,8 +5,9 @@ Canonical modes: ``context`` (1 global rule, 71 skills, 17 subagents, 0
 write-capable MCP) and ``baseline`` (0/0/0/0). ``paired`` is a CLI selection
 that runs both canonical modes; it is not a third execution mode.
 
-All artifacts live under ``tests/benchmark/``. No stale mode vocabulary or
-obsolete singular benchmark paths are permitted.
+All artifacts live under ``scripts/benchmark/``. No stale mode vocabulary or
+obsolete singular benchmark paths are permitted. Live runs (any spawn) require
+``--confirm-live`` and default to a ``--max-cost-usd`` cap of 10.0.
 """
 
 import argparse
@@ -28,7 +29,7 @@ from manifest import ManifestError
 DEFAULT_MODEL = "opencode-go/deepseek-v4-flash"
 DEFAULT_AGENT = "build"
 DEFAULT_SEED = 20260818
-DEFAULT_OUT = "tests/benchmark/out"
+DEFAULT_OUT = "scripts/benchmark/out"
 EXIT_SMOKE_FAIL = 1
 EXIT_VALIDATION = 2
 EXIT_SAFETY = 3
@@ -49,7 +50,18 @@ def build_parser():
     parser.add_argument("--timeout", type=float, default=600.0, help="finite and > 0")
     parser.add_argument("--max-runs", type=int, default=10)
     parser.add_argument("--max-batch-runs", type=int, default=0, help="0 disables")
-    parser.add_argument("--max-cost-usd", type=float, default=0.0, help="0 disables")
+    parser.add_argument(
+        "--max-cost-usd",
+        type=float,
+        default=10.0,
+        help="hard cost cap in USD for the whole run (fail closed if exceeded)",
+    )
+    parser.add_argument(
+        "--confirm-live",
+        action="store_true",
+        help="require an interactive y/N confirmation before any live spawn "
+        "(mandatory for live and --smoke runs; fails closed on non-TTY)",
+    )
     parser.add_argument("--max-batch-seconds", type=float, default=7200.0)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--agent", default=DEFAULT_AGENT)
@@ -111,6 +123,33 @@ def validate_args(args):
     if args.max_batch_runs < 0:
         _fail("--max-batch-runs must be >= 0")
     select_prompts(args.prompts)
+
+
+def _confirm_live(args):
+    """Interactive human confirmation gate before any live spawn.
+
+    Fails closed: anything other than an explicit ``y``/``yes`` (including EOF
+    on a non-TTY stdin) aborts with EXIT_VALIDATION. The effective cost cap is
+    shown so the human confirms the spend ceiling, not an empty assertion."""
+    cap = (
+        f"${args.max_cost_usd:.2f}"
+        if args.max_cost_usd and args.max_cost_usd > 0
+        else "unlimited"
+    )
+    print(
+        f"benchmark: live benchmark will spend LLM money (cost cap {cap}).",
+        file=sys.stderr,
+    )
+    try:
+        answer = input("Confirm live run? [y/N] ")
+    except EOFError:
+        answer = ""
+    if answer.strip().lower() not in ("y", "yes"):
+        print(
+            "benchmark: error: live run not confirmed; aborting",
+            file=sys.stderr,
+        )
+        sys.exit(EXIT_VALIDATION)
 
 
 def _read_message(prompt_path):
@@ -333,6 +372,7 @@ def run_smoke(args):
         report.write_smoke_verdict(str(verdict_path), verdict)
         print(json.dumps(verdict))
         return EXIT_VALIDATION
+    _confirm_live(args)
     try:
         _preflight(["context", "baseline"], batch_home=batch_home)
         snapshot = preflight.create_snapshot(["p1"], args.out)
@@ -426,6 +466,7 @@ def main(argv=None):
             )
             return EXIT_VALIDATION
         _register_home_cleanup(batch_home)
+    _confirm_live(args)
     try:
         inventories = _preflight(modes, batch_home=batch_home)
         fingerprint_before = preflight.repo_fingerprint()

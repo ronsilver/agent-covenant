@@ -15,7 +15,7 @@ is therefore excluded from the baseline `0/0/0/0` counts.
 ## Fixture tree
 
 ```text
-tests/benchmark/
+scripts/benchmark/
 ├── README.md            # this file
 ├── benchmark.py         # CLI runner, preflight gates, snapshot, execution
 ├── manifest.py          # exact skills.directories parser (fail closed)
@@ -64,7 +64,7 @@ and baseline once each.
 
 Exit codes: `0` PASS, `1` FAIL (marker found or invalid baseline), `2`
 INCONCLUSIVE (isolation preflight failed closed). A smoke verdict JSON is
-always written to `tests/benchmark/out/smoke-<batch_id>.json` and printed to
+always written to `scripts/benchmark/out/smoke-<batch_id>.json` and printed to
 stdout. The verdict object has exactly 10 keys: `record_type` ("smoke"),
 `batch_id`, `marker_absent`, `markers_found`, `input_raw_context`,
 `input_raw_baseline`, `input_raw_ratio` (context/baseline; `"N/A"` when
@@ -84,7 +84,7 @@ never gates the smoke verdict. Counts are validated and any drift fails closed.
 ## Snapshot contract
 
 Before any `Popen`, selected prompts are copied to
-`tests/benchmark/out/snapshot/prompts/`, set read-only (mode `0444`), and hashed
+`scripts/benchmark/out/snapshot/prompts/`, set read-only (mode `0444`), and hashed
 canonically over sorted tuples `(relative path, mode, byte length, bytes)`.
 Every run reads only this snapshot. Source drift is fingerprinted separately
 and can never alter a run.
@@ -133,7 +133,7 @@ validate_smoke_verdict(path)
 fixed `cell_summary` objects thereafter. Markdown compare tables use the 12 raw
 metric rows in exact raw-list order followed by the 5 derived rows in exact
 derived-list order; row names are the metric names only. Report files are
-`tests/benchmark/out/report-<batch_id>.md`, `runs-<batch_id>.jsonl`,
+`scripts/benchmark/out/report-<batch_id>.md`, `runs-<batch_id>.jsonl`,
 `summary-<batch_id>.jsonl`, and `smoke-<batch_id>.json`.
 
 ## Metrics
@@ -179,7 +179,21 @@ dimension and never change a verdict.
 |---|---|
 | `make benchmark-dry` | Print context and baseline commands; write nothing |
 | `make benchmark-probe` | Probe dry-run; emit exactly two mode commands |
-| `make benchmark` | Live benchmark: `MODE=context\|baseline\|paired RUNS=5 MAX_RUNS=10` |
+| `make benchmark-live` | Live benchmark: requires `BENCH_APPROVED=1` + interactive confirm; `MODE=context\|baseline\|paired RUNS=5 MAX_RUNS=10 MAX_COST_USD=10` |
+
+The legacy `make benchmark` target was removed: live runs now require an
+explicit `make benchmark-live` with `BENCH_APPROVED=1`, so a bare `make
+benchmark` fails with "no rule to make target" instead of spending money.
+
+## Live spend gates (fail closed)
+
+Two independent gates must both pass before any `opencode run` is spawned:
+
+1. `--confirm-live` (CLI): interactive `y/N` prompt showing the effective cost
+   cap. Anything other than an explicit `y`/`yes` — including EOF on a
+   non-TTY stdin — aborts with exit `2`.
+2. `--max-cost-usd` (CLI, default `10.0`): hard cost cap reconciled before
+   every probe, attempt, and retry; exceeding it fails the batch.
 
 ## Separate live benchmark command
 
@@ -188,16 +202,17 @@ isolated live run (spends money, needs approval) is invoked directly after all
 no-spend checks pass:
 
 ```bash
-python3 tests/benchmark/benchmark.py --smoke --model opencode-go/deepseek-v4-flash
-python3 tests/benchmark/benchmark.py --mode paired --runs 5 --max-runs 10
+python3 scripts/benchmark/benchmark.py --smoke --model opencode-go/deepseek-v4-flash --confirm-live
+python3 scripts/benchmark/benchmark.py --mode paired --runs 5 --max-runs 10 --max-cost-usd 10 --confirm-live
 ```
 
-It retains every attempt and reconciles observed, reserved, estimated, and
+Both commands require an interactive confirmation and default to a $10 cost
+cap. It retains every attempt and reconciles observed, reserved, estimated, and
 actual cost.
 
 ## Verification
 
 ```bash
 bats tests/test_benchmark.bats          # exactly 13/13
-python3 tests/benchmark/benchmark.py --help   # exit 0
+python3 scripts/benchmark/benchmark.py --help   # exit 0
 ```

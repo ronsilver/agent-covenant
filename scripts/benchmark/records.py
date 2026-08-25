@@ -47,7 +47,7 @@ def _identity_fields(ctx, attempt_id, started, finished):
         "retry_reason": None,
         "mode": ctx.mode,
         "prompt_id": ctx.prompt_id,
-        "prompt_file": f"tests/benchmark/prompts/{PROMPT_FILES[ctx.prompt_id]}",
+        "prompt_file": f"scripts/benchmark/prompts/{PROMPT_FILES[ctx.prompt_id]}",
         "snapshot_path": f"{ctx.snapshot_path}/{PROMPT_FILES[ctx.prompt_id]}",
         "snapshot_sha256": ctx.snapshot_sha256,
         "source_prompt_sha256": preflight.file_sha256(

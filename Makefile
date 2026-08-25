@@ -153,15 +153,19 @@ check: lint lint-md fmt-check validate validate-no-fintech validate-subagent-mod
 	@echo ""
 	@echo "✓ All checks passed"
 
-.PHONY: benchmark benchmark-probe benchmark-dry
-benchmark: ## Run benchmark harness (MODE=context|baseline|paired, RUNS=1..10, MAX_RUNS cap)
-	python3 tests/benchmark/benchmark.py --mode $(or $(MODE),paired) --runs $(or $(RUNS),5) --max-runs $(or $(MAX_RUNS),10)
+.PHONY: benchmark-live benchmark-probe benchmark-dry
+benchmark-live: ## Run LIVE benchmark (spends LLM money; requires BENCH_APPROVED=1 + interactive confirm)
+	@if [ "$(BENCH_APPROVED)" != "1" ]; then \
+		echo "[BLOCKED] Live benchmark spends LLM money. Set BENCH_APPROVED=1 to confirm."; \
+		exit 1; \
+	fi
+	python3 scripts/benchmark/benchmark.py --mode $(or $(MODE),paired) --runs $(or $(RUNS),5) --max-runs $(or $(MAX_RUNS),10) --max-cost-usd $(or $(MAX_COST_USD),10) --confirm-live
 
 benchmark-probe: ## Probe dry-run: emit exactly two mode commands, no spend
-	python3 tests/benchmark/benchmark.py --probe-only --dry-run
+	python3 scripts/benchmark/benchmark.py --probe-only --dry-run
 
 benchmark-dry: ## Dry-run: print opencode run commands, write nothing
-	python3 tests/benchmark/benchmark.py --dry-run
+	python3 scripts/benchmark/benchmark.py --dry-run
 
 # =============================================================================
 # Sync
