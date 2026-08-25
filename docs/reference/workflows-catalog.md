@@ -8,10 +8,7 @@ Each workflow lives in `content/workflows/<category>/<name>.md`.
 
 | Agent | Path |
 |-------|------|
-| **Windsurf** | `~/.windsurf/workflows/` |
-| **Windsurf JetBrains** | `~/.codeium/workflows/` |
-| **Antigravity** | `~/.gemini/antigravity/workflows/` |
-| **local-project** | `<project>/.windsurf/workflows/` (when enabled) |
+| **Antigravity** | `~/.gemini/antigravity/global_workflows/` |
 
 ---
 

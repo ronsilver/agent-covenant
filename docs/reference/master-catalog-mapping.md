@@ -35,11 +35,11 @@ Out of scope (recorded, not created):
 
 The 71 active skills in `manifest.yaml` under `skills.directories` cover: security (security-expert, penetration-testing-expert), AI agents (agent-expert, agent-architecture-expert, web-browsing-agent-expert, mcp-expert), infrastructure, data, frontend, backend, quality, process, and core.
 
-## Updateable-Resource Cruce
+## Updateable-Resource Cross-reference
 
-The cruce de proyectos vs recurso actualizable: every master-catalog entry maps to a repo URL and, when the repository holds the guidance, to the exact update-target resource (skill or reference file). Updating guidance from these sources is only allowed through the re-read-source-before-update protocol below.
+The project-vs-updatable-resource mapping: every master-catalog entry maps to a repo URL and, when the repository holds the guidance, to the exact update-target resource (skill or reference file). Updating guidance from these sources is only allowed through the re-read-source-before-update protocol below.
 
-<!-- CRUCE TABLE START -->
+<!-- CROSS TABLE START -->
 | Master # | Repo | Repo URL | Category | Disposition | Update target | How to update |
 |---|---|---|---|---|---|---|
 | 1 | zakirullin/files.md | https://github.com/zakirullin/files.md | misc tooling | OOS | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
@@ -231,7 +231,7 @@ The cruce de proyectos vs recurso actualizable: every master-catalog entry maps 
 | 188 | docker-curriculum.com | https://docker-curriculum.com/ | education | COV | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
 | 189 | kubernetes.io | https://kubernetes.io/ | education | COV | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
 | 190 | edx.org devops | https://www.edx.org/learn/devops | education | OOS | — | Re-read the source repo URL first (never update from memory); record access date; update the target resource; bump skill version + CHANGELOG bullet if guidance changed; OOS rows: revisit at quarterly review |
-<!-- CRUCE TABLE END -->
+<!-- CROSS TABLE END -->
 
 ## Update Procedure
 

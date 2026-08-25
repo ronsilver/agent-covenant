@@ -10,9 +10,10 @@ Language Server Protocol (LSP) configuration for AI coding agents, mapped to sup
 |-------|------------|-----------|---------------|
 | **OpenCode** | Native | `auto_lsp: true` (default) | Auto-detects LSPs via project root markers (`go.mod`, `package.json`, etc.) |
 | **Claude Code** | Plugins | `.lsp.json` via plugin system | `claude plugin install <name>@<marketplace>` |
-| **Windsurf** | N/A | IDE built-in (VS Code extensions) | Not configurable via this system |
-| **Cursor** | N/A | IDE built-in (VS Code fork) | Not configurable via this system |
-| **Gemini CLI** | Not supported | — | — |
+| **Antigravity** | N/A | IDE built-in (Gemini-powered) | Not configurable via this system |
+| **Codex CLI** | Not supported | — | — |
+| **Pi** | Not supported | — | — |
+| **OMP** | Not supported | — | — |
 
 ---
 
