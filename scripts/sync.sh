@@ -9,7 +9,7 @@ set -euo pipefail
 #
 # Usage:
 #   ./scripts/sync.sh                    # Sync all enabled agents
-#   ./scripts/sync.sh --agent windsurf   # Sync a specific agent
+#   ./scripts/sync.sh --agent opencode   # Sync a specific agent
 #   ./scripts/sync.sh --dry-run          # Show what would be done without executing
 #   ./scripts/sync.sh --list             # List available agents
 #   ./scripts/sync.sh --backup           # Create backup before writing

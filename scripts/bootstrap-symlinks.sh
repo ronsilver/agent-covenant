@@ -18,10 +18,8 @@ for agent_dir in \
 	"${HOME}/.claude/skills" \
 	"${HOME}/.claude-silver/skills" \
 	"${HOME}/.claude-example/skills" \
-	"${HOME}/.copilot/skills" \
 	"${HOME}/.config/opencode/skills" \
-	"${HOME}/.gemini/antigravity/skills" \
-	"${HOME}/.github-copilot/skills"; do
+	"${HOME}/.gemini/antigravity/skills"; do
 	if [ -d "${agent_dir}" ] && [ ! -L "${agent_dir}" ]; then
 		echo "  Backing up ${agent_dir} -> ${agent_dir}.bak.$(date +%Y%m%d)"
 		mv "${agent_dir}" "${agent_dir}.bak.$(date +%Y%m%d)" 2>/dev/null || true

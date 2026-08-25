@@ -17,9 +17,9 @@ error() {
 ok() { echo "OK:    $*" >&2; }
 
 # Kernels that support a skill tool (must name it explicitly)
-TOOL_AGENTS=(claude-code windsurf opencode)
+TOOL_AGENTS=(claude-code opencode)
 # Kernels without a runtime skill tool (must name @file pattern)
-FILE_AGENTS=(copilot cursor gemini)
+FILE_AGENTS=(antigravity codex-cli pi omp)
 
 check_no_windsurf_leak() {
     local file="$1" agent="$2"
