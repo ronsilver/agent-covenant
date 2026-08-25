@@ -13,22 +13,22 @@
 ## Orchestration flow
 
 ```
-ultraorchestrator -> task(ultraplan) -> plan (stdout) -> host persists -> ultracode
-ultraorchestrator -> task(ultrareview | code-review) -> verdict (specialists fan out INSIDE the reviewer) -> to-do -> ultracode
-ultraorchestrator -> task(ultradebugger) -> root-cause report + fix proposal + test spec -> ultracode
-ultraorchestrator -> task(research) -> findings document -> ultraplan / ultracode
-ultraorchestrator -> task(ultrathinking) -> Reasoning Dossier -> task(ultraplan) -> plan -> host -> ultracode
+ultraorchestrator -> S0 classify -> route to Flow A-F (ratified flows, shared audit loop <=2 iter)
+Flow A/B/F (Construcción/Cambios acotados/Infra): task(investigator: ultraresearch|ultradebugger) -> task(ultraplan) [WIP] -> parallel task(ultrathinking + ultrareview) -> plan definitivo -> GATE (ask user) -> task(ultracode)
+Flow C (Revisión): task(domain specialist) -> task(docs-writer) [WIP reporte] -> audit loop -> reporte definitivo (docs-writer)
+Flow D (Investigación pura): task(investigator) -> task(docs-writer) [WIP reporte] -> audit loop -> reporte definitivo
+Flow E (Incidentes): task(investigator) -> reporte WIP (docs-writer) -> audit loop -> reporte definitivo -> GATE-1 (plan fix?) -> task(ultraplan) -> audit loop -> GATE-2 -> task(ultracode)
 ultracode -> git-requests (branch, commit, push, PR)
 ```
 
-Only `ultracode` mutates project source code. Only `git-requests` mutates git history. `test-writer` is the explicit exception for writing tests. `docs-writer` is the explicit exception for documentation. `ultraorchestrator` DISPATCHES the 9 allowed agents directly via `task`; it cannot task the 6 review specialists directly — that fan-out happens inside `code-review` / `ultrareview`.
+Only `ultracode` mutates project source code. Only `git-requests` mutates git history. `test-writer` is the explicit exception for writing tests. `docs-writer` is the explicit exception for documentation. `ultraorchestrator` DISPATCHES 13 targets autonomously via `task` (5 ultra* pipeline agents + `research` + `code-review` + the 7 review specialists + `docs-writer`); `test-writer`, `ultracode`, `git-requests` are `ask`-gated (host approval).
 
 ### Restricted delegation graph (permission.task)
 
 | Agent | `permission.task` |
 |---|---|
-| Orchestrators (`ultrareview`, `code-review`) | allow only the 5 review specialists; deny `ultracode`/`test-writer`/`git-requests`/`docs-writer` |
-| `ultraorchestrator` | `"*"`: ask; DISPATCHES 9 directly via `task` (7 read-only: `ultraplan`, `ultrathinking`, `ultrareview`, `ultradebugger`, `ultraresearch`, `research`, `code-review` + `test-writer` + `docs-writer`); ask `ultracode`/`git-requests` (host-gated); cannot task the 6 review specialists directly (fan-out inside `code-review`/`ultrareview`) |
+| Orchestrators (`ultrareview`, `code-review`) | allow only the review specialists (leaf: `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor`; `code-review` additionally for `ultrareview`); deny `ultracode`/`test-writer`/`git-requests`/`docs-writer` |
+| `ultraorchestrator` | `"*"`: ask; DISPATCHES 13 autonomously (5 ultra* pipeline: `ultraplan`, `ultrathinking`, `ultrareview`, `ultradebugger`, `ultraresearch` + `research`, `code-review`, 7 review specialists: `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor` + `docs-writer`); ask `ultracode`/`git-requests`/`test-writer` (host-gated) |
 | `ultradebugger`, `research`, `ultraplan`, `ultrathinking`, `ultraresearch` | specialists/research allowed or `ask`; deny write agents (`ultracode`, `test-writer`, `git-requests`, `docs-writer`) |
 | `ultracode` | allow only `git-requests`, `test-writer`, `docs-writer`; ask rest |
 | Specialists (`dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `performance-profiler`, `security-auditor`) + `test-writer`, `docs-writer` | `"*": deny` (leaves) |
@@ -62,7 +62,7 @@ Every subagent must include the following sections in its body (after `## Anti-p
 | **`ultradebugger`** | Root-cause debugger using the scientific method; delivers cause, minimum fix proposal, and regression test spec. |
 | **`ultraresearch`** | External-facts specialist; surveys and cross-verifies vendors, libraries, APIs, and standards into a Research Dossier. |
 | **`research`** | Investigates codebases and web sources; produces a findings document with citations and trade-offs. |
-| **`ultraorchestrator`** | Read-only routing meta-agent; classifies incoming requests, applies the litmus table, and emits an ADVISORY routing verdict (route + executor) to the host. |
+| **`ultraorchestrator`** | Read-only routing meta-agent; classifies incoming requests, applies the 6-flow routing table (A-F), and emits an ADVISORY routing verdict (route + executor) to the host. |
 
 ## 2. Review Specialists (read-only)
 
@@ -190,14 +190,13 @@ permission:
   websearch: allow | ask | deny
   question: allow
   apply_patch: deny
-  codesearch: allow | ask | deny
+  # codesearch / todoread: inert keys (UI-visible, not runtime-evaluated in OpenCode 1.18.21)
   doom_loop: ask
   external_directory: deny
   lsp: allow | ask | deny
   plan_enter: deny
   plan_exit: deny
   skill: allow | ask | deny
-  todoread: deny
   todowrite: deny
 ---
 

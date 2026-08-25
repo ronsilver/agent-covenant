@@ -9,7 +9,7 @@ Central reference for tool permissions, permission modes, and agent modes used b
 | `Default` | Wildcard fallback. Defines default behavior (`allow`, `ask`, or `deny`) for any tool not explicitly listed in the subagent's permission block. |
 | `apply_patch` | Apply structured patch files (.patch or diffs) directly to source code instead of rewriting entire files. |
 | `bash` | Execute arbitrary commands in the system terminal (Mac/Linux). The most security-critical tool. |
-| `codesearch` | Advanced code-level indexing and search (regex or token-based) to locate functions or classes across the entire repository. |
+| `codesearch` | INERT in OpenCode 1.18.21 — UI/config-visible but never runtime-evaluated (zero binary hits). Kept only for UI parity. |
 | `doom_loop` | Internal safety mechanism. Monitors and detects infinite loops or redundant repetitive calls to stop the agent if it gets "stuck." |
 | `edit` | Directly edit and modify specific sections of text or lines within an existing file. |
 | `external_directory` | Interact with, read, or write files in directories outside the configured workspace root. |
@@ -22,8 +22,8 @@ Central reference for tool permissions, permission modes, and agent modes used b
 | `question` | Pause technical execution to ask the user an interactive question (in the UI or terminal), awaiting clarification. |
 | `read` | Read files within the workspace. Open and view the full content of any file. |
 | `skill` | Invoke or reuse pre-built, reusable code blocks or custom functions ("skills"). |
-| `task` | Fragment a goal into individually tracked sub-tasks with progress follow-up. |
-| `todoread` | Read the internal pending task list (TODO) assigned to the agent's current context. |
+| `task` | Invoke another subagent by type (dispatched subagent runs in a fresh session; used for delegation/fan-out). Permission patterns match the target subagent name. |
+| `todoread` | INERT in OpenCode 1.18.21 — UI/config-visible but never runtime-evaluated (zero binary hits). Kept only for UI parity. |
 | `todowrite` | Write, check off, or add items to the internal pending task list. |
 | `webfetch` | Download raw content (HTML, JSON, or text) from a specific internet URL (like curl or an HTTP GET request). |
 | `websearch` | Run queries on external web search engines to gather documentation or up-to-date information from the internet. |
@@ -64,7 +64,7 @@ Central reference for tool permissions, permission modes, and agent modes used b
 - `question: allow`
 - `mode: subagent`
 
-### Reviewer (`ultrareview`, `code-review`, `ultraorchestrator`)
+### Reviewer (`ultrareview`, `code-review`)
 - `edit: deny`
 - `bash: ask` + safe read-only commands
 - `apply_patch: deny`
@@ -90,6 +90,14 @@ Central reference for tool permissions, permission modes, and agent modes used b
 - `question: allow`
 - `mode: subagent`
 
+### Router (`ultraorchestrator`)
+- `edit: deny` with scoped write exception `docs/plans/**`: allow
+- `bash: ask` + read-only git/jq (find/cat/jq ask; universal denies)
+- `task: "*": ask`; allow 13 targets (5 ultra* + `research` + `code-review` + 7 specialists + `docs-writer`); ask `ultracode`/`git-requests`/`test-writer`
+- `question/webfetch/websearch/skill/lsp/plan_enter/plan_exit/external_directory/todowrite: allow`
+- `doom_loop: ask`; `apply_patch: deny`
+- `mode: subagent`
+
 ### Domain experts and specialists (read-only, autonomous)
 - `edit: deny`
 - `bash: ask` + domain-specific commands
@@ -97,7 +105,7 @@ Central reference for tool permissions, permission modes, and agent modes used b
 - `plan_enter/plan_exit/todowrite: deny`
 - `question: allow` (S8: can corroborate info and resolve doubts)
 - `task: "*": deny` (S2: leaves; no delegation)
-- `hidden: true` (S7: internal-only, invoked via task by orchestrators)
+- `hidden: false` — `hidden: true` is FORBIDDEN for subagents (governance invariant #8, ADR-0021): all subagents must be visible in the agent picker
 - `mode: subagent`
 
 ### Full (git workflow — `git-requests`)
@@ -124,7 +132,7 @@ Central reference for tool permissions, permission modes, and agent modes used b
 | ultraresearch | investigation | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
 | ultrareview | review | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | deny | deny | allow | allow | allow | subagent | false |
 | ultrathinking | decision | allow | deny | allow | allow | allow | safe | `"*": allow`; deny ultracode/test-writer/git-requests/docs-writer | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
-| ultraorchestrator | routing | allow | deny | allow | allow | allow | read-only git/jq/yq | `"*": allow`; allow ultraplan/ultrathinking/ultrareview/ultradebugger/ultraresearch/research/code-review/test-writer/docs-writer; ask ultracode/git-requests | allow | allow | allow | deny | allow | ask | allow | allow | allow | allow | allow | allow | allow | subagent | false |
+| ultraorchestrator | routing | allow | deny (docs/plans/** allow) | allow | allow | allow | read-only git/jq (find/cat/jq ask) | `"*": ask`; allow ultraplan/ultrathinking/ultrareview/ultraresearch/ultradebugger/research/code-review/dependency-audit-agent/idempotency-agent/linting-agent/performance-profiler/security-auditor/docs-writer; ask ultracode/git-requests/test-writer | allow | allow | allow | deny | allow(inert) | ask | allow | allow | allow | allow | allow(inert) | allow | subagent | false |
 | git-requests | git | allow | deny | allow | allow | allow | git | `"*": deny` | allow | allow | deny | deny | allow | ask | deny | allow | deny | deny | allow | deny | deny | subagent | false |
 | test-writer | build | allow | allow | allow | allow | allow | build | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
 | docs-writer | build | allow | allow | allow | allow | allow | read-only git (no build cmds) | `"*": deny` | allow | allow | allow | deny | allow | ask | deny | allow | allow | allow | allow | allow | allow | subagent | false |
@@ -157,10 +165,11 @@ Denied for all agents:
 
 ## Known divergences (JSON mirror vs frontmatter)
 
-The OpenCode JSON mirror (`content/mcp/opencode-agents-config.json`) is a partial, hand-maintained subset and intentionally diverges from the authoritative YAML frontmatter in `content/subagents/*.md`. Known gaps:
+The OpenCode JSON mirror (`content/mcp/opencode-agents-config.json`) is a partial, hand-maintained subset. Status per ratified fix plan (`docs/plans/ultraorchestrator-pipeline-fix-2026-08-22.md`):
 
-- **Bash `*` default differs for `ultraorchestrator`:** the JSON `agent.ultraorchestrator.permission.bash` uses `"*": "deny"`, while `content/subagents/ultraorchestrator.md` frontmatter uses `"*": "ask"`. This is a pre-existing systemic divergence — the same pattern appears for `ultrareview`, `ultradebugger`, `code-review`, `security-auditor`, `performance-profiler`, `research`, `dependency-audit-agent`, `idempotency-agent`, `linting-agent`, `ultraresearch`, `ultrathinking` (JSON uses `"*": "deny"` where the frontmatter uses `"*": "ask"`). The YAML frontmatter is authoritative; do not "fix" the JSON to match.
-- **C2 ask-gate is prose-only, not runtime-enforced:** the rule that `ultraorchestrator` may not dispatch `ultracode`/`git-requests` without host approval exists only in the `.md` frontmatter `permission.task` (`ultracode: ask`, `git-requests: ask`) and body prose. The JSON mirror has no `permission.task` block for `ultraorchestrator` (consistent with ADR-0024), so this gate is NOT enforced by tooling. It is a prompt/convention-level control only.
+- **Mirror parity is being enforced, not tolerated**: the plan (S3 + validator checks d/f) requires the mirror's `permission` map (task/edit/write/question/bash + all retained keys) to deep-equal the md frontmatter. Bash `"*"` default and task allowlist divergences are fixed by lockstep updates; drift is CI-blocking.
+- **C2 ask-gate becomes runtime-enforced**: after S3 adds `permission.task` to the mirror, the `ultracode`/`git-requests`/`test-writer` ask gates are enforced by tooling, not prose-only.
+- **Runtime keys verified 1.18.21**: real keys = read/edit/glob/grep/list/bash/task/external_directory/todowrite/question/webfetch/websearch/lsp/doom_loop/skill/plan_enter/plan_exit/apply_patch. `codesearch`/`todoread` are inert (UI-visible only).
 
 ## Migration Notes
 

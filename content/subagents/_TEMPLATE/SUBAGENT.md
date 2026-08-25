@@ -22,14 +22,14 @@ permission:
     "git diff *": allow
     "git show *": allow
     "git blame *": allow
-    "cat *": allow
+    "cat *": ask
     "head *": allow
     "tail *": allow
-    "find *": allow
+    "find *": ask
     "ls *": allow
     "grep *": allow
-    "jq *": allow
-    "yq *": allow
+    "jq *": ask
+    "yq *": ask
     "wc *": allow
     "rm -rf *": deny
     "git push *": deny
@@ -47,10 +47,11 @@ permission:
     ultracode: deny
     test-writer: deny
     git-requests: deny
+    docs-writer: deny
   webfetch: allow
   websearch: allow
   question: allow
-  codesearch: allow
+  # codesearch / todoread: inert keys (UI-visible, not runtime-evaluated in OpenCode 1.18.21)
   doom_loop: ask
   external_directory: deny
   apply_patch: deny
@@ -58,7 +59,6 @@ permission:
   plan_enter: deny
   plan_exit: deny
   skill: allow
-  todoread: allow
   todowrite: allow
 ---
 
