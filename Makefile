@@ -4,11 +4,15 @@
 
 SHELL := /usr/bin/env bash
 .DEFAULT_GOAL := help
+# Serial-only execution: sync's two phases (sync-content -> bootstrap-symlinks)
+# MUST NOT run in parallel (make -j). Ordering is a data-loss guard (see
+# docs/plans/symlink-shared-dir-sync-2026-08-25.md, BLOCKER B1).
+.NOTPARALLEL:
 
 SCRIPTS_DIR := scripts
 TESTS_DIR := tests
 
-SHELL_SCRIPTS := $(SCRIPTS_DIR)/sync.sh $(SCRIPTS_DIR)/validate.sh $(SCRIPTS_DIR)/validate-subagent-mode.sh $(SCRIPTS_DIR)/validate-kernel-budget.sh $(SCRIPTS_DIR)/validate-router-delegation.sh $(SCRIPTS_DIR)/mcp-github.sh
+SHELL_SCRIPTS := $(SCRIPTS_DIR)/sync.sh $(SCRIPTS_DIR)/validate.sh $(SCRIPTS_DIR)/validate-subagent-mode.sh $(SCRIPTS_DIR)/validate-kernel-budget.sh $(SCRIPTS_DIR)/validate-router-delegation.sh $(SCRIPTS_DIR)/mcp-github.sh $(SCRIPTS_DIR)/bootstrap-symlinks.sh $(SCRIPTS_DIR)/validate-shared-targets.sh
 SHELL_LIBS    := $(SCRIPTS_DIR)/lib/common.sh $(SCRIPTS_DIR)/lib/sync.sh
 SHELL_ALL     := $(SHELL_SCRIPTS) $(SHELL_LIBS)
 
@@ -121,7 +125,7 @@ test: ## Run bats tests
 # =============================================================================
 
 .PHONY: validate
-validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons validate-evals validate-router-delegation ## Run manifest + subagent + MCP + kernel budget + icon + eval + router delegation validation
+validate: validate-subagent-mode validate-mcp-config validate-kernel-budget validate-icons validate-evals validate-router-delegation validate-shared-targets ## Run manifest + subagent + MCP + kernel budget + icon + eval + router delegation + shared-target validation
 	@echo "Running manifest validation..."
 	$(SCRIPTS_DIR)/validate.sh
 	@echo "✓ validation passed"
@@ -143,6 +147,12 @@ validate-router-delegation: ## Check router dispatch mandate (REFUSAL PROTOCOL, 
 	@echo "Running router delegation validation..."
 	@$(SCRIPTS_DIR)/validate-router-delegation.sh
 	@echo "✓ router delegation validation passed"
+
+.PHONY: validate-shared-targets
+validate-shared-targets: ## Check directory-format sync targets (skills/subagents/hooks) use the shared base ${HOME}/.config/agent-covenant
+	@echo "Running shared-target validation..."
+	@$(SCRIPTS_DIR)/validate-shared-targets.sh
+	@echo "✓ shared-target validation passed"
 
 .PHONY: validate-kernel-budget
 validate-kernel-budget: ## Check kernel files stay within the 6000-byte budget
@@ -199,17 +209,27 @@ validate-evals: ## Validate skill evals presence, schema, and minimal quality
 # Sync
 # =============================================================================
 
-.PHONY: sync
-sync: ## Sync rules to all enabled agents  [VERBOSE=1 for trace]
+.PHONY: sync-content
+sync-content: ## Sync content to shared dirs (scripts/sync.sh, incl. registry cleanup)  [VERBOSE=1 for trace]
 	$(BASH_EXEC) $(SCRIPTS_DIR)/sync.sh
 
+.PHONY: bootstrap-symlinks
+bootstrap-symlinks: ## Convert per-agent skills/subagents/hooks dirs to symlinks into ~/.config/agent-covenant
+	@printf '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  Bootstrap Symlinks\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
+	bash $(SCRIPTS_DIR)/bootstrap-symlinks.sh
+
+.PHONY: sync
+sync: sync-content bootstrap-symlinks ## Sync content, then bootstrap per-agent symlinks (serial; never make -j)
+	@echo "✓ sync complete (content + symlinks)"
+
 .PHONY: sync-dry
-sync-dry: ## Dry-run sync (show what would happen)  [VERBOSE=1 for trace]
+sync-dry: ## Dry-run sync (content only; bootstrap has its own --dry-run)  [VERBOSE=1 for trace]
 	$(BASH_EXEC) $(SCRIPTS_DIR)/sync.sh --dry-run
 
 .PHONY: sync-force
-sync-force: ## Force sync ignoring the content cache  [VERBOSE=1 for trace]
+sync-force: ## Force redeploy ignoring the content cache, then bootstrap symlinks  [VERBOSE=1 for trace]
 	$(BASH_EXEC) $(SCRIPTS_DIR)/sync.sh --force
+	$(MAKE) bootstrap-symlinks
 
 .PHONY: list
 list: ## List available agents
