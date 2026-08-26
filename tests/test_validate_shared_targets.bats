@@ -16,7 +16,8 @@ setup() {
 }
 
 @test "gate passes on real manifests (shared_base + agent real dirs)" {
-    run bash "${SCRIPT_DIR}/validate-shared-targets.sh" "${REPO_ROOT}/manifest.yaml" "${REPO_ROOT}/manifest.example.yaml"
+    # Use manifest.example.yaml (committed) — manifest.yaml is gitignored and absent in CI.
+    run bash "${SCRIPT_DIR}/validate-shared-targets.sh" "${REPO_ROOT}/manifest.example.yaml"
     [[ "$status" -eq 0 ]]
     [[ "$output" == *"PASS:"* ]]
 }
