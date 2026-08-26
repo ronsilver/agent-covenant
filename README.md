@@ -39,8 +39,8 @@ The kernel stays under 6,000 chars. Skills provide depth without bloating the al
 
 ```bash
 make check       # Full pipeline: lint → lint-md → lint-yaml-json → fmt-check → validate → test
-make sync        # Deploy to all enabled agents
-make sync-dry    # Preview without writing
+make sync        # Sync content to shared dirs, then bootstrap per-agent symlinks
+make sync-dry    # Preview content writes without writing
 make list        # List available agents
 ```
 
@@ -103,9 +103,9 @@ Each `content/` subdirectory has its own `README.md` with purpose, format, and l
 ## Usage
 
 ```bash
-make sync              # Sync to all enabled agents
-make sync-dry          # Dry run
-make sync-force        # Force redeploy (bypass cache)
+make sync              # Sync content to shared dirs, then bootstrap per-agent symlinks
+make sync-dry          # Dry run (content only)
+make sync-force        # Force redeploy (bypass cache), then bootstrap symlinks
 
 # Single agent
 ./scripts/sync.sh --agent opencode
@@ -120,6 +120,7 @@ make validate                      # Check manifest, files, and frontmatter
 make validate-mcp-config           # MCP portability: bare binaries, no PATH env, no secrets
 make validate-skill-refs           # Skill coherence check (non-blocking)
 make validate-canonical-paths      # Canonical path audit (non-blocking)
+make validate-shared-targets       # shared flag + transform enum gate: directory targets keep real dirs (invariant #11)
 make test                          # Run bats tests
 ```
 

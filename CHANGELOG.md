@@ -25,9 +25,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/validate-router-delegation.sh` — extended with pipeline-contract + config-parity checks (a)-(f): executor ask-gating, stage-label/Flow-A-E headers, real-key guard, inert-key warn, md-vs-mirror deep-equal parity incl. full bash map, inject_keys depth, glob parity
 - `docs/plans/wip/` — scoped WIP plan-artifact convention (definitive plans git-visible, wip ignored)
 - `docs/adr/0038-agent-set-consolidation.md` — ADR: agent set pruned 18 → 7 (antigravity, claude-code, codex-app, codex-cli, omp, opencode, pi); skill-invocation taxonomy (TOOL vs FILE) enforced in kernels + subagents
+- `tests/test_bootstrap_symlinks.bats` — regression suite for shared-dir sync (get_shared_write_path default+override, write-once to shared base, manifest-derived symlink bootstrap)
+- `scripts/validate-shared-targets.sh` — gate: top-level `shared_base` must be canonical (`${HOME}/.config/agent-covenant`) and directory-format targets (skills/subagents/hooks) must keep the agent's real dir in `path`/`scripts_path` (never the shared base); wired into `make validate` (AGENTS.md invariant #11; prevents per-agent copy divergence)
+- `tests/test_validate_shared_targets.bats` — 5→8 regression tests for the shared-target gate (canonical shared_base, missing shared_base fails, directory path pointing at shared base fails, file-level targets skipped, shared_dir path-separator rejected, residual legacy-key rejection, `shared: false` path-required-when-false, `shared: false` + transform enum; subagents write dirs become `<shared_base>/subagents-strip` and `<shared_base>/subagents-opencode`)
 
 ### Changed
 
+- `scripts/validate-evals.py` — gitnexus-* eval exemptions demoted from WARN to INFO (still exempt, no longer counted as warnings)
+- `scripts/validate-router-delegation.sh` — inert-key (codesearch/todoread) notices demoted from WARN to INFO (non-blocking, no longer counted as warnings)
+- `scripts/validate.sh` — frontmatter check now skips `README.md` (catalog documentation, not deployable content)
+- `scripts/sync.sh` + `scripts/lib/sync.sh` — shared skills/subagent output is now summarized once per target; per-file logs remain available with `--debug`
+- `Makefile` + `scripts/bootstrap-symlinks.sh` — bootstrap now renders as its own `Bootstrap Symlinks` section after cleanup; removed recursive `make sync` hint
 - `Makefile` — reordered into grouped sections (Verification/Lint/Format/Test/Validation/Sync/Benchmark/Help); added `lint-yaml-json` target; `make check` now gates lint-md + lint-yaml-json; benchmark excluded from CI (cost policy)
 - `tests/benchmark/` → `scripts/benchmark/` — benchmark harness moved out of `tests/` (repo convention: `tests/` holds only `*.bats`; Python tooling lives in `scripts/`). Bats regression suite stays at `tests/test_benchmark.bats` (13/13 no-spend; CI unchanged, `make test` spends $0).
 - `make benchmark` → `make benchmark-live` — legacy target removed (now fails with no-rule instead of spending); live runs require `BENCH_APPROVED=1` + interactive `--confirm-live` (y/N with cost-cap shown, fails closed on non-TTY) + `--max-cost-usd` default cap `10.0`. `scripts/benchmark/benchmark.py` live and `--smoke` paths both gate on `--confirm-live`; `.gitignore` path updated to `scripts/benchmark/out/`.
@@ -63,6 +71,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `content/subagents/*.md` (17) — Step-0 boot-skill lists made mechanism-neutral (kernel <SKILLS> governs load) + targets pruned to {opencode, claudecode, codex}
 - `scripts/validate-kernel-skill-coherence.sh` — TOOL_AGENTS=(claude-code opencode), FILE_AGENTS=(antigravity codex-cli pi omp)
 - docs + README + AGENTS.md + CONTRIBUTING.md — removed-agent references pruned (ADR-0038)
+- `manifest.yaml` + `manifest.example.yaml` — added top-level `shared_base: ${HOME}/.config/agent-covenant`; directory-format targets (skills/subagents/hooks) now keep each agent's REAL dir in `path`/`scripts_path` (e.g. `~/.codex/skills`, `~/.pi/agent/skills`, `~/.omp/agent/skills`); opencode subagents use a `shared_dir: subagents-opencode` override (its frontmatter transform differs from the stripped subagents shared by claude-code/codex-cli)
+- `scripts/lib/sync.sh` — `sync_directory_impl` + subagents + hooks now write directory content ONCE to the shared base via `get_shared_write_path` (derives `<shared_base>/<shared_dir|target_type>`); registry/bootstrap/prune scans the shared skills dir instead of per-agent paths
+- `scripts/bootstrap-symlinks.sh` — rewritten to derive symlinks from the manifest (agent `path`/`scripts_path` → shared write dir; no hardcoded link map); backup-first, idempotent, `--dry-run`
+- `Makefile` — added `sync-content`/`bootstrap-symlinks` targets; `sync` = sync-content + bootstrap-symlinks; `sync-force` = `sync.sh --force` + bootstrap; `.NOTPARALLEL:` guard
+- `AGENTS.md` — invariant #11 (Shared-Dir Sync): directory targets keep agent real dirs + write via top-level `shared_base`; per-agent dirs are manifest-derived symlinks; Validation Rules + Content Registration notes (`[SYMLINK-DIVERGENCE VIOLATION]`)
+- `CONTRIBUTING.md` — Adding-a-New-Agent note: directory targets keep the agent dir + write via `shared_base` (invariant #11)
+- `README.md` — Usage block lists `make validate-shared-targets`; documents the `shared: true|false` flag and `shared: false` per-workspace targets (claude-code)
+- `scripts/lib/sync.sh` — directory impls branch on `shared` (null-safe jq): `shared: false` targets write real per-workspace dirs; A3 cleanup resolves `${DETECTED_BASE}` per detected workspace; A4 fragment merge expands `${DETECTED_BASE}`; write dirs become `<shared_base>/<type>[-<transform>]`
+- `content/hooks/claude-code/settings.fragment.json` — hook commands now use `${DETECTED_BASE}/hooks/...` per-workspace placeholders
+- Tests: test_bootstrap_symlinks 4→6, test_validate_shared_targets 5→8, test_sync 90→92 (HOME-isolated, never touches live ~/.claude*) — 252 → 259 total; `shared: false` targets write real per-workspace dirs
 
 ### Removed
 
