@@ -39,13 +39,12 @@ init_sync_registry() {
 # temp file).  This lets cleanup_stale_files detect orphaned files on the very
 # next sync even when the registry was never previously written.
 bootstrap_sync_registry() {
+    # No skills config (or no manifest) → nothing to seed.
+    has_skill_directories || return 0
+    # Directory-format targets (skills) write ONCE to the shared base, so the
+    # bootstrap scan uses the shared skills dir (not per-agent `path` values).
     local skill_target_paths
-    skill_target_paths=$(jq -r '
-        .agents | to_entries[] |
-        .value.targets | to_entries[]? |
-        select(.value.format == "directory") |
-        .value.path // empty
-    ' <<<"${MANIFEST_JSON}" 2>/dev/null | sort -u || true)
+    skill_target_paths=$(get_shared_write_path "skills" '{}')
 
     [[ -z "${skill_target_paths}" ]] && return 0
 
@@ -122,19 +121,30 @@ cleanup_stale_files() {
     # the manifest but still deployed on disk (with files that survived
     # the stale-file pass because they were never in the registry).
     _prune_stale_skill_dirs
+
+    # Migration: shared:false claude-code targets no longer write the default
+    # subagents dir or the shared hooks dir. Remove those dirs once empty (files
+    # are already gone via the stale-file pass above; rmdir is a no-op when
+    # non-empty, so a future transform:none subagents target is unaffected).
+    local legacy_dir
+    for legacy_dir in "${SYNC_REGISTRY_DIR}/subagents" "${SYNC_REGISTRY_DIR}/hooks"; do
+        if [[ -d "${legacy_dir}" ]] && [[ -z "$(find "${legacy_dir}" -mindepth 1 2>/dev/null)" ]]; then
+            if [[ "${DRY_RUN}" == "true" ]]; then
+                log_info "[DRY-RUN] Would remove empty legacy shared dir: ${legacy_dir}"
+            else
+                rmdir "${legacy_dir}" && log_warn "  ✗ Empty legacy shared dir removed: ${legacy_dir}"
+            fi
+        fi
+    done
 }
 
 # Remove empty directories under every directory-format target path.
 # Uses find -depth so child dirs are evaluated before parents, allowing
 # a single pass to clean nested empty trees.
 _prune_empty_skill_dirs() {
+    has_skill_directories || return 0
     local skill_target_paths
-    skill_target_paths=$(jq -r '
-        .agents | to_entries[] |
-        .value.targets | to_entries[]? |
-        select(.value.format == "directory") |
-        .value.path // empty
-    ' <<<"${MANIFEST_JSON}" 2>/dev/null | sort -u || true)
+    skill_target_paths=$(get_shared_write_path "skills" '{}')
 
     [[ -z "${skill_target_paths}" ]] && return 0
 
@@ -180,13 +190,9 @@ _prune_empty_skill_dirs() {
 # only handles empty dirs). This catches skills retired from manifest but
 # still deployed on disk.
 _prune_stale_skill_dirs() {
+    has_skill_directories || return 0
     local dir_paths
-    dir_paths=$(jq -r '
-        .agents | to_entries[] |
-        .value.targets | to_entries[]? |
-        select(.value.format == "directory") |
-        .value.path // empty
-    ' <<<"${MANIFEST_JSON}" 2>/dev/null | sort -u || true)
+    dir_paths=$(get_shared_write_path "skills" '{}')
 
     [[ -z "${dir_paths}" ]] && return 0
 
@@ -231,12 +237,57 @@ cleanup_agent_stale_files() {
     local agent="$1"
     [[ -z "${_SYNC_REGISTRY_NEW}" ]] && return 0
 
-    # Collect all target paths for this agent
-    local target_paths
-    target_paths=$(jq -r --arg a "${agent}" '
-        .agents[$a].targets | to_entries[]? |
-        (.value.path // empty), (.value.paths[]? // empty)
-    ' <<<"${MANIFEST_JSON}" 2>/dev/null | sort -u || true)
+    # Collect all target paths for this agent. Directory-format targets
+    # (skills/subagents/hooks) map to the shared base — their real dir is a
+    # symlink and find(1) does not traverse a symlinked start path. File-level
+    # targets keep their literal path.
+    local target_paths=""
+    local target_types ttype
+    target_types=$(jq -r --arg a "${agent}" '.agents[$a].targets | keys[]' <<<"${MANIFEST_JSON}" 2>/dev/null || true)
+    while IFS= read -r ttype; do
+        [[ -z "${ttype}" ]] && continue
+        local tcfg
+        tcfg=$(jq -r --arg a "${agent}" --arg t "${ttype}" '.agents[$a].targets[$t]' <<<"${MANIFEST_JSON}")
+        case "${ttype}" in
+            skills | subagents | hooks)
+                local shared_t
+                shared_t=$(jq -r 'if .shared == null then true else .shared end' <<<"${tcfg}")
+                if [[ "${shared_t}" == "true" ]]; then
+                    target_paths+="$(get_shared_write_path "${ttype}" "${tcfg}")"$'\n'
+                else
+                    # shared:false: scan the agent's real dirs (path for
+                    # skills/subagents, scripts_path for hooks). Paths using
+                    # ${DETECTED_BASE} are resolved per detected workspace HERE
+                    # because sync.sh unsets DETECTED_BASE after each workspace
+                    # (expand_path would otherwise yield /skills, /agents, /hooks
+                    # — a silent no-op). Each emitted path is the FULL RESOLVED
+                    # TARGET SUBDIR (e.g. ~/.claude/skills), NEVER the raw
+                    # workspace base — downstream find+comm-23+rm (lib/sync.sh
+                    # 269/264) must stay scoped to the subdir, not the workspace
+                    # root (a base-level scan would delete user state: sessions/,
+                    # plugins/, cache/, settings.local.json, .claude.json).
+                    # Mirrors bootstrap-symlinks.sh resolve_agent_dirs
+                    # (detect_all_agent_paths).
+                    local rawp wbase
+                    rawp=$(jq -r '.path // .scripts_path // empty' <<<"${tcfg}" 2>/dev/null || true)
+                    if [[ "${rawp}" == *"\${DETECTED_BASE}"* ]]; then
+                        while IFS= read -r wbase; do
+                            [[ -n "${wbase}" ]] && target_paths+="$(expand_path "${rawp//\$\{DETECTED_BASE\}/${wbase}}")"$'\n'
+                        done < <(detect_all_agent_paths "${agent}")
+                    else
+                        while IFS= read -r p; do
+                            [[ -n "${p}" ]] && target_paths+="${p}"$'\n'
+                        done < <(jq -r '.path // .scripts_path // empty, .paths[]? // empty' <<<"${tcfg}" 2>/dev/null || true)
+                    fi
+                fi
+                ;;
+            *)
+                while IFS= read -r p; do
+                    [[ -n "${p}" ]] && target_paths+="${p}"$'\n'
+                done < <(jq -r '.path // empty, .paths[]? // empty' <<<"${tcfg}" 2>/dev/null || true)
+                ;;
+        esac
+    done <<<"${target_types}"
 
     [[ -z "${target_paths}" ]] && return 0
 
@@ -269,13 +320,10 @@ cleanup_agent_stale_files() {
         log_debug "Cleanup: no stale files for agent '${agent}'"
     fi
 
-    # Prune empty dirs left behind under this agent's targets
+    # Prune empty dirs left behind under this agent's directory targets.
+    # Directory content lives in the shared base (skills dir), not per-agent.
     local dir_target_paths
-    dir_target_paths=$(jq -r --arg a "${agent}" '
-        .agents[$a].targets | to_entries[]? |
-        select(.value.format == "directory") |
-        .value.path // empty
-    ' <<<"${MANIFEST_JSON}" 2>/dev/null | sort -u || true)
+    dir_target_paths=$(get_shared_write_path "skills" '{}')
 
     if [[ -n "${dir_target_paths}" ]]; then
         local pruned=0
@@ -497,6 +545,53 @@ get_target_paths() {
     fi
 }
 
+# Shared base root for directory-format targets (skills/subagents/hooks).
+# Directory content is written ONCE here; each agent's real dir (target `path`)
+# is a symlink into it (created by scripts/bootstrap-symlinks.sh after sync).
+# Reads the manifest's top-level `shared_base` key, defaulting to the canonical
+# ${HOME}/.config/agent-covenant when absent.
+get_shared_base() {
+    local sb=""
+    if [[ -n "${MANIFEST_JSON}" ]]; then
+        sb=$(jq -r '.shared_base // ""' <<<"${MANIFEST_JSON}" 2>/dev/null || true)
+    fi
+    if [[ -z "${sb}" || "${sb}" == "null" ]]; then
+        sb="${HOME}/.config/agent-covenant"
+    fi
+    expand_path "${sb}"
+}
+
+# Shared write path for a directory-format target.
+#   $1 target_type  (skills | subagents | hooks)
+#   $2 target_config JSON object (may be "{}" for registry scans)
+# Write dir = ${shared_base}/<target_type> when transform is none (default);
+# ${shared_base}/<target_type>-<transform> otherwise (e.g. subagents-strip,
+# subagents-opencode). The transform suffix keeps differently-transformed
+# copies of the same content type apart.
+get_shared_write_path() {
+    local target_type="$1"
+    local target_config="$2"
+    local sb tr
+    sb=$(get_shared_base)
+    tr=$(jq -r '.transform // "none"' <<<"${target_config}" 2>/dev/null || true)
+    if [[ -z "${tr}" || "${tr}" == "null" ]]; then
+        tr="none"
+    fi
+    if [[ "${tr}" == "none" ]]; then
+        printf '%s\n' "${sb}/${target_type}"
+    else
+        printf '%s\n' "${sb}/${target_type}-${tr}"
+    fi
+}
+
+# True (exit 0) when the manifest defines at least one skill directory to deploy.
+# Used by the registry/prune scans so they no-op when there is no skills config
+# (or no manifest at all — e.g. unit tests calling cleanup directly).
+has_skill_directories() {
+    [[ -n "${MANIFEST_JSON}" ]] || return 1
+    jq -e '.skills.directories | length > 0' <<<"${MANIFEST_JSON}" >/dev/null 2>&1
+}
+
 # Write file with backup and dry-run support
 # Usage: write_sync_file <dest_path> <content> [source_file]
 #   source_file: when provided, its checksum is saved to the per-file cache on write.
@@ -530,12 +625,20 @@ write_sync_file() {
     fi
 
     if [[ "${DRY_RUN}" == "true" ]]; then
-        log_info "[DRY-RUN] Would write to: ${final_path}"
+        if [[ "${QUIET_SYNC:-false}" == "true" ]]; then
+            log_debug "[DRY-RUN] Would write to: ${final_path}"
+        else
+            log_info "[DRY-RUN] Would write to: ${final_path}"
+        fi
         show_diff "${final_path}" "${content}"
     else
         mkdir -p "$(dirname "${final_path}")"
         printf '%s\n' "${content}" >"${final_path}"
-        log_info "  → ${final_path}"
+        if [[ "${QUIET_SYNC:-false}" == "true" ]]; then
+            log_debug "  → ${final_path}"
+        else
+            log_info "  → ${final_path}"
+        fi
         if [[ -n "${source_file}" && -n "${agent}" ]]; then save_file_cache "${agent}" "${source_file}"; fi
     fi
 }
@@ -824,9 +927,18 @@ sync_directory_impl() {
     local source_type="$3"
     local target_config="$4"
 
-    # Get target paths
+    # shared:true — content is written ONCE to the shared base and the agent's
+    # real dir is symlinked into it by scripts/bootstrap-symlinks.sh. shared:false
+    # (e.g. claude-code) — content is written to the agent's real dir (per
+    # detected workspace when path uses ${DETECTED_BASE}).
+    local shared
+    shared=$(jq -r 'if .shared == null then true else .shared end' <<<"${target_config}")
     local target_paths
-    target_paths=$(get_target_paths "${target_config}")
+    if [[ "${shared}" == "true" ]]; then
+        target_paths=$(get_shared_write_path "${target_type}" "${target_config}")
+    else
+        target_paths=$(get_target_paths "${target_config}")
+    fi
 
     # Pre-collect all source skill files in ONE find call, grouped by skill dir.
     # Avoids 112 separate find forks (one per skill dir) — each fork adds ~10ms on macOS.
@@ -854,6 +966,17 @@ sync_directory_impl() {
         # Copy to each target directory
         while IFS= read -r target_path; do
             [[ -z "${target_path}" ]] && continue
+            # Migration verb for shared:false: drop a stale symlink into the
+            # shared base so the real per-agent dir is created (idempotent;
+            # order-independent with bootstrap-symlinks.sh).
+            if [[ "${shared}" != "true" ]] && [[ -L "${target_path}" ]]; then
+                if [[ "${DRY_RUN}" == "true" ]]; then
+                    log_info "[DRY-RUN] Would remove symlink: ${target_path}"
+                else
+                    rm -f "${target_path}"
+                    log_warn "  ✗ Symlink removed (shared:false target): ${target_path}"
+                fi
+            fi
             # Handle broken symlinks: if target_path or any component is a
             # dangling symlink, remove it first so mkdir -p can create real dirs.
             local _check="${target_path}"
@@ -870,7 +993,11 @@ sync_directory_impl() {
             local dest_dir="${target_path}/${skill_name}"
 
             if [[ "${DRY_RUN}" == "true" ]]; then
-                log_info "[DRY-RUN] Would copy directory: ${source_dir} → ${dest_dir}"
+                if [[ "${QUIET_SYNC:-false}" == "true" ]]; then
+                    log_debug "[DRY-RUN] Would copy directory: ${source_dir} → ${dest_dir}"
+                else
+                    log_info "[DRY-RUN] Would copy directory: ${source_dir} → ${dest_dir}"
+                fi
                 continue
             fi
 
@@ -926,7 +1053,11 @@ sync_directory_impl() {
             if [[ "${changed}" != "true" ]]; then
                 log_debug "  Unchanged: ${dest_dir}/"
             else
-                log_info "  → ${dest_dir}/"
+                if [[ "${QUIET_SYNC:-false}" == "true" ]]; then
+                    log_debug "  → ${dest_dir}/"
+                else
+                    log_info "  → ${dest_dir}/"
+                fi
             fi
         done <<<"${target_paths}"
     done < <(get_source_skill_dirs)
@@ -1041,18 +1172,42 @@ sync_individual_impl() {
     local source_type="$3"
     local target_config="$4" # JSON object of this target's config
 
-    local strip_frontmatter
-    strip_frontmatter=$(jq -r '.strip_frontmatter // false' <<<"${target_config}")
-
     local output_extension
     output_extension=$(jq -r '.output_extension // ".md"' <<<"${target_config}")
 
+    # Single transform enum (none|strip|opencode|header). Legacy keys
+    # (strip_frontmatter/transform_frontmatter) map onto it for backward
+    # compatibility — the gate rejects them in manifests, but old test
+    # fixtures still exercise them.
     local transform
-    transform=$(jq -r '.transform_frontmatter // false' <<<"${target_config}")
+    transform=$(jq -r '.transform // ""' <<<"${target_config}")
+    if [[ -z "${transform}" || "${transform}" == "null" ]]; then
+        local tf_legacy sf_legacy
+        tf_legacy=$(jq -r '.transform_frontmatter // false' <<<"${target_config}")
+        sf_legacy=$(jq -r '.strip_frontmatter // false' <<<"${target_config}")
+        if [[ "${tf_legacy}" == "opencode" ]]; then
+            transform="opencode"
+        elif [[ "${tf_legacy}" == "true" ]]; then
+            transform="header"
+        elif [[ "${sf_legacy}" == "true" ]]; then
+            transform="strip"
+        else
+            transform="none"
+        fi
+    fi
 
-    # Get target paths
+    # Get target paths. subagents: shared:true writes ONCE to the shared base
+    # (real dir symlinked in by bootstrap-symlinks.sh); shared:false (claude-code)
+    # writes to the agent's real dir, per detected workspace. Other individual
+    # targets (e.g. workflows) stay per-agent.
+    local shared
+    shared=$(jq -r 'if .shared == null then true else .shared end' <<<"${target_config}")
     local target_paths
-    target_paths=$(get_target_paths "${target_config}")
+    if [[ "${target_type}" == "subagents" && "${shared}" == "true" ]]; then
+        target_paths=$(get_shared_write_path "${target_type}" "${target_config}")
+    else
+        target_paths=$(get_target_paths "${target_config}")
+    fi
 
     while IFS= read -r source_file; do
         [[ -z "${source_file}" ]] && continue
@@ -1062,11 +1217,18 @@ sync_individual_impl() {
             log_debug "  Cache hit (unchanged): ${source_file}"
             local _bn="${source_file##*/}"
             local base_name_cached="${_bn%.md}"
+            # A2 guard: the cache key is agent:source — identical for both
+            # claude-code workspaces. Register the dest, but fall through to the
+            # write path when the dest file is missing (e.g. 2nd workspace never
+            # written, or dir deleted) so it gets (re)created.
+            local dest_missing=false
             while IFS= read -r target_path; do
                 [[ -z "${target_path}" ]] && continue
-                register_managed_file "${target_path}/${base_name_cached}${output_extension}"
+                local cached_final="${target_path}/${base_name_cached}${output_extension}"
+                register_managed_file "${cached_final}"
+                [[ ! -f "${cached_final}" ]] && dest_missing=true
             done <<<"${target_paths}"
-            continue
+            [[ "${dest_missing}" == "false" ]] && continue
         fi
 
         # Derive output file name from source
@@ -1074,11 +1236,11 @@ sync_individual_impl() {
         local base_name="${_bn%.md}"
         local file_content
 
-        if [[ "${transform}" == "true" ]]; then
+        if [[ "${transform}" == "header" ]]; then
             file_content=$(transform_file_frontmatter "${source_file}" "${agent}" "${target_config}")
         elif [[ "${transform}" == "opencode" ]]; then
             file_content=$(opencode_subagent_transform "${source_file}")
-        elif [[ "${strip_frontmatter}" == "true" ]]; then
+        elif [[ "${transform}" == "strip" ]]; then
             file_content=$(extract_content "${source_file}")
         else
             file_content=$(cat "${source_file}")
@@ -1087,6 +1249,17 @@ sync_individual_impl() {
         # Write to each target directory
         while IFS= read -r target_path; do
             [[ -z "${target_path}" ]] && continue
+            # Migration verb for shared:false subagents: drop a stale symlink
+            # into the shared base so the real per-agent dir is created
+            # (idempotent; order-independent with bootstrap-symlinks.sh).
+            if [[ "${shared}" != "true" ]] && [[ -L "${target_path}" ]]; then
+                if [[ "${DRY_RUN}" == "true" ]]; then
+                    log_info "[DRY-RUN] Would remove symlink: ${target_path}"
+                else
+                    rm -f "${target_path}"
+                    log_warn "  ✗ Symlink removed (shared:false target): ${target_path}"
+                fi
+            fi
             mkdir -p "${target_path}"
             local final_path="${target_path}/${base_name}${output_extension}"
             write_sync_file "${final_path}" "${file_content}" "${source_file}" "${agent}"
@@ -1105,12 +1278,32 @@ sync_hooks_impl() {
     local target_type="$2"
     local target_config="$3"
 
+    local shared
+    shared=$(jq -r 'if .shared == null then true else .shared end' <<<"${target_config}")
     local scripts_path
-    scripts_path=$(expand_path "$(jq -r '.scripts_path // ""' <<<"${target_config}")")
+    if [[ "${shared}" == "true" ]]; then
+        # Hook scripts write ONCE to the shared hooks dir; the agent's
+        # scripts_path is symlinked in by bootstrap-symlinks.sh.
+        scripts_path=$(get_shared_write_path "${target_type}" "${target_config}")
+    else
+        # shared:false (claude-code): scripts go to the agent's real dir,
+        # resolved per detected workspace (${DETECTED_BASE}).
+        scripts_path=$(expand_path "$(jq -r '.scripts_path // ""' <<<"${target_config}")")
+    fi
 
     if [[ -z "${scripts_path}" ]]; then
         log_error "hooks target missing scripts_path for ${agent}"
         return 1
+    fi
+
+    # Migration verb for shared:false: drop a stale symlink into the shared base.
+    if [[ "${shared}" != "true" ]] && [[ -L "${scripts_path}" ]]; then
+        if [[ "${DRY_RUN}" == "true" ]]; then
+            log_info "[DRY-RUN] Would remove symlink: ${scripts_path}"
+        else
+            rm -f "${scripts_path}"
+            log_warn "  ✗ Symlink removed (shared:false target): ${scripts_path}"
+        fi
     fi
 
     # --- 1. Copy hook scripts ---
@@ -1165,13 +1358,20 @@ sync_hooks_impl() {
         backup_file "${settings_path}"
     fi
 
+    # Expand ${DETECTED_BASE} (and any other ${VAR}) placeholders in the fragment
+    # so hook commands point at THIS workspace's hooks dir (A4: the committed
+    # fragment uses ${DETECTED_BASE}/hooks/... placeholders; absent vars stay
+    # literal, so legacy fragments merge unchanged).
+    local fragment_content
+    fragment_content=$(expand_vars_in_string "$(cat "${fragment_file}")")
+
     if [[ -f "${settings_path}" ]]; then
         # Recursive merge: existing settings wins except for hooks key (fragment wins)
         local merged
-        merged=$(jq -s '.[0] * .[1]' "${settings_path}" "${fragment_file}")
+        merged=$(jq -s '.[0] * .[1]' "${settings_path}" <(printf '%s' "${fragment_content}"))
         printf '%s\n' "${merged}" >"${settings_path}"
     else
-        cat "${fragment_file}" >"${settings_path}"
+        printf '%s' "${fragment_content}" >"${settings_path}"
     fi
 
     log_info "  → merged hooks into: ${settings_path}"

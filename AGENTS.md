@@ -59,6 +59,8 @@ All agents with native skill tooling load these **6 Core + 1 Mandatory Domain** 
 | Codex CLI | `./AGENTS.md` (merged) | — | `./.codex/skills/` | `./.codex/agents/` | — | — | — |
 
 > **Note**: Project-level paths are created by `sync.sh`. All supported agents deploy `*-global.md` kernels.
+>
+> **Note**: Directory-format sync targets (`skills`/`subagents`/`hooks`) declare `shared: true` (default) to be written ONCE into `${HOME}/.config/agent-covenant/<dir>`, with the per-agent directories listed above symlinked into it by `scripts/bootstrap-symlinks.sh`; `shared: false` targets (claude-code) are written to the agent's real per-workspace dir instead (invariant #11).
 
 ## Validation Rules
 
@@ -118,6 +120,9 @@ All agents with native skill tooling load these **6 Core + 1 Mandatory Domain** 
 - [ ] Hook scope declared: `pre` / `post` / `on-error`
 - [ ] **All `baseline-skills` hooks must target 7 boot skills (trigger: always)**
 
+### Sync Targets (shared base)
+- [ ] **Directory-format sync targets (`skills`/`subagents`/`hooks`) keep the agent's real dir in `path`/`scripts_path`**; `shared: false` targets (claude-code) write to that real dir per detected workspace, `shared: true` targets write content to the shared base via the top-level `shared_base` key — `make validate` runs `scripts/validate-shared-targets.sh`; per-agent dirs are symlinks derived from the manifest by `scripts/bootstrap-symlinks.sh` (invariant #11)
+
 ## Content Registration
 
 ### manifest.yaml (v2.0)
@@ -139,6 +144,7 @@ Central configuration. Every content file **must** be registered to be synced.
 1. Add path/directory to appropriate `manifest.yaml` section.
 2. For agent-specific rules, add `agents: [agent-name]` filter.
 3. Run `make validate` to check, then `make sync` to deploy.
+4. Directory-format targets (skills/subagents/hooks) MUST keep the agent's real dir in `path`/`scripts_path` (e.g. `~/.codex/skills`) and either declare `shared: false` to write there per detected workspace (claude-code) or write to the shared base via the top-level `shared_base` key — never point `path` at the shared base (invariant #11, enforced by `make validate`).
 
 ## Commands
 
@@ -183,6 +189,7 @@ Do not duplicate catalog content in AGENTS.md. Use these canonical references:
 8. **Subagent Discoverability**: No subagent in `content/subagents/` may set `hidden: true`. All 17 subagents must be visible in every agent's TUI/CLI picker. Specialist subagents are invokable both via `task` (by orchestrators) and directly (by users). Hiding creates an asymmetry: orchestrators know the agent exists, users do not. The `hidden` field is reserved for system-internal agents only. Violation → `[DISCOVERABILITY VIOLATION]`.
 9. **No Icons in content/**: All files under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) MUST NOT contain emoji icons or status dingbats (❌ ✅ 🔴 🟢 🟡 🟠 ⚪ ⚠️ ⚡ 🔒 ✏️ ⭐ ✨ 💡 🔥 📌 🔍 🚨 🔐 ✔ ✖ ✓ ✗ ▶ and similar visual markers). Replace with text labels: `Correct:` / `Incorrect:` / `[BLOCKER]` / `[WARN]` / `[PASS]` / `[FAIL]`. Arrows (`→ ←`), bullets (`•`), and em-dashes are permitted (prose typography, not status markers). Rationale: icons are non-diffable noise, inconsistent across editors, and break grep-based validation. Violation → `[CONTENT ICON VIOLATION]`.
 10. **English-Only content/**: All prose in files under `content/` (rules, skills, subagents, workflows, prompts, hooks, MCP configs) MUST be written in English. This strengthens invariant #6 (Language Policy) by making it explicit that skill `description:` frontmatter clauses and subagent "Known blind spots" sections are prose, not identifiers — they must be English. Proper nouns (team member names like "José", "Lisbaldy de Jesús Ojeda", place names like "Nuevo León") and data examples (`José → Jose` in normalization engine docs) are permitted as they are data, not prose. Violation → `[LANGUAGE POLICY VIOLATION]`.
+11. **Shared-Dir Sync**: Each directory-format sync target (`skills`, `subagents`, `hooks`) declares `shared: true|false` — `shared: true` (default) writes content ONCE into the shared base (the manifest's top-level `shared_base` key, canonically `${HOME}/.config/agent-covenant`), with each target's `path`/`scripts_path` holding the agent's REAL dir (e.g. `~/.codex/skills`, `~/.pi/agent/skills`, `~/.omp/agent/skills`), symlinked into `<shared_base>/<type>[-<transform>]` (e.g. `subagents-strip`, `subagents-opencode`) by `scripts/bootstrap-symlinks.sh` (manifest-derived, no hardcoded link map; stale symlinks into the shared base are removed with the `UNLINK` verb, dry-run-aware and idempotent); `shared: false` targets (claude-code) are written to the agent's real dir per detected workspace and are never symlinked. `make sync` = `sync-content` (writes shared base) → `bootstrap-symlinks` (links per-agent dirs), serial. File-level targets (rules merged, mcp json, settings.json) stay real per-agent files and ignore `shared_base`. Violation → `[SYMLINK-DIVERGENCE VIOLATION]`. Enforced mechanically by `make validate` → `scripts/validate-shared-targets.sh` (requires canonical `shared_base`; rejects any directory target whose `path` points at the shared base).
 
 ## Orchestration Flow
 

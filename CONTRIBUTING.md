@@ -40,6 +40,8 @@ agents:
 2. Test with dry-run: `./scripts/sync.sh --agent my-agent --dry-run`
 3. Sync: `./scripts/sync.sh --agent my-agent`
 
+**Directory-format targets (skills/subagents/hooks) MUST keep the agent's real dir in `path`/`scripts_path`** (e.g. `~/.codex/skills`); `shared: false` targets (claude-code) write there per detected workspace, `shared: true` targets write content to the shared base via the top-level `shared_base` key — never point `path` at the shared base. Per-agent dirs are symlinks derived from the manifest by `scripts/bootstrap-symlinks.sh`. Enforced by `make validate` → `scripts/validate-shared-targets.sh` (AGENTS.md invariant #11).
+
 ## Adding a New Rule
 
 1. Create `content/rules/<category>/<name>.md` with frontmatter:

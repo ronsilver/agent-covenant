@@ -18,7 +18,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "${SCRIPT_DIR}")"
-MANIFEST_FILE="${REPO_ROOT}/manifest.yaml"
+MANIFEST_FILE="${MANIFEST_FILE:-${REPO_ROOT}/manifest.yaml}"
 [[ ! -f "${MANIFEST_FILE}" ]] && MANIFEST_FILE="${REPO_ROOT}/manifest.example.yaml"
 
 # Load common functions
@@ -207,6 +207,15 @@ sync_agent() {
 
             while IFS= read -r target_type; do
                 [[ -z "${target_type}" ]] && continue
+                # shared:true directory targets are written once in the shared-content
+                # phase; shared:false ones (claude-code) are written here per workspace.
+                case "${target_type}" in
+                    skills | subagents)
+                        local skip_shared
+                        skip_shared=$(jq -r --arg a "${agent}" --arg t "${target_type}" '.agents[$a].targets[$t] | if .shared == null then true else .shared end' <<<"${MANIFEST_JSON}")
+                        [[ "${skip_shared}" == "true" ]] && continue
+                        ;;
+                esac
                 local source_type
                 source_type=$(jq -r --arg a "${agent}" --arg t "${target_type}" '.agents[$a].targets[$t].source_type // $t' <<<"${MANIFEST_JSON}")
                 log_info "Syncing ${target_type}..."
@@ -220,12 +229,77 @@ sync_agent() {
         # No path_strategy — just sync targets (standard agents)
         while IFS= read -r target_type; do
             [[ -z "${target_type}" ]] && continue
+            # shared:true directory targets are written once in the shared-content
+            # phase; shared:false ones (claude-code) are written here per workspace.
+            case "${target_type}" in
+                skills | subagents)
+                    local skip_shared
+                    skip_shared=$(jq -r --arg a "${agent}" --arg t "${target_type}" '.agents[$a].targets[$t] | if .shared == null then true else .shared end' <<<"${MANIFEST_JSON}")
+                    [[ "${skip_shared}" == "true" ]] && continue
+                    ;;
+            esac
             local source_type
             source_type=$(jq -r --arg a "${agent}" --arg t "${target_type}" '.agents[$a].targets[$t].source_type // $t' <<<"${MANIFEST_JSON}")
             log_info "Syncing ${target_type}..."
             sync_target "${agent}" "${target_type}" "${source_type}"
         done <<<"${target_types}"
     fi
+}
+
+# =============================================================================
+# Shared directory content (skills / subagents / hooks)
+# =============================================================================
+
+# Write directory-format targets (skills/subagents) ONCE to the shared base,
+# deduplicated by write dir. Every enabled agent's skills target resolves to the
+# same <shared_base>/skills, and subagents to <shared_base>/subagents[-codex|
+# -opencode] — so content is written a single time regardless of how many agents
+# declare the target. Per-agent symlinks are created afterwards by
+# scripts/bootstrap-symlinks.sh. (hooks are excluded: claude-code merges
+# settings.json per workspace, so hooks stay in the per-agent loop.)
+sync_shared_directory_content() {
+    local seen=""
+    local agent ttype
+
+    while IFS= read -r agent; do
+        [[ -z "${agent}" ]] && continue
+        is_agent_enabled "${agent}" || continue
+
+        local target_types
+        target_types=$(jq -r --arg a "${agent}" '.agents[$a].targets | keys[]' <<<"${MANIFEST_JSON}" 2>/dev/null || true)
+        while IFS= read -r ttype; do
+            [[ -z "${ttype}" ]] && continue
+            case "${ttype}" in
+                skills | subagents) ;;
+                *) continue ;;
+            esac
+
+            # shared:false targets (claude-code skills/subagents) are written
+            # per-agent in the per-agent loop — skip them in the shared phase.
+            local shared_t
+            shared_t=$(jq -r --arg a "${agent}" --arg t "${ttype}" '.agents[$a].targets[$t] | if .shared == null then true else .shared end' <<<"${MANIFEST_JSON}")
+            [[ "${shared_t}" == "true" ]] || continue
+
+            local tcfg write_dir
+            tcfg=$(jq -r --arg a "${agent}" --arg t "${ttype}" '.agents[$a].targets[$t]' <<<"${MANIFEST_JSON}")
+            write_dir=$(get_shared_write_path "${ttype}" "${tcfg}")
+
+            # Dedup: one shared dir may be declared by many agents (e.g. skills).
+            if [[ " ${seen} " == *" ${write_dir} "* ]]; then
+                continue
+            fi
+            seen+="${write_dir} "
+
+            local source_type
+            source_type=$(jq -r --arg a "${agent}" --arg t "${ttype}" '.agents[$a].targets[$t].source_type // $t' <<<"${MANIFEST_JSON}")
+            log_info "Syncing ${ttype} (shared) → ${write_dir}"
+            local previous_quiet="${QUIET_SYNC:-false}"
+            QUIET_SYNC=true
+            sync_target "${agent}" "${ttype}" "${source_type}"
+            QUIET_SYNC="${previous_quiet}"
+            log_info "Completed ${ttype} (shared) → ${write_dir}"
+        done <<<"${target_types}"
+    done < <(jq -r '.agents | keys[]' <<<"${MANIFEST_JSON}")
 }
 
 # =============================================================================
@@ -404,7 +478,14 @@ main() {
         # Sync specific agent
         sync_agent "${SPECIFIC_AGENT}"
     else
-        # Sync all enabled agents
+        # 1. Write shared:true directory-format content (skills/subagents) ONCE
+        #    to the shared base (deduplicated), then 2. sync per-agent targets —
+        #    file-level targets AND shared:false directory targets (claude-code
+        #    skills/subagents/hooks are written per detected workspace).
+        log_section "Shared Content (skills / subagents, shared:true only)"
+        sync_shared_directory_content
+
+        # Sync all enabled agents (file-level targets only)
         local agents
         agents=$(jq -r '.agents | keys[]' <<<"${MANIFEST_JSON}")
 

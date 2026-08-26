@@ -11,6 +11,11 @@ version: "2.0"
 # =============================================================================
 # Directorio de contenido (nueva estructura organizada)
 # =============================================================================
+# Shared base for directory-format targets (skills/subagents/hooks). Content is
+# written ONCE here; each agent's real dir (target `path`) is symlinked into it
+# by scripts/bootstrap-symlinks.sh. File-level targets (rules/mcp/config) stay
+# per-agent and ignore this base.
+shared_base: "${HOME}/.config/agent-covenant"
 content_dir: "content"
 rules:
   source_dir: "rules"
@@ -269,7 +274,6 @@ agents:
       paths:
         # Workspace paths (higher priority — first match wins)
         - "${HOME}/.claude-workspace"
-        - "${HOME}/.claude-workspace-bedrock"
         # Default path (fallback)
         - "${HOME}/.claude"
       commands: []
@@ -287,15 +291,20 @@ agents:
       skills:
         path: "${DETECTED_BASE}/skills"
         format: directory
+        shared: true
+        transform: none
       subagents:
         path: "${DETECTED_BASE}/agents"
         format: individual
-        strip_frontmatter: true
+        shared: true
+        transform: strip
       mcp:
         path: "${DETECTED_BASE}/.mcp.json"
         format: json
       hooks:
         scripts_path: "${DETECTED_BASE}/hooks"
+        shared: true
+        transform: none
         settings_path: "${DETECTED_BASE}/settings.json"
         settings_fragment: "hooks/claude-code/settings.fragment.json"
         scripts:
@@ -304,6 +313,8 @@ agents:
           - "hooks/claude-code/word-budget.sh"
           - "hooks/claude-code/memory-persist.sh"
           - "hooks/claude-code/git-guardrails.sh"
+          - "hooks/claude-code/injection-scan.sh"
+          - "hooks/claude-code/done-gate.sh"
         format: hooks
   codex-cli:
     enabled: true
@@ -322,10 +333,13 @@ agents:
       skills:
         path: "${HOME}/.codex/skills"
         format: directory
+        shared: true
+        transform: none
       subagents:
         path: "${HOME}/.codex/agents"
         format: individual
-        strip_frontmatter: true
+        shared: true
+        transform: strip
         # mcp: codex-cli uses ~/.codex/config.toml (TOML format) — not supported by sync.sh (json only).
         # Manage manually: add MCP servers to ~/.codex/config.toml under [mcp] section.
   codex-app:
@@ -341,6 +355,8 @@ agents:
       skills:
         path: "${HOME}/.codex/skills"
         format: directory
+        shared: true
+        transform: none
         # mcp: shared with codex-cli (~/.codex/config.toml, TOML format) — not supported by sync.sh.
         # Manage manually alongside codex-cli MCP config.
   antigravity:
@@ -367,6 +383,8 @@ agents:
       skills:
         path: "${HOME}/.gemini/antigravity/skills"
         format: directory
+        shared: true
+        transform: none
       #subagents:
       #  path: "${HOME}/.gemini/antigravity/agents"
       #  format: individual
@@ -392,10 +410,13 @@ agents:
       skills:
         path: "${HOME}/.config/opencode/skills"
         format: directory
+        shared: true
+        transform: none
       subagents:
         path: "${HOME}/.config/opencode/agents"
         format: individual
-        transform_frontmatter: "opencode"
+        shared: true
+        transform: opencode
       mcp:
         path: "${HOME}/.config/opencode/opencode.json"
         format: json
@@ -435,6 +456,8 @@ agents:
       skills:
         path: "${HOME}/.pi/agent/skills"
         format: directory
+        shared: true
+        transform: none
 
       # mcp: none — pi has no native MCP support. subagents: none — pi has no file-based subagents.
 
@@ -457,6 +480,8 @@ agents:
       skills:
         path: "${HOME}/.omp/agent/skills"
         format: directory
+        shared: true
+        transform: none
 
       mcp:
         path: "${HOME}/.omp/agent/mcp.json"

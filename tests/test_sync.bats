@@ -690,7 +690,7 @@ YAML
 # =============================================================================
 
 @test "sync_directory_impl copies skill directories" {
-    local target_dir="${TEST_FIXTURES}/output/skills"
+    local target_dir="${TEST_FIXTURES}/shared-base/skills"
     local skill_src="${TEST_FIXTURES}/content/skills/test-skill"
     mkdir -p "${target_dir}" "${skill_src}/references"
 
@@ -711,6 +711,7 @@ MD
     cat >"${TEST_FIXTURES}/skill-manifest.yaml" <<YAML
 version: "2.0"
 content_dir: "content"
+shared_base: "${TEST_FIXTURES}/shared-base"
 skills:
   source_dir: "skills"
   directories:
@@ -772,7 +773,7 @@ YAML
 }
 
 @test "sync_directory_impl detects unchanged content" {
-    local target_dir="${TEST_FIXTURES}/output/skills-unchanged"
+    local target_dir="${TEST_FIXTURES}/shared-base/skills"
     local skill_src="${TEST_FIXTURES}/content/skills/unchanged-skill"
     mkdir -p "${target_dir}/unchanged-skill" "${skill_src}"
 
@@ -791,6 +792,7 @@ MD
     cat >"${TEST_FIXTURES}/unchanged-manifest.yaml" <<YAML
 version: "2.0"
 content_dir: "content"
+shared_base: "${TEST_FIXTURES}/shared-base"
 skills:
   source_dir: "skills"
   directories:
@@ -1151,7 +1153,7 @@ YAML
 # =============================================================================
 
 @test "sync_directory_impl dry-run does not copy files" {
-    local target_dir="${TEST_FIXTURES}/output/skills-dry"
+    local target_dir="${TEST_FIXTURES}/shared-base/skills"
     local skill_src="${TEST_FIXTURES}/content/skills/dry-skill"
     mkdir -p "${target_dir}" "${skill_src}"
     cat >"${skill_src}/SKILL.md" <<'MD'
@@ -1166,6 +1168,7 @@ MD
     cat >"${TEST_FIXTURES}/dry-skill-manifest.yaml" <<YAML
 version: "2.0"
 content_dir: "content"
+shared_base: "${TEST_FIXTURES}/shared-base"
 skills:
   source_dir: "skills"
   directories:
@@ -1190,7 +1193,7 @@ YAML
 }
 
 @test "sync_directory_impl creates backup when enabled" {
-    local target_dir="${TEST_FIXTURES}/output/skills-backup"
+    local target_dir="${TEST_FIXTURES}/shared-base/skills"
     local skill_src="${TEST_FIXTURES}/content/skills/bk-skill"
     mkdir -p "${target_dir}/bk-skill" "${skill_src}"
 
@@ -1209,6 +1212,7 @@ MD
     cat >"${TEST_FIXTURES}/bk-manifest.yaml" <<YAML
 version: "2.0"
 content_dir: "content"
+shared_base: "${TEST_FIXTURES}/shared-base"
 skills:
   source_dir: "skills"
   directories:
@@ -1242,7 +1246,7 @@ YAML
 # =============================================================================
 
 @test "_prune_stale_skill_dirs removes non-empty stale skill directory" {
-    local target_dir="${TEST_FIXTURES}/output/skills-prune-stale"
+    local target_dir="${TEST_FIXTURES}/shared-base/skills"
     mkdir -p "${target_dir}/active-skill" "${target_dir}/retired-skill/subdir"
     echo "active" >"${target_dir}/active-skill/SKILL.md"
     echo "retired" >"${target_dir}/retired-skill/SKILL.md"
@@ -1250,6 +1254,7 @@ YAML
 
     cat >"${TEST_FIXTURES}/prune-stale-manifest.yaml" <<YAML
 version: "2.0"
+shared_base: "${TEST_FIXTURES}/shared-base"
 skills:
   directories:
     - active-skill
@@ -1326,12 +1331,13 @@ YAML
 }
 
 @test "_prune_stale_skill_dirs dry-run does not delete" {
-    local target_dir="${TEST_FIXTURES}/output/skills-prune-dry"
+    local target_dir="${TEST_FIXTURES}/shared-base/skills"
     mkdir -p "${target_dir}/stale-skill"
     echo "stale" >"${target_dir}/stale-skill/SKILL.md"
 
     cat >"${TEST_FIXTURES}/prune-dry-manifest.yaml" <<YAML
 version: "2.0"
+shared_base: "${TEST_FIXTURES}/shared-base"
 skills:
   directories:
     - other-skill
@@ -1494,7 +1500,7 @@ YAML
 }
 
 @test "sync_target dispatches directory format" {
-    local target_dir="${TEST_FIXTURES}/output/st-directory"
+    local target_dir="${TEST_FIXTURES}/shared-base/skills"
     local skill_src="${TEST_FIXTURES}/content/skills/st-skill"
     mkdir -p "${target_dir}" "${skill_src}"
     cat >"${skill_src}/SKILL.md" <<'MD'
@@ -1509,6 +1515,7 @@ MD
     cat >"${TEST_FIXTURES}/st-dir-manifest.yaml" <<YAML
 version: "2.0"
 content_dir: "content"
+shared_base: "${TEST_FIXTURES}/shared-base"
 skills:
   source_dir: "skills"
   directories:
@@ -1716,10 +1723,12 @@ YAML
         --argjson scripts '["hooks/claude-code/test-hook.sh"]' \
         '{scripts_path: $sp, scripts: $scripts}')
 
+    # sync_hooks_impl writes hook scripts to the shared base (not scripts_path).
+    MANIFEST_JSON="{\"shared_base\":\"${TEST_FIXTURES}/shared-base\"}"
     run sync_hooks_impl "claude-code" "hooks" "${target_config}"
     [[ "$status" -eq 0 ]]
-    [[ -f "${hooks_dir}/test-hook.sh" ]]
-    [[ -x "${hooks_dir}/test-hook.sh" ]]
+    [[ -f "${TEST_FIXTURES}/shared-base/hooks/test-hook.sh" ]]
+    [[ -x "${TEST_FIXTURES}/shared-base/hooks/test-hook.sh" ]]
 }
 
 @test "sync_hooks_impl: merges fragment into empty settings.json" {
@@ -1789,4 +1798,145 @@ YAML
     [[ "$status" -eq 0 ]]
     [[ ! -f "${settings_file}" ]]
     DRY_RUN=false
+}
+
+@test "claude-code shared:false skills write real per-workspace dirs; cleanup scans them (A3)" {
+    # HOME isolation: never touch live ~/.claude dirs (pre-migration they are
+    # symlinks into the shared base). Mirrors test_bootstrap_symlinks.bats.
+    local FAKE_HOME
+    FAKE_HOME="$(mktemp -d)"
+    export HOME="${FAKE_HOME}"
+
+    mkdir -p "${TEST_FIXTURES}/content/skills/test-skill"
+    cat >"${TEST_FIXTURES}/content/skills/test-skill/SKILL.md" <<'MD'
+---
+name: test-skill
+description: shared:false test
+license: MIT
+---
+# Test Skill
+MD
+
+    MANIFEST_FILE="${TEST_FIXTURES}/test-manifest.yaml"
+    CONTENT_DIR="${TEST_FIXTURES}/content"
+    DRY_RUN=false
+    CREATE_BACKUP=false
+    TIMESTAMP="2026-01-01 00:00:00"
+
+    # detect.paths REQUIRED: cleanup_agent_stale_files resolves ${DETECTED_BASE}
+    # per workspace via detect_all_agent_paths (DETECTED_BASE is unset by then).
+    cat >"${MANIFEST_FILE}" <<YAML
+version: "2.0"
+content_dir: "content"
+shared_base: "\${HOME}/.config/agent-covenant"
+skills:
+  source_dir: "skills"
+  directories:
+    - test-skill
+agents:
+  claude-code:
+    enabled: true
+    detect:
+      paths:
+        - "\${HOME}/.claude"
+        - "\${HOME}/.claude-silver"
+      commands: []
+    targets:
+      skills:
+        path: "\${DETECTED_BASE}/skills"
+        format: directory
+        shared: false
+YAML
+    MANIFEST_JSON=$(yq -o=json '.' "${MANIFEST_FILE}")
+    init_sync_registry
+
+    local tcfg
+    tcfg=$(jq -c '.agents."claude-code".targets.skills' <<<"${MANIFEST_JSON}")
+
+    # Workspace 1
+    DETECTED_BASE="${HOME}/.claude"
+    sync_directory_impl "claude-code" "skills" "skills" "${tcfg}"
+    # Workspace 2 — same agent:source cache key, must still be written
+    DETECTED_BASE="${HOME}/.claude-silver"
+    sync_directory_impl "claude-code" "skills" "skills" "${tcfg}"
+    unset DETECTED_BASE
+
+    [[ -f "${HOME}/.claude/skills/test-skill/SKILL.md" ]]
+    [[ -f "${HOME}/.claude-silver/skills/test-skill/SKILL.md" ]]
+    [[ ! -d "${HOME}/.config/agent-covenant/skills/test-skill" ]]
+
+    # Sentinel at the WORKSPACE ROOT (unregistered — created after the sync
+    # writes): proves cleanup is scoped to the RESOLVED TARGET SUBDIR
+    # (${HOME}/.claude/skills), not the raw workspace base (${HOME}/.claude).
+    # If T3 Edit 11 emitted the raw base, the find+comm-23+rm pass would scan
+    # the entire workspace root and delete this file (user-state wipe).
+    echo '{"user": true}' >"${HOME}/.claude/sentinel-user-state.json"
+
+    # A3: cleanup_agent_stale_files scans the real per-workspace dirs even though
+    # DETECTED_BASE is unset (per-workspace resolution via detect_all_agent_paths).
+    echo "stale" >"${HOME}/.claude/skills/stale.md"
+    cleanup_agent_stale_files "claude-code"
+    [[ ! -f "${HOME}/.claude/skills/stale.md" ]]
+    [[ -f "${HOME}/.claude/skills/test-skill/SKILL.md" ]]
+    [[ -f "${HOME}/.claude-silver/skills/test-skill/SKILL.md" ]]
+    [[ -f "${HOME}/.claude/sentinel-user-state.json" ]]
+
+    unset DETECTED_BASE
+    rm -rf "${FAKE_HOME}"
+}
+
+@test "sync_individual_impl cache-hit re-writes when dest is missing (A2)" {
+    # HOME isolation (F3): never rm -rf a live ~/.claude/agents symlink.
+    local FAKE_HOME
+    FAKE_HOME="$(mktemp -d)"
+    export HOME="${FAKE_HOME}"
+
+    mkdir -p "${TEST_FIXTURES}/content/subagents"
+    cat >"${TEST_FIXTURES}/content/subagents/ultraplan.md" <<'MD'
+---
+name: ultraplan
+description: A2 test subagent
+---
+# Ultraplan
+MD
+
+    MANIFEST_FILE="${TEST_FIXTURES}/test-manifest.yaml"
+    CONTENT_DIR="${TEST_FIXTURES}/content"
+    DRY_RUN=false
+    CREATE_BACKUP=false
+    TIMESTAMP="2026-01-01 00:00:00"
+
+    cat >"${MANIFEST_FILE}" <<YAML
+version: "2.0"
+content_dir: "content"
+shared_base: "\${HOME}/.config/agent-covenant"
+subagents:
+  source_dir: "subagents"
+  files:
+    - ultraplan.md
+agents:
+  claude-code:
+    enabled: true
+    targets:
+      subagents:
+        path: "\${DETECTED_BASE}/agents"
+        format: individual
+        shared: false
+        transform: strip
+YAML
+    MANIFEST_JSON=$(yq -o=json '.' "${MANIFEST_FILE}")
+    init_sync_registry
+
+    local tcfg
+    tcfg=$(jq -c '.agents."claude-code".targets.subagents' <<<"${MANIFEST_JSON}")
+    DETECTED_BASE="${HOME}/.claude"
+    sync_individual_impl "claude-code" "subagents" "subagents" "${tcfg}"
+    [[ -f "${HOME}/.claude/agents/ultraplan.md" ]]
+
+    # Dest removed; second call hits the cache but must re-write (A2 guard).
+    rm -rf "${HOME}/.claude/agents"
+    sync_individual_impl "claude-code" "subagents" "subagents" "${tcfg}"
+    [[ -f "${HOME}/.claude/agents/ultraplan.md" ]]
+    unset DETECTED_BASE
+    rm -rf "${FAKE_HOME}"
 }
