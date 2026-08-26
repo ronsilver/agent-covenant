@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/agent-covenant/hooks/baseline-skills.sh"
+            "command": "${DETECTED_BASE}/hooks/baseline-skills.sh"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/agent-covenant/hooks/require-read.sh"
+            "command": "${DETECTED_BASE}/hooks/require-read.sh"
           }
         ]
       },
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/agent-covenant/hooks/git-guardrails.sh"
+            "command": "${DETECTED_BASE}/hooks/git-guardrails.sh"
           }
         ]
       }
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/agent-covenant/hooks/word-budget.sh"
+            "command": "${DETECTED_BASE}/hooks/word-budget.sh"
           }
         ]
       }
@@ -48,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/agent-covenant/hooks/injection-scan.sh"
+            "command": "${DETECTED_BASE}/hooks/injection-scan.sh"
           }
         ]
       }
@@ -59,11 +59,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/agent-covenant/hooks/done-gate.sh"
+            "command": "${DETECTED_BASE}/hooks/done-gate.sh"
           },
           {
             "type": "command",
-            "command": "~/.config/agent-covenant/hooks/memory-persist.sh"
+            "command": "${DETECTED_BASE}/hooks/memory-persist.sh"
           }
         ]
       }
